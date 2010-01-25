@@ -1,0 +1,14 @@
+﻿<Window x:Class="IPFilter.UI.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="uTorrent IPFilter Updater" Height="172" Width="683" Loaded="Window_Loaded" SizeToContent="Manual" WindowStyle="SingleBorderWindow" MinHeight="172" MinWidth="683" MaxHeight="172">
+    <Grid Height="133">
+        <ComboBox Height="23" Margin="122,12,12,0" Name="cboMirrorProvider" VerticalAlignment="Top" />
+        <Label Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" Name="lblMirrorProvider" VerticalAlignment="Top" Width="104">Mirror Provider:</Label>
+        <ComboBox Height="23" Margin="122,41,12,0" Name="cboMirror" VerticalAlignment="Top" />
+        <Label Height="23" HorizontalAlignment="Left" Margin="12,41,0,0" Name="lblMirror" VerticalAlignment="Top" Width="104">Mirror:</Label>
+        <Button HorizontalAlignment="Right" Margin="0,0,12,12" Name="btnGo" Width="75" Height="23" VerticalAlignment="Bottom" Click="btnGo_Click">Go</Button>
+        <Label Margin="12,0,93,0" Name="lblStatus" Height="35" VerticalAlignment="Bottom">Label</Label>
+        <ProgressBar Height="21" Margin="12,71,12,0" Name="pbProgress" VerticalAlignment="Top" />
+    </Grid>
+</Window>
