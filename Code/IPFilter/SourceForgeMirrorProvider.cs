@@ -4,18 +4,17 @@ namespace IPFilter
 {
     public class SourceForgeMirrorProvider : IMirrorProvider
     {
-        readonly SourceForgeMirrorListDownloader listDownloader;
+        readonly ISourceForgeMirrorListDownloader listDownloader;
         readonly SourceForgeMirrorParser parser;
 
-        //public const string DefaultMirrorListUrl = "http://sourceforge.net/project/mirror_picker.php?height=350&width=300&group_id=92411&filesize=&filename=ipfilter.zip&abmode=&modal=1&_=1244453588655";
-        public const string DefaultMirrorListUrl = "http://sourceforge.net/settings/mirror_choices?projectname=emulepawcio&filename=Ipfilter/Ipfilter/ipfilter.zip";
+        public const string DefaultMirrorListUrl = "https://sourceforge.net/settings/mirror_choices?projectname=emulepawcio&filename=Ipfilter/Ipfilter/ipfilter.zip";
 
         public SourceForgeMirrorProvider() : this( new SourceForgeMirrorParser(), DefaultMirrorListUrl ) {}
 
         public SourceForgeMirrorProvider(SourceForgeMirrorParser mirrorParser, string mirrorListUrl)
             : this(mirrorParser, new SourceForgeMirrorListDownloader(mirrorListUrl)) {}
 
-        public SourceForgeMirrorProvider(SourceForgeMirrorParser parser, SourceForgeMirrorListDownloader downloader)
+        public SourceForgeMirrorProvider(SourceForgeMirrorParser parser, ISourceForgeMirrorListDownloader downloader)
         {
             listDownloader = downloader;
             this.parser = parser;

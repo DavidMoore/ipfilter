@@ -69,6 +69,8 @@
   <ItemGroup>
     <Compile Include="FileMirror.cs" />
     <Compile Include="IMirrorProvider.cs" />
+    <Compile Include="ISourceForgeMirrorListDownloader.cs" />
+    <Compile Include="ISourceForgeMirrorParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceForgeMirrorListDownloader.cs" />
     <Compile Include="SourceForgeMirrorParser.cs" />

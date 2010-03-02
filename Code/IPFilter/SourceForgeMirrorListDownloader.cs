@@ -4,7 +4,7 @@ using System.Net;
 
 namespace IPFilter
 {
-    public class SourceForgeMirrorListDownloader
+    public class SourceForgeMirrorListDownloader : ISourceForgeMirrorListDownloader
     {
         public SourceForgeMirrorListDownloader(string listUrl) : this(new Uri(listUrl)) {}
 
@@ -19,7 +19,7 @@ namespace IPFilter
         /// Downloads the list
         /// </summary>
         /// <returns></returns>
-        public virtual string Download()
+        public string Download()
         {
             var request = WebRequest.Create(ListUrl);
             using(var response = request.GetResponse())
@@ -33,6 +33,6 @@ namespace IPFilter
         /// <summary>
         /// URL that returns a list of mirrors
         /// </summary>
-        protected Uri ListUrl { get; set; }
+        public Uri ListUrl { get; set; }
     }
 }
