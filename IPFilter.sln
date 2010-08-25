@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{74AFF634
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{DC6ACDD3-9506-45FA-A71C-9BCC8553A3FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons", "Commons\Commons.csproj", "{253E123D-E63A-47BB-8A6A-3C530D1AF01D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,8 @@ Global
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{253E123D-E63A-47BB-8A6A-3C530D1AF01D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{253E123D-E63A-47BB-8A6A-3C530D1AF01D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

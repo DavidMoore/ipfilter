@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using Ionic.Zip;
@@ -13,17 +14,16 @@ using IPFilter.UI.Properties;
 namespace IPFilter.UI
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for the main window.
     /// </summary>
-    public partial class Window1
+    public partial class MainWindow
     {
-        const int ZipReadBufferSize = 4096;
         readonly IMirrorProvider mirrorProvider;
         readonly BackgroundWorker worker;
         IEnumerable<FileMirror> mirrors;
         UpdateState state;
 
-        public Window1()
+        public MainWindow()
         {
             mirrorProvider = new SourceForgeMirrorProvider();
 
@@ -38,6 +38,16 @@ namespace IPFilter.UI
             worker.RunWorkerCompleted += RunWorkerCompleted;
 
             InitializeComponent();
+
+            var version = GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            var product = GetAttribute<AssemblyProductAttribute>().Product;
+
+            Title = string.Concat(product, @" ", version);
+        }
+
+        static T GetAttribute<T>() where T : Attribute
+        {
+            return Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(T), true).Cast<T>().Single();
         }
 
         void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -50,7 +60,6 @@ namespace IPFilter.UI
         void SetState(UpdateState updateState)
         {
             state = updateState;
-
             RefreshState();
         }
 
@@ -87,11 +96,6 @@ namespace IPFilter.UI
         void CancelDownload()
         {
             worker.CancelAsync();
-        }
-
-        MessageBoxResult ShowPrompt(string message, string title)
-        {
-            return ShowMessageBox(title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, message);
         }
 
         void StartDownload()
@@ -150,12 +154,11 @@ namespace IPFilter.UI
                                                         "Downloaded {0:F2} MB of {1:F2} MB", downloadedMegs, lengthMegs));
                     bytesRead = stream.Read(buffer, 0, bufferSize);
 
-                    if (worker.CancellationPending)
-                    {
-                        // Cancel
-                        e.Cancel = true;
-                        return;
-                    }
+                    if (!worker.CancellationPending) continue;
+
+                    // Cancel
+                    e.Cancel = true;
+                    return;
                 }
 
                 string filterPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\ipfilter.dat");
@@ -164,8 +167,6 @@ namespace IPFilter.UI
 
                 using (var decompressedStream = new MemoryStream())
                 {
-                    var zipReadBuffer = new byte[ZipReadBufferSize];
-
                     MessageBoxResult tryToWrite = MessageBoxResult.Yes;
 
                     try
@@ -183,8 +184,6 @@ namespace IPFilter.UI
                     }
                     catch (Exception ex)
                     {
-                        bool isRightToLeft = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
-
                         ShowMessageBox("Error Decompressing", // Title / Caption
                                        MessageBoxButton.OK, // Buttons
                                        MessageBoxImage.Error, // Icon
@@ -234,32 +233,26 @@ namespace IPFilter.UI
             }
         }
 
-        MessageBoxResult ShowMessageBox(string title, MessageBoxButton buttons, MessageBoxImage image,
-                                        MessageBoxResult defaultButton, string message, params object[] args)
+        MessageBoxResult ShowMessageBox(string title, MessageBoxButton buttons, MessageBoxImage image, MessageBoxResult defaultButton, string message, params object[] args)
         {
             string formattedMessage = string.Format(CultureInfo.CurrentCulture, message, args);
 
             return (MessageBoxResult)Dispatcher.Invoke(new Func<MessageBoxResult>(
-                delegate
-                    {
-                        return MessageBox.Show(this, // Owner
-                                   formattedMessage, // Message
-                                   title, // Title / Caption
-                                   buttons, // Buttons
-                                   image, // Icon
-                                   defaultButton, // Default button
-                            // RTL culture?
-                                   CultureInfo.CurrentCulture.TextInfo.IsRightToLeft
-                                       ?
-                                           MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading
-                                       : 0);
-                    }
-                ));
+                () => MessageBox.Show(this, // Owner
+                            formattedMessage, // Message
+                            title, // Title / Caption
+                            buttons, // Buttons
+                            image, // Icon
+                            defaultButton, // Default button
+                            CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading : 0) // RTL culture?
+            ));
         }
 
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetStatus("Loading mirrors...");
+
+            pbProgress.IsIndeterminate = true;
 
             btnGo.IsEnabled = false;
 
@@ -278,7 +271,7 @@ namespace IPFilter.UI
             ThreadPool.QueueUserWorkItem(LoadMirrors);
         }
 
-        void LoadMirrors(object state)
+        void LoadMirrors(object currentState)
         {
             mirrors = mirrorProvider.GetMirrors();
 
@@ -289,15 +282,16 @@ namespace IPFilter.UI
                    cboMirror.IsEnabled = true;
                    SetStatus("Ready");
                    btnGo.IsEnabled = true;
+                   pbProgress.IsIndeterminate = false;
                } ));
-    }
+        }
 
         void SetStatus(string message)
         {
             lblStatus.Content = message;
         }
 
-        void btnGo_Click(object sender, RoutedEventArgs e)
+        void BtnGoClick(object sender, RoutedEventArgs e)
         {
             switch (state)
             {
@@ -318,11 +312,6 @@ namespace IPFilter.UI
 
             cboMirror.IsEnabled = cboMirrorProvider.IsEnabled = false;
             RefreshState();
-        }
-
-        void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }
