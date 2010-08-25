@@ -173,7 +173,11 @@ namespace IPFilter.UI
                         contentStream.Seek(0, SeekOrigin.Begin);
                         using( var zipFile = ZipFile.Read(contentStream, ZipProgress) )
                         {
-                            var entry = zipFile["ipfilter.dat"];
+                            if( zipFile.Entries.Count == 0) throw new ZipException("There are no entries in the zip file.");
+                            if( zipFile.Entries.Count > 1) throw new ZipException("There is more than one file in the zip file. This application will need to be updated to support this.");
+                            
+                            var entry = zipFile.Entries.First();
+
                             entry.Extract(decompressedStream);                            
                         }
                     }
