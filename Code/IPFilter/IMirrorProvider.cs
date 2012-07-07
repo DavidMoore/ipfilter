@@ -16,6 +16,8 @@ namespace IPFilter
         /// <summary>
         /// The name of the mirror provider
         /// </summary>
-        string Name { get; set; }
+        string Name { get; }
+
+        string GetUrlForMirror(FileMirror mirror);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -18,15 +19,16 @@ namespace IPFilter.UI
     /// </summary>
     public partial class MainWindow
     {
-        readonly IMirrorProvider mirrorProvider;
+        string[] zipContentTypes = new string[]{};
+
+        string[] gzipContentTypes = new string[]{};
+
         readonly BackgroundWorker worker;
         IEnumerable<FileMirror> mirrors;
         UpdateState state;
 
         public MainWindow()
         {
-            mirrorProvider = new SourceForgeMirrorProvider();
-
             worker = new BackgroundWorker
                          {
                              WorkerReportsProgress = true,
@@ -52,7 +54,8 @@ namespace IPFilter.UI
 
         void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            lblStatus.Content = e.Cancelled ? "Cancelled" : "Done";
+            //lblStatus.Content = e.Cancelled ? "Cancelled" : "Done";
+            if (e.Cancelled) lblStatus.Content = "Cancelled";
             pbProgress.Value = 100;
             SetState( e.Cancelled ? UpdateState.Cancelled : UpdateState.Done);
         }
@@ -100,8 +103,9 @@ namespace IPFilter.UI
 
         void StartDownload()
         {
+            var mirrorProvider = (IMirrorProvider)cboMirrorProvider.SelectedItem;
             var mirror = ((FileMirror) cboMirror.SelectedItem);
-            string urlString = string.Format(CultureInfo.CurrentUICulture, Settings.Default.DownloadUrlFormat, mirror.Id);
+            string urlString = mirrorProvider.GetUrlForMirror(mirror);
             worker.RunWorkerAsync(urlString);
         }
 
@@ -135,11 +139,65 @@ namespace IPFilter.UI
             {
                 worker.ReportProgress(0, "Downloading...");
 
+                var lastModified = response.Headers[HttpResponseHeader.LastModified];
+
+                if( !string.IsNullOrEmpty(lastModified))
+                {
+                    lastModified = DateTime.Parse(lastModified).ToString(CultureInfo.CurrentCulture);// "Cannot determine date of file.";
+                }
+                else
+                {
+                    lastModified = "Cannot determine date of file.";
+                }
+
                 int length = Convert.ToInt32(response.ContentLength);
                 double lengthMegs = (double) length/1024/1024;
 
                 int bytesRead = stream.Read(buffer, 0, bufferSize);
                 int totalRead = 0;
+
+                CompressionFormat fileFormat = CompressionFormat.None;
+
+                switch (response.ContentType)
+                {
+                    case "application/gzip":
+                    case "application/x-gzip":
+                    case "application/x-gunzip":
+                    case "application/gzipped":
+                    case "application/gzip-compressed":
+                    case "gzip/document":
+                        fileFormat = CompressionFormat.GZip;
+                        break;
+
+                    case "application/zip":
+                    case "application/x-zip":
+                    case "application/x-zip-compressed":
+                    case "multipart/x-zip":
+                        fileFormat = CompressionFormat.Zip;
+                        break;
+
+                    case "application/x-compressed":
+                    case "application/octet-stream":
+                    case "text/plain":
+                    default:
+                        {
+                            // Look for the GZip header bytes
+                            if (buffer[0] == 31 && buffer[1] == 139)
+                            {
+                                fileFormat = CompressionFormat.GZip;
+                            }
+                            else
+                            {
+                                // Look for the ZIP header bytes.
+                                var zipHeaderNumber = BitConverter.ToInt32(buffer, 0);
+                                if (zipHeaderNumber == 0x4034b50)
+                                {
+                                    fileFormat = CompressionFormat.Zip;
+                                }
+                            }
+                        }
+                        break;
+                }
 
                 while (bytesRead > 0)
                 {
@@ -172,14 +230,39 @@ namespace IPFilter.UI
                     try
                     {
                         contentStream.Seek(0, SeekOrigin.Begin);
-                        using( var zipFile = ZipFile.Read(contentStream, ZipProgress) )
-                        {
-                            if( zipFile.Entries.Count == 0) throw new ZipException("There are no entries in the zip file.");
-                            if( zipFile.Entries.Count > 1) throw new ZipException("There is more than one file in the zip file. This application will need to be updated to support this.");
-                            
-                            var entry = zipFile.Entries.First();
 
-                            entry.Extract(decompressedStream);                            
+                        switch(fileFormat)
+                        {
+                            case CompressionFormat.GZip:
+
+                                // Can't report progress for GZip
+                                Dispatcher.Invoke(new Action(() => pbProgress.IsIndeterminate = true));
+
+                                using(var gzipFile = new GZipStream(contentStream, CompressionMode.Decompress))
+                                {
+                                    var zipByteBuffer = new byte[1024 * 64];
+                                    int zipBytesRead;
+                                    while ((zipBytesRead = gzipFile.Read(zipByteBuffer, 0, zipByteBuffer.Length)) > 0)
+                                    {
+                                        decompressedStream.Write(zipByteBuffer, 0, zipBytesRead);
+                                    }
+                                }
+                                break;
+
+                            case CompressionFormat.Zip:
+                                using (var zipFile = ZipFile.Read(contentStream, ZipProgress))
+                                {
+                                    if (zipFile.Entries.Count == 0) throw new ZipException("There are no entries in the zip file.");
+                                    if (zipFile.Entries.Count > 1) throw new ZipException("There is more than one file in the zip file. This application will need to be updated to support this.");
+
+                                    var entry = zipFile.Entries.First();
+
+                                    entry.Extract(decompressedStream);
+                                }
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
                     }
                     catch (Exception ex)
@@ -208,9 +291,7 @@ namespace IPFilter.UI
                     {
                         try
                         {
-                            using (
-                                FileStream file = File.Open(filterPath, FileMode.Truncate, FileAccess.Write,
-                                                            FileShare.None))
+                            using (FileStream file = File.Open(filterPath, FileMode.Truncate, FileAccess.Write, FileShare.None))
                             {
                                 decompressedStream.WriteTo(file);
                                 file.Flush();
@@ -229,6 +310,9 @@ namespace IPFilter.UI
                                 ); // RTL culture?
                         }
                     }
+
+                    SetStatus("IP Filter downloaded. Date of this filter is " + lastModified, false);
+                    Dispatcher.Invoke(new Action(() => pbProgress.IsIndeterminate = false));
                 }
             }
         }
@@ -250,19 +334,11 @@ namespace IPFilter.UI
 
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            SetStatus("Loading mirrors...");
-
-            pbProgress.IsIndeterminate = true;
-
-            btnGo.IsEnabled = false;
-
-            cboMirror.Items.Clear();
-            cboMirror.IsEnabled = false;
-
             cboMirrorProvider.Items.Clear();
             cboMirrorProvider.IsEnabled = false;
 
-            cboMirrorProvider.Items.Add(mirrorProvider);
+            cboMirrorProvider.Items.Add(new BlocklistMirrorProvider());
+            cboMirrorProvider.Items.Add(new SourceForgeMirrorProvider());
 
             cboMirrorProvider.SelectedIndex = 0;
 
@@ -273,21 +349,51 @@ namespace IPFilter.UI
 
         void LoadMirrors(object currentState)
         {
-            mirrors = mirrorProvider.GetMirrors();
+            SetStatus("Loading mirrors...", true);
 
-            Dispatcher.Invoke( new Action( () =>
-               {
-                   cboMirror.ItemsSource = mirrors;
-                   cboMirror.SelectedIndex = mirrors.Count() - 1;
-                   cboMirror.IsEnabled = true;
-                   SetStatus("Ready");
-                   btnGo.IsEnabled = true;
-                   pbProgress.IsIndeterminate = false;
-               } ));
+            IMirrorProvider selectedMirrorProvider = null;
+
+            Dispatcher.Invoke(
+                new Action(
+                    () =>
+                    {
+                        selectedMirrorProvider = (IMirrorProvider)cboMirrorProvider.SelectedItem;
+                        //cboMirror.Items.Clear();
+                        cboMirror.IsEnabled = false;
+                    }));
+
+            var backgroundWorker = new BackgroundWorker();
+
+            backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs args)
+                {
+                    mirrors = selectedMirrorProvider.GetMirrors();
+                };
+
+            backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs args)
+                {
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        cboMirror.ItemsSource = mirrors;
+                        cboMirror.SelectedIndex = mirrors.Count() - 1;
+                        cboMirror.IsEnabled = true;
+                        SetStatus("Ready", false);
+                        btnGo.IsEnabled = true;
+                        pbProgress.IsIndeterminate = false;
+                    }));
+                };
+
+            backgroundWorker.RunWorkerAsync();
         }
 
-        void SetStatus(string message)
+        void SetStatus(string message, bool busy)
         {
+            if( !Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action<string, bool>(SetStatus), message, busy);
+                return;
+            }
+            btnGo.IsEnabled = !busy;
+            pbProgress.IsIndeterminate = busy;
             lblStatus.Content = message;
         }
 
@@ -304,7 +410,7 @@ namespace IPFilter.UI
                     state = UpdateState.Cancelling;
                     break;
                 case UpdateState.Done:
-                    SetState(UpdateState.Ready);
+                    Close();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -313,5 +419,17 @@ namespace IPFilter.UI
             cboMirror.IsEnabled = cboMirrorProvider.IsEnabled = false;
             RefreshState();
         }
+
+        private void cboMirrorProvider_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            LoadMirrors(null);
+        }
+    }
+
+    enum CompressionFormat
+    {
+        None = 0,
+        GZip = 1,
+        Zip = 2
     }
 }

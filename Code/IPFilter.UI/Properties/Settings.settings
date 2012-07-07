@@ -1,9 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="IPFilter.UI.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="DownloadUrlFormat" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://downloads.sourceforge.net/sourceforge/emulepawcio/ipfilter.zip?use_mirror={0}</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

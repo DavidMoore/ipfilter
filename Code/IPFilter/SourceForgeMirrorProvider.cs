@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace IPFilter
 {
@@ -18,7 +19,7 @@ namespace IPFilter
         {
             listDownloader = downloader;
             this.parser = parser;
-            Name = "SourceForge.net";
+            Name = "SourceForge.net (OLD!)";
         }
 
         /// <summary>
@@ -57,6 +58,11 @@ namespace IPFilter
         public string DownloadMirrorList()
         {
             return listDownloader.Download();
+        }
+
+        public string GetUrlForMirror(FileMirror mirror)
+        {
+            return string.Format(CultureInfo.CurrentCulture, "https://downloads.sourceforge.net/sourceforge/emulepawcio/ipfilter.zip?use_mirror={0}", mirror.Id);
         }
     }
 }
