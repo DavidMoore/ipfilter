@@ -38,11 +38,11 @@
     <SupportUrl>http://ipfilter.codeplex.com/</SupportUrl>
     <ProductName>IPFilter Updater</ProductName>
     <PublisherName>David Moore</PublisherName>
-    <MinimumRequiredVersion>1.0.0.6</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.7</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <ApplicationRevision>6</ApplicationRevision>
-    <ApplicationVersion>1.0.0.6</ApplicationVersion>
+    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationVersion>1.0.0.7</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>

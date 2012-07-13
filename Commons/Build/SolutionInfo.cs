@@ -14,6 +14,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersion("1.0.0.4")] // Product version
-[assembly: AssemblyFileVersion("1.0.0.4")]          // File version visible in Explorer
+[assembly: AssemblyInformationalVersion("1.0.0.7")] // Product version
+[assembly: AssemblyFileVersion("1.0.0.7")]          // File version visible in Explorer
 [assembly: AssemblyVersion("1.0.0.0")]              // File version for the CLR
