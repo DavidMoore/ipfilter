@@ -24,7 +24,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <PublishUrl>C:\Projects\David\Live\Publish\</PublishUrl>
+    <PublishUrl>C:\Projects\IPFilterUpdater\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -35,14 +35,15 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://ipfilter.codeplex.com/releases/clickonce/</InstallUrl>
+    <UpdateUrl>http://davidmoore.github.io/IP-Filter-Updater/</UpdateUrl>
     <SupportUrl>http://ipfilter.codeplex.com/</SupportUrl>
     <ProductName>IPFilter Updater</ProductName>
     <PublisherName>David Moore</PublisherName>
-    <MinimumRequiredVersion>1.0.0.7</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.8</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <ApplicationRevision>7</ApplicationRevision>
-    <ApplicationVersion>1.0.0.7</ApplicationVersion>
+    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationVersion>1.0.0.8</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
