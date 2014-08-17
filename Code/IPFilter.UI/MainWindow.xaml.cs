@@ -345,6 +345,17 @@ namespace IPFilter.UI
             cboMirrorProvider.IsEnabled = true;
 
             ThreadPool.QueueUserWorkItem(LoadMirrors);
+
+            return;
+
+            // TODO: Check if IP Filter is enabled in µTorrent
+            string settingsPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\settings.dat");
+            var settings = File.ReadAllText(settingsPath);
+            if (settings.Contains("15:ipfilter.enablei0e"))
+            {
+                MessageBox.Show("You haven't enabled IP Filtering in µTorrent! Go to http://ipfilter.codeplex.com/ for help.", "IP filtering not enabled", MessageBoxButton.OK);
+            }
+
         }
 
         void LoadMirrors(object currentState)
