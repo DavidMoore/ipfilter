@@ -40,7 +40,7 @@
     <PublisherName>David Moore</PublisherName>
     <MinimumRequiredVersion>1.0.0.10</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
+    <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.10</ApplicationVersion>
