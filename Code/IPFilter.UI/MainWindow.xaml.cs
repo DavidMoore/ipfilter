@@ -346,6 +346,13 @@ namespace IPFilter.UI
 
             ThreadPool.QueueUserWorkItem(LoadMirrors);
 
+//            if (MessageBox.Show(this, "IP Filter Updater has moved host from Microsoft's Codeplex to GitHub. \r\n\r\n"
+//                + "Sorry for the inconvenience, but you will need to download and install the new version manually (thanks for nothing, Codeplex). \r\n\r\n"
+//                + "Would you like me to take you to the web page now?", "New version available", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+//            {
+//                Process.Start("http://davidmoore.github.io/ipfilter/");
+//            }
+
             return;
 
             // TODO: Check if IP Filter is enabled in µTorrent

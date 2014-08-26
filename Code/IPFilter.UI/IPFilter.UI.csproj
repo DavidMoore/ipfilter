@@ -34,8 +34,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://davidmoore.github.io/IP-Filter-Updater/install/</InstallUrl>
-    <SupportUrl>https://davidmoore.github.io/IP-Filter-Updater/</SupportUrl>
+    <InstallUrl>https://davidmoore.github.io/ipfilter/install/</InstallUrl>
+    <SupportUrl>https://davidmoore.github.io/ipfilter/</SupportUrl>
     <ProductName>IPFilter Updater</ProductName>
     <PublisherName>David Moore</PublisherName>
     <MinimumRequiredVersion>1.0.0.10</MinimumRequiredVersion>
