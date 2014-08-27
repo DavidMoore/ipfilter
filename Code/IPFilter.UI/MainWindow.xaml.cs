@@ -14,6 +14,8 @@ using IPFilter.UI.Properties;
 
 namespace IPFilter.UI
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// Interaction logic for the main window.
     /// </summary>
@@ -219,13 +221,30 @@ namespace IPFilter.UI
                     return;
                 }
 
-                string filterPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\ipfilter.dat");
+                // Our default paths to put the ipfilter into
+                var paths = new List<string>
+                {
+                    @"%APPDATA%\uTorrent\ipfilter.dat",
+                    @"%APPDATA%\BitTorrent\ipfilter.dat"
+                };
 
+                try
+                {
+                    // Try to combine our defaults with the custom ones
+                    if( Settings.Default.CustomPaths != null) paths.AddRange(Settings.Default.CustomPaths.Cast<string>());
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Had trouble getting the custom paths: " + ex);
+                }
+
+                // Now parse the paths, which should expand environment variables in them, and strip out any duplicates.
+                var expandedPaths = new DestinationPathsProvider().GetDestinations(paths.ToArray());
+                
                 worker.ReportProgress(0, "Decompressing...");
 
                 using (var decompressedStream = new MemoryStream())
                 {
-                    MessageBoxResult tryToWrite = MessageBoxResult.Yes;
 
                     try
                     {
@@ -278,36 +297,49 @@ namespace IPFilter.UI
                         return;
                     }
 
-                    if (!File.Exists(filterPath))
+                    foreach (var filterPath in expandedPaths)
                     {
-                        var filterDirectory = new DirectoryInfo(Path.GetDirectoryName(filterPath));
-                        if (!filterDirectory.Exists) filterDirectory.Create();
-                        File.Create(filterPath).Dispose();
-                    }
-
-                    worker.ReportProgress(100, "Writing to " + filterPath);
-
-                    while (tryToWrite == MessageBoxResult.Yes)
-                    {
-                        try
+                        if (!File.Exists(filterPath))
                         {
-                            using (FileStream file = File.Open(filterPath, FileMode.Truncate, FileAccess.Write, FileShare.None))
+                            var filterDirectory = new DirectoryInfo(Path.GetDirectoryName(filterPath));
+
+                            // If the filter directory doesn't exist, we will assume they don't have that
+                            // particular flavour of client installed, and skip this copy.
+                            // TODO: Give user option to force writing of destination file even if the directory doesn't exist.
+                            if (!filterDirectory.Exists)
                             {
-                                decompressedStream.WriteTo(file);
-                                file.Flush();
-                                file.Close();
-                                tryToWrite = MessageBoxResult.No;
+                                Trace.TraceInformation("Destination directory {0} doesn't exist, so skipping this copy.", filterDirectory.FullName);
+                                continue;
                             }
                         }
-                        catch (Exception ex)
+
+                        worker.ReportProgress(100, "Writing to " + filterPath);
+
+                        // An ugly little loop that lets the user keep trying if we can't write
+                        // the destination file for some reason (e.g. locks).
+                        var tryToWrite = MessageBoxResult.Yes;
+                        while (tryToWrite == MessageBoxResult.Yes)
                         {
-                            tryToWrite = ShowMessageBox("Error Writing ipfilter.dat", // Title / Caption
-                                                        MessageBoxButton.YesNo, // Buttons
-                                                        MessageBoxImage.Error, // Icon
-                                                        MessageBoxResult.Yes, // Default button
-                                                        "There was a problem writing to {0}:\n\n{1}",
-                                                        filterPath, ex.Message
-                                ); // RTL culture?
+                            try
+                            {
+                                using (var file = File.Open(filterPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                                {
+                                    decompressedStream.WriteTo(file);
+                                    file.Flush();
+                                    file.Close();
+                                    tryToWrite = MessageBoxResult.No;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                tryToWrite = ShowMessageBox("Error Writing ipfilter.dat", // Title / Caption
+                                                            MessageBoxButton.YesNo, // Buttons
+                                                            MessageBoxImage.Error, // Icon
+                                                            MessageBoxResult.Yes, // Default button
+                                                            "There was a problem writing to {0}.\n\nWould you like to try again?\n\nThe error message was: {1}",
+                                                            filterPath, ex.Message
+                                    ); // RTL culture?
+                            }
                         }
                     }
 
@@ -343,15 +375,17 @@ namespace IPFilter.UI
             cboMirrorProvider.SelectedIndex = 0;
 
             cboMirrorProvider.IsEnabled = true;
-
+            
+            try
+            {
+                Settings.Default.Upgrade();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Gah, couldn't upgrade the application settings!: " + ex);
+            }
+            
             ThreadPool.QueueUserWorkItem(LoadMirrors);
-
-//            if (MessageBox.Show(this, "IP Filter Updater has moved host from Microsoft's Codeplex to GitHub. \r\n\r\n"
-//                + "Sorry for the inconvenience, but you will need to download and install the new version manually (thanks for nothing, Codeplex). \r\n\r\n"
-//                + "Would you like me to take you to the web page now?", "New version available", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.Yes) == MessageBoxResult.Yes)
-//            {
-//                Process.Start("http://davidmoore.github.io/ipfilter/");
-//            }
 
             return;
 

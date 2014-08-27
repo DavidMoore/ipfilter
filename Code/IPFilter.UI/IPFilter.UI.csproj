@@ -38,12 +38,12 @@
     <SupportUrl>https://davidmoore.github.io/ipfilter/</SupportUrl>
     <ProductName>IPFilter Updater</ProductName>
     <PublisherName>David Moore</PublisherName>
-    <MinimumRequiredVersion>1.0.0.10</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.11</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>10</ApplicationRevision>
-    <ApplicationVersion>1.0.0.10</ApplicationVersion>
+    <ApplicationRevision>11</ApplicationRevision>
+    <ApplicationVersion>1.0.0.11</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>

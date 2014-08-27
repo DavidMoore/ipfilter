@@ -71,6 +71,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="BlocklistMirrorProvider.cs" />
+    <Compile Include="DestinationPathsProvider.cs" />
     <Compile Include="FileMirror.cs" />
     <Compile Include="IMirrorProvider.cs" />
     <Compile Include="ISourceForgeMirrorListDownloader.cs" />
