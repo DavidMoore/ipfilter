@@ -30,3 +30,4 @@ _ReSharper*/
 Publish/
 *.vs10x
 *.zip
+/packages
