@@ -49,6 +49,20 @@ namespace IPFilter.UI
             Title = string.Concat(product, @" ", version);
         }
 
+        public MainWindow(MainWindowViewModel viewModel) : this()
+        {
+            ViewModel = viewModel;
+        }
+
+        public MainWindowViewModel ViewModel
+        {
+            get
+            {
+                return DataContext as MainWindowViewModel;
+            }
+            set { DataContext = value; }
+        }
+
         static T GetAttribute<T>() where T : Attribute
         {
             return Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(T), true).Cast<T>().Single();

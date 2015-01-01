@@ -4,17 +4,39 @@ using System.IO;
 
 namespace IPFilter.UI
 {
+    using System.Diagnostics;
+    using Properties;
+
     static class EntryPoint
     {
         [STAThread]
         internal static void Main(string[] args)
         {
+            UpgradeSettings();
+            
+            // TODO: Command line arguments / run silently
+
+            // Create the view model
+            var viewModel = new MainWindowViewModel();
+            
+            var window = new MainWindow(viewModel);
             var app = new App();
-
-            var window = new MainWindow();
-
             app.Run(window);
         }
+
+        static void UpgradeSettings()
+        {
+            try
+            {
+                // Upgrade / migrate custom settings if necessary
+                Settings.Default.Upgrade();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Couldn't upgrade settings: " + ex);
+            }
+        }
+
 
         static void AddToStartup()
         {
@@ -38,5 +60,15 @@ namespace IPFilter.UI
                 }
             }
         }
+    }
+
+    public class MainWindowViewModel
+    {
+        public MainWindowViewModel()
+        {
+            Options = new OptionsViewModel();
+        }
+
+        public OptionsViewModel Options { get; private set; }
     }
 }
