@@ -147,7 +147,9 @@
     </Compile>
     <Compile Include="ApplicationDetectionResult.cs" />
     <Compile Include="ApplicationEnumerator.cs" />
+    <Compile Include="BitTorrentApplication.cs" />
     <Compile Include="BlocklistMirrorProvider.cs" />
+    <Compile Include="CacheProvider.cs" />
     <Compile Include="CompressionFormat.cs" />
     <Compile Include="CryptoHelper.cs" />
     <Compile Include="DestinationPathsProvider.cs" />
@@ -156,12 +158,16 @@
     <Compile Include="FileMirror.cs" />
     <Compile Include="FilterDownloader.cs" />
     <Compile Include="IApplication.cs" />
+    <Compile Include="ICacheProvider.cs" />
     <Compile Include="IMirrorProvider.cs" />
     <Compile Include="ISourceForgeMirrorListDownloader.cs" />
     <Compile Include="ISourceForgeMirrorParser.cs" />
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Models\FilterDownloadResult.cs" />
     <Compile Include="Models\FilterUpdateResult.cs" />
     <Compile Include="OptionsViewModel.cs" />
+    <Compile Include="PathSetting.cs" />
+    <Compile Include="QBitTorrent.cs" />
     <Compile Include="SourceForgeMirrorListDownloader.cs" />
     <Compile Include="SourceForgeMirrorParser.cs" />
     <Compile Include="SourceForgeMirrorProvider.cs" />
