@@ -1,8 +1,8 @@
-namespace IPFilter
+namespace IPFilter.Models
 {
     using System;
 
-    class FilterUpdateResult
+    public class FilterUpdateResult
     {
         public TimeSpan? UpdateTime { get; set; }
 

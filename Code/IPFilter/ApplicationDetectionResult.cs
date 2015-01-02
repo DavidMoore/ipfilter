@@ -2,7 +2,7 @@ namespace IPFilter
 {
     using System.IO;
 
-    class ApplicationDetectionResult
+    public class ApplicationDetectionResult
     {
         public bool IsPresent { get; set; }
 
@@ -11,6 +11,8 @@ namespace IPFilter
         public DirectoryInfo InstallLocation { get; set; }
 
         public string Version { get; set; }
+
+        public IApplication Application { get; set; }
 
         public static ApplicationDetectionResult NotFound()
         {

@@ -384,6 +384,7 @@ namespace IPFilter.UI
             cboMirrorProvider.IsEnabled = false;
 
             cboMirrorProvider.Items.Add(new BlocklistMirrorProvider());
+            cboMirrorProvider.Items.Add(new EmuleSecurity());
             cboMirrorProvider.Items.Add(new SourceForgeMirrorProvider());
 
             cboMirrorProvider.SelectedIndex = 0;
@@ -490,12 +491,5 @@ namespace IPFilter.UI
         {
             LoadMirrors(null);
         }
-    }
-
-    enum CompressionFormat
-    {
-        None = 0,
-        GZip = 1,
-        Zip = 2
     }
 }

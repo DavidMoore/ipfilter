@@ -1,10 +1,13 @@
-﻿using System;
-using System.Deployment.Application;
-using System.IO;
-
-namespace IPFilter.UI
+﻿namespace IPFilter.UI
 {
+    using System;
+    using System.Deployment.Application;
+    using System.IO;
     using System.Diagnostics;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft;
     using Properties;
 
     static class EntryPoint
@@ -15,6 +18,28 @@ namespace IPFilter.UI
             UpgradeSettings();
             
             // TODO: Command line arguments / run silently
+            if (args.Length > 0)
+            {
+                try
+                {
+                    SilentMain().GetAwaiter().GetResult();
+                }
+                catch (AggregateException ae)
+                {
+                    Trace.TraceWarning("There were one or more errors trying to update the filter: ");
+
+                    foreach (var exception in ae.InnerExceptions)
+                    {
+                        Trace.TraceWarning(exception.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("There was a problem when trying to update the filter: " + ex);
+                }
+
+                return;
+            }
 
             // Create the view model
             var viewModel = new MainWindowViewModel();
@@ -22,6 +47,34 @@ namespace IPFilter.UI
             var window = new MainWindow(viewModel);
             var app = new App();
             app.Run(window);
+        }
+
+        static async Task SilentMain()
+        {
+            var detector = new ApplicationEnumerator();
+
+            var apps = (await detector.GetInstalledApplications()).ToList();
+
+            if (!apps.Any())
+            {
+                Trace.TraceWarning("No BitTorrent applications found. Nothing to do, so exiting.");
+                return;
+            }
+
+            // Download the filter
+            var downloader = new FilterDownloader();
+
+            using (var filter = await downloader.DownloadFilter(null, new CancellationToken(), new Progress<int>()))
+            {
+                if (filter.Exception != null) throw filter.Exception;
+                
+                foreach (var application in apps)
+                {
+                    Trace.TraceInformation("Updating app {0} {1}", application.Description, application.Version);
+
+                    await application.Application.UpdateFilterAsync(filter, new CancellationToken(), new Progress<int>());
+                }
+            }
         }
 
         static void UpgradeSettings()
