@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Common interface for classes that can parse SourceForge
     /// mirror list HTML into a collection of <see cref="FileMirror"/>

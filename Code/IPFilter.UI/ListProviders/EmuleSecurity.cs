@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
     using System;
     using System.Collections.Generic;

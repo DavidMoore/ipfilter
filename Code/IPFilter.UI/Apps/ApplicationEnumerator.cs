@@ -2,6 +2,7 @@ namespace IPFilter
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using UI.Apps;
 
     public class ApplicationEnumerator
     {

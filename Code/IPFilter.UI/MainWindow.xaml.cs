@@ -15,6 +15,7 @@ using IPFilter.UI.Properties;
 namespace IPFilter.UI
 {
     using System.Diagnostics;
+    using ListProviders;
 
     /// <summary>
     /// Interaction logic for the main window.

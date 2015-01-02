@@ -145,34 +145,34 @@
     <Compile Include="..\..\Commons\Build\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="ApplicationDetectionResult.cs" />
-    <Compile Include="ApplicationEnumerator.cs" />
-    <Compile Include="BitTorrentApplication.cs" />
-    <Compile Include="BlocklistMirrorProvider.cs" />
+    <Compile Include="Models\ApplicationDetectionResult.cs" />
+    <Compile Include="Apps\ApplicationEnumerator.cs" />
+    <Compile Include="Apps\BitTorrentApplication.cs" />
+    <Compile Include="Apps\QBitTorrent.cs" />
+    <Compile Include="Apps\UTorrentApplication.cs" />
     <Compile Include="CacheProvider.cs" />
-    <Compile Include="CompressionFormat.cs" />
+    <Compile Include="Models\CompressionFormat.cs" />
     <Compile Include="CryptoHelper.cs" />
     <Compile Include="DestinationPathsProvider.cs" />
-    <Compile Include="EmuleSecurity.cs" />
     <Compile Include="EntryPoint.cs" />
-    <Compile Include="FileMirror.cs" />
+    <Compile Include="Models\FileMirror.cs" />
     <Compile Include="FilterDownloader.cs" />
-    <Compile Include="IApplication.cs" />
+    <Compile Include="Apps\IApplication.cs" />
     <Compile Include="ICacheProvider.cs" />
-    <Compile Include="IMirrorProvider.cs" />
-    <Compile Include="ISourceForgeMirrorListDownloader.cs" />
-    <Compile Include="ISourceForgeMirrorParser.cs" />
+    <Compile Include="ListProviders\IMirrorProvider.cs" />
+    <Compile Include="ListProviders\BlocklistMirrorProvider.cs" />
+    <Compile Include="ListProviders\EmuleSecurity.cs" />
+    <Compile Include="ListProviders\ISourceForgeMirrorListDownloader.cs" />
+    <Compile Include="ListProviders\ISourceForgeMirrorParser.cs" />
+    <Compile Include="ListProviders\SourceForgeMirrorListDownloader.cs" />
+    <Compile Include="ListProviders\SourceForgeMirrorParser.cs" />
+    <Compile Include="ListProviders\SourceForgeMirrorProvider.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Models\FilterDownloadResult.cs" />
     <Compile Include="Models\FilterUpdateResult.cs" />
     <Compile Include="OptionsViewModel.cs" />
     <Compile Include="PathSetting.cs" />
-    <Compile Include="QBitTorrent.cs" />
-    <Compile Include="SourceForgeMirrorListDownloader.cs" />
-    <Compile Include="SourceForgeMirrorParser.cs" />
-    <Compile Include="SourceForgeMirrorProvider.cs" />
-    <Compile Include="UpdateState.cs" />
-    <Compile Include="UTorrentApplication.cs" />
+    <Compile Include="Models\UpdateState.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -270,6 +270,7 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">

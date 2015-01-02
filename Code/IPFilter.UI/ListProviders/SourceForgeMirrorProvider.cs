@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Globalization;
-
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
+    using System.Collections.Generic;
+    using System.Globalization;
+
     public class SourceForgeMirrorProvider : IMirrorProvider
     {
         readonly ISourceForgeMirrorListDownloader listDownloader;

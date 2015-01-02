@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Globalization;
-
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
+    using System.Collections.Generic;
+    using System.Globalization;
+
     public class BlocklistMirrorProvider : IMirrorProvider {
         /// <summary>
         /// Gets a list of mirrors for this provider

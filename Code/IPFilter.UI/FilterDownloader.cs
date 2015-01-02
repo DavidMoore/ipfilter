@@ -13,6 +13,7 @@ namespace IPFilter
     using System.Threading.Tasks;
     using Ionic.Zip;
     using Models;
+    using UI.ListProviders;
 
     public class FilterDownloader
     {

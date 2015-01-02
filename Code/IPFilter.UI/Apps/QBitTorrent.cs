@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.UI.Apps
 {
     using System;
     using System.Diagnostics;

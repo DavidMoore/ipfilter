@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Net;
-
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
+    using System;
+    using System.IO;
+    using System.Net;
+
     public class SourceForgeMirrorListDownloader : ISourceForgeMirrorListDownloader
     {
         public SourceForgeMirrorListDownloader(string listUrl) : this(new Uri(listUrl)) {}

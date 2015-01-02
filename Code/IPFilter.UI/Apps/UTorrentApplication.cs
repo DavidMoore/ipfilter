@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.UI.Apps
 {
     class UTorrentApplication : BitTorrentApplication
     {

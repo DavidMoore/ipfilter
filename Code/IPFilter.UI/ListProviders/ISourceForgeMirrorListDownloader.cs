@@ -1,7 +1,7 @@
-using System;
-
-namespace IPFilter
+namespace IPFilter.UI.ListProviders
 {
+    using System;
+
     public interface ISourceForgeMirrorListDownloader {
         /// <summary>
         /// Downloads the list
