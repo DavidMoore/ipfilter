@@ -142,9 +142,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="..\..\Commons\Build\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
     <Compile Include="Models\ApplicationDetectionResult.cs" />
     <Compile Include="Apps\ApplicationEnumerator.cs" />
     <Compile Include="Apps\BitTorrentApplication.cs" />
