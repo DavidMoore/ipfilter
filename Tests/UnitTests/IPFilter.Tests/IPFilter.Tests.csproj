@@ -85,10 +85,6 @@
       <Project>{34A454A5-5453-424A-81CE-30FF0A2B004B}</Project>
       <Name>IPFilter.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Code\IPFilter\IPFilter.csproj">
-      <Project>{01845C6E-D941-460E-9202-ED26E7D6B974}</Project>
-      <Name>IPFilter</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.UI", "Code\IPFilter.UI\IPFilter.UI.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{01845C6E-D941-460E-9202-ED26E7D6B974}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\UnitTests\IPFilter.Tests\IPFilter.Tests.csproj", "{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}"
 EndProject
@@ -28,10 +28,6 @@ Global
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01845C6E-D941-460E-9202-ED26E7D6B974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01845C6E-D941-460E-9202-ED26E7D6B974}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01845C6E-D941-460E-9202-ED26E7D6B974}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01845C6E-D941-460E-9202-ED26E7D6B974}.Release|Any CPU.Build.0 = Release|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -43,7 +39,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DC6ACDD3-9506-45FA-A71C-9BCC8553A3FB} = {74AFF634-F59E-4BE0-B7E4-5476A51220C1}
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4} = {DC6ACDD3-9506-45FA-A71C-9BCC8553A3FB}
+		{DC6ACDD3-9506-45FA-A71C-9BCC8553A3FB} = {74AFF634-F59E-4BE0-B7E4-5476A51220C1}
 	EndGlobalSection
 EndGlobal

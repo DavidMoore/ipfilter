@@ -118,6 +118,7 @@
     <Reference Include="System.Runtime">
       <HintPath>..\..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -144,10 +145,28 @@
     <Compile Include="..\..\Commons\Build\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="ApplicationDetectionResult.cs" />
+    <Compile Include="ApplicationEnumerator.cs" />
+    <Compile Include="BlocklistMirrorProvider.cs" />
+    <Compile Include="CompressionFormat.cs" />
+    <Compile Include="CryptoHelper.cs" />
     <Compile Include="DestinationPathsProvider.cs" />
+    <Compile Include="EmuleSecurity.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="FileMirror.cs" />
+    <Compile Include="FilterDownloader.cs" />
+    <Compile Include="IApplication.cs" />
+    <Compile Include="IMirrorProvider.cs" />
+    <Compile Include="ISourceForgeMirrorListDownloader.cs" />
+    <Compile Include="ISourceForgeMirrorParser.cs" />
+    <Compile Include="Models\FilterDownloadResult.cs" />
+    <Compile Include="Models\FilterUpdateResult.cs" />
     <Compile Include="OptionsViewModel.cs" />
+    <Compile Include="SourceForgeMirrorListDownloader.cs" />
+    <Compile Include="SourceForgeMirrorParser.cs" />
+    <Compile Include="SourceForgeMirrorProvider.cs" />
     <Compile Include="UpdateState.cs" />
+    <Compile Include="UTorrentApplication.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -190,12 +209,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IPFilter\IPFilter.csproj">
-      <Project>{01845C6E-D941-460E-9202-ED26E7D6B974}</Project>
-      <Name>IPFilter</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
