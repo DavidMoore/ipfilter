@@ -179,8 +179,8 @@ namespace IPFilter.Tests
 
             Assert.AreEqual(25, mirrors.Count());
 
-            Assert.IsNotNull(mirrors.FirstOrDefault(mirror => mirror.Name.Equals("Transact (Canberra, Australia)",StringComparison.OrdinalIgnoreCase)));
-            Assert.IsNotNull(mirrors.FirstOrDefault(mirror => mirror.Id.Equals("transact", StringComparison.OrdinalIgnoreCase)));
+            Assert.IsNotNull(mirrors.FirstOrDefault(mirror => mirror.Name.IndexOf("Transact",StringComparison.OrdinalIgnoreCase) > -1));
+            Assert.IsNotNull(mirrors.FirstOrDefault(mirror => mirror.Id.IndexOf("transact", StringComparison.OrdinalIgnoreCase) > -1));
         }
 
         [TestMethod]

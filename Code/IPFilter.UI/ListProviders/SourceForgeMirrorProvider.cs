@@ -19,7 +19,7 @@ namespace IPFilter.UI.ListProviders
         {
             listDownloader = downloader;
             this.parser = parser;
-            Name = "SourceForge.net (OLD!)";
+            Name = "SourceForge.net";
         }
 
         /// <summary>
