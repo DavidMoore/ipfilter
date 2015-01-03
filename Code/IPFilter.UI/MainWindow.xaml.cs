@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Threading;
-using System.Windows;
-using Ionic.Zip;
-using IPFilter.UI.Properties;
-
-namespace IPFilter.UI
+﻿namespace IPFilter.UI
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Net;
+    using System.Reflection;
+    using System.Threading;
+    using System.Windows;
+    using Ionic.Zip;
+    using Properties;
     using System.Diagnostics;
     using ListProviders;
 
@@ -22,9 +21,6 @@ namespace IPFilter.UI
     /// </summary>
     public partial class MainWindow
     {
-        string[] zipContentTypes = new string[]{};
-
-        string[] gzipContentTypes = new string[]{};
 
         readonly BackgroundWorker worker;
         IEnumerable<FileMirror> mirrors;
@@ -47,7 +43,7 @@ namespace IPFilter.UI
             var version = GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
             var product = GetAttribute<AssemblyProductAttribute>().Product;
 
-            Title = string.Concat(product, @" ", version);
+            Title = string.Concat(product, " ", version);
         }
 
         public MainWindow(MainWindowViewModel viewModel) : this()
@@ -379,18 +375,9 @@ namespace IPFilter.UI
             ));
         }
 
-        void Window_Loaded(object sender, RoutedEventArgs e)
+        async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cboMirrorProvider.Items.Clear();
-            cboMirrorProvider.IsEnabled = false;
-
-            cboMirrorProvider.Items.Add(new BlocklistMirrorProvider());
-            cboMirrorProvider.Items.Add(new EmuleSecurity());
-            cboMirrorProvider.Items.Add(new SourceForgeMirrorProvider());
-
-            cboMirrorProvider.SelectedIndex = 0;
-
-            cboMirrorProvider.IsEnabled = true;
+            await ViewModel.Initialize();
             
             try
             {
@@ -401,8 +388,6 @@ namespace IPFilter.UI
                 Trace.TraceError("Gah, couldn't upgrade the application settings!: " + ex);
             }
             
-            ThreadPool.QueueUserWorkItem(LoadMirrors);
-
             return;
 
             // TODO: Check if IP Filter is enabled in µTorrent

@@ -30,34 +30,28 @@ namespace IPFilter
 
         public IEnumerable<PathSetting> GetDestinations()
         {
-            // Our default paths to put the ipfilter into
-            var paths = new List<PathSetting>
-            {
-                new PathSetting("uTorrent", @"%APPDATA%\uTorrent\ipfilter.dat", true),
-                new PathSetting("BitTorrent", @"%APPDATA%\BitTorrent\ipfilter.dat", true)
-            };
-
             try
             {
                 // Try to combine our defaults with the custom ones
-                if (Settings.Default.CustomPaths != null)
+                if (Settings.Default.CustomPaths == null)
                 {
-                    paths.AddRange( Settings.Default.CustomPaths.Cast<string>().Select(ParseCustomPath) );
+                    return Enumerable.Empty<PathSetting>();
                 }
+                
+                return Settings.Default.CustomPaths.Cast<string>().Select(ParseCustomPath);
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("Had trouble getting the custom paths: " + ex);
+                return Enumerable.Empty<PathSetting>();
             }
-
-            return paths;
         }
 
         PathSetting ParseCustomPath(string arg)
         {
             var separatorIndex = arg.IndexOf(';');
             var name = "(Untitled)";
-            string path = null;
+            string path;
 
             if (separatorIndex > -1)
             {
@@ -71,7 +65,7 @@ namespace IPFilter
 
             path = TrimSeparatorsAndWhitespace(path);
 
-            return new PathSetting(name, path, false);
+            return new PathSetting(name, path);
         }
     }
 }

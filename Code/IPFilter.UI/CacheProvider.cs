@@ -8,12 +8,11 @@ namespace IPFilter
 
     class CacheProvider : ICacheProvider
     {
-        static string dataPath;
         static readonly string filterPath;
 
         static CacheProvider()
         {
-            dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DavidMoore", "IPFilter");
+            string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DavidMoore", "IPFilter");
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
