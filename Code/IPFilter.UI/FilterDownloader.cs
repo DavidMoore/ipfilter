@@ -2,18 +2,21 @@ namespace IPFilter
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
-    using System.Security.AccessControl;
     using System.Threading;
     using System.Threading.Tasks;
     using Ionic.Zip;
     using Models;
+    using UI;
     using UI.ListProviders;
+    using UI.Models;
 
     public class FilterDownloader
     {
@@ -31,12 +34,13 @@ namespace IPFilter
             Mirrors = new List<IMirrorProvider> { new EmuleSecurity(), new BlocklistMirrorProvider() };
         }
         
-        public async Task<FilterDownloadResult> DownloadFilter(Uri uri, CancellationToken cancellationToken, IProgress<int> progress)
+        public async Task<FilterDownloadResult> DownloadFilter(Uri uri, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var result = new FilterDownloadResult();
 
             try
             {
+                
                 if (uri == null)
                 {
                     var provider = Mirrors.First();
@@ -58,18 +62,29 @@ namespace IPFilter
                         result.FilterTimestamp = response.Headers.Date;
                         result.Etag = response.Headers.ETag;
 
+                        Trace.TraceInformation("Online filter's timestamp is " + result.FilterTimestamp);
+                        Trace.TraceInformation("ETag: " + result.Etag);
+
+
                         // Check if the cached filter is already up to date.
                         if (cache != null)
                         {
-                            var cacheResult = cache.Get(result);
+                            var cacheResult = await cache.GetAsync(result);
 
                             if (cacheResult != null && cacheResult.Length > 0)
                             {
-                                return cacheResult;
+                                Trace.TraceInformation("Found cached ipfilter with timestamp of " + cacheResult.FilterTimestamp);
+                                if (cacheResult.FilterTimestamp >= result.FilterTimestamp)
+                                {
+                                    Trace.TraceInformation("Using the cached ipfilter as it's the same or newer than the online filter.");
+                                    return cacheResult;
+                                }
                             }
                         }
                         
                         result.Length = response.Content.Headers.ContentLength;
+
+                        double lengthInMb = !result.Length.HasValue ? -1 : (double) result.Length.Value / 1024 / 1024;
 
                         double bytesDownloaded = 0;
 
@@ -90,8 +105,12 @@ namespace IPFilter
 
                                 if (result.Length.HasValue)
                                 {
-                                    var percent = (int) Math.Floor((bytesDownloaded/result.Length.Value)*100);
-                                    progress.Report(percent);
+                                    double downloadedMegs = bytesDownloaded / 1024 / 1024;
+                                    var percent = (int)Math.Floor((bytesDownloaded / result.Length.Value) * 100);
+                                    
+                                    var status = string.Format(CultureInfo.CurrentUICulture, "Downloaded {0:F2} MB of {1:F2} MB", downloadedMegs, lengthInMb);
+
+                                    progress.Report(new ProgressModel(UpdateState.Downloading, status, percent));
                                 }
 
                                 if (cancellationToken.IsCancellationRequested) return null;
@@ -105,7 +124,7 @@ namespace IPFilter
                 // Decompress if necessary
                 if (result.CompressionFormat != CompressionFormat.None)
                 {
-                    result.Stream = await Decompress(result,cancellationToken, progress);
+                    result.Stream = await Decompress(result, cancellationToken, progress);
                 }
             }
             catch (Exception ex)
@@ -123,7 +142,7 @@ namespace IPFilter
             return result;
         }
 
-        async Task<MemoryStream> Decompress(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<int> progress)
+        async Task<MemoryStream> Decompress(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             using (var stream = filter.Stream)
             {
@@ -131,16 +150,20 @@ namespace IPFilter
 
                 stream.Seek(0, SeekOrigin.Begin);
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 switch (filter.CompressionFormat)
                 {
                     case CompressionFormat.GZip:
                         using(var gzipFile = new GZipStream(stream, CompressionMode.Decompress))
                         {
                             var buffer = new byte[1024 * 64];
-                            int bytesRead = 0;
+                            int bytesRead;
                             while ((bytesRead = await gzipFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
                                 result.Write(buffer, 0, bytesRead);
+                                progress.Report(new ProgressModel(UpdateState.Decompressing, "Decompressing...", -1));
                             }
                         }
                         break;
@@ -149,9 +172,10 @@ namespace IPFilter
 
                         EventHandler<ReadProgressEventArgs> reportProgress = (sender, args) =>
                         {
+                            cancellationToken.ThrowIfCancellationRequested();
                             if (args.EventType != ZipProgressEventType.Extracting_EntryBytesWritten) return;
-                            var percentage = args.BytesTransferred/args.TotalBytesToTransfer*100;
-                            progress.Report((int) percentage);
+                            var percentage = (int)Math.Floor( (double)args.BytesTransferred / args.TotalBytesToTransfer * 100);
+                            progress.Report(new ProgressModel(UpdateState.Decompressing, "Unzipping...", percentage));
                         };
 
                         using (var zipFile = ZipFile.Read(stream, reportProgress))

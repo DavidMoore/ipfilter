@@ -1,6 +1,6 @@
 ﻿namespace IPFilter.UI
 {
-    enum UpdateState
+    public enum UpdateState
     {
         /// <summary>
         /// Ready to download
@@ -26,6 +26,8 @@
         /// <summary>
         /// The download was cancelled
         /// </summary>
-        Cancelled
+        Cancelled,
+
+        Decompressing
     }
 }
