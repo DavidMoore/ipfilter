@@ -5,9 +5,11 @@
     using System.IO;
     using System.Diagnostics;
     using System.Linq;
+    using System.Net.Mime;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft;
+    using Models;
     using Properties;
 
     static class EntryPoint
@@ -20,31 +22,37 @@
             // TODO: Command line arguments / run silently
             if (args.Length > 0)
             {
-                try
-                {
-                    SilentMain().GetAwaiter().GetResult();
-                }
-                catch (AggregateException ae)
-                {
-                    Trace.TraceWarning("There were one or more errors trying to update the filter: ");
+                var commandLine = string.Join(" ", args);
 
-                    foreach (var exception in ae.InnerExceptions)
+                if (commandLine.IndexOf("/silent", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    try
                     {
-                        Trace.TraceWarning(exception.ToString());
+                        SilentMain().GetAwaiter().GetResult();
+                    }
+                    catch (AggregateException ae)
+                    {
+                        Trace.TraceWarning("There were one or more errors trying to update the filter: ");
+
+                        foreach (var exception in ae.InnerExceptions)
+                        {
+                            Trace.TraceWarning(exception.ToString());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("There was a problem when trying to update the filter: " + ex);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Trace.TraceWarning("There was a problem when trying to update the filter: " + ex);
+                    Trace.TraceWarning("Invalid command line: " + commandLine);
                 }
-
+                
                 return;
             }
-
-            // Create the view model
-            var viewModel = new MainWindowViewModel();
             
-            var window = new MainWindow(viewModel);
+            var window = new MainWindow();
             var app = new App();
             app.Run(window);
         }
@@ -61,10 +69,16 @@
                 return;
             }
 
+            var cancellationSource = new CancellationTokenSource();
+
             // Download the filter
             var downloader = new FilterDownloader();
+            var progress = new Progress<ProgressModel>(delegate(ProgressModel model)
+            {
+                Trace.TraceInformation("{0}", model.Caption);
+            });
 
-            using (var filter = await downloader.DownloadFilter(null, new CancellationToken(), new Progress<int>()))
+            using (var filter = await downloader.DownloadFilter(null, cancellationSource.Token, progress))
             {
                 if (filter.Exception != null) throw filter.Exception;
                 
@@ -72,7 +86,7 @@
                 {
                     Trace.TraceInformation("Updating app {0} {1}", application.Description, application.Version);
 
-                    await application.Application.UpdateFilterAsync(filter, new CancellationToken(), new Progress<int>());
+                    await application.Application.UpdateFilterAsync(filter, cancellationSource.Token, progress);
                 }
             }
         }
