@@ -5,7 +5,7 @@ namespace IPFilter
 
     public interface ICacheProvider
     {
-        FilterDownloadResult Get(FilterDownloadResult filter);
+        Task<FilterDownloadResult> GetAsync(FilterDownloadResult filter);
         Task SetAsync(FilterDownloadResult filter);
     }
 }

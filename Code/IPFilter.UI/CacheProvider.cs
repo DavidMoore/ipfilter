@@ -2,6 +2,7 @@ namespace IPFilter
 {
     using System;
     using System.Deployment.Application;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading.Tasks;
     using Models;
@@ -27,7 +28,7 @@ namespace IPFilter
             get { return filterPath; }
         }
 
-        public FilterDownloadResult Get(FilterDownloadResult filter)
+        public async Task<FilterDownloadResult> GetAsync(FilterDownloadResult filter)
         {
             var file = new FileInfo(filterPath);
 
@@ -41,7 +42,7 @@ namespace IPFilter
 
             using (var stream = file.OpenRead())
             {
-                stream.CopyToAsync(result.Stream);
+                await stream.CopyToAsync(result.Stream);
             }
 
             result.Length = result.Stream.Length;
@@ -51,23 +52,31 @@ namespace IPFilter
 
         public async Task SetAsync(FilterDownloadResult filter)
         {
-            if (filter == null || filter.Exception != null) return;
-
-            var file = new FileInfo(filterPath);
-
-            if (file.Directory != null && !file.Directory.Exists)
+            try
             {
-                file.Directory.Create();
+                if (filter == null || filter.Exception != null) return;
+
+                var file = new FileInfo(filterPath);
+
+                if (file.Directory != null && !file.Directory.Exists)
+                {
+                    file.Directory.Create();
+                }
+
+                Trace.TraceInformation("Writing cached ipfilter to " + filterPath);
+                using (var cacheFile = File.Open(filterPath, FileMode.Create, FileAccess.Write,FileShare.Read))
+                {
+                    await filter.Stream.CopyToAsync(cacheFile);
+                }
+
+                if (filter.FilterTimestamp != null)
+                {
+                    file.LastWriteTimeUtc = filter.FilterTimestamp.Value.UtcDateTime;
+                }
             }
-
-            using (var cacheFile = File.Open(filterPath, FileMode.Create, FileAccess.Write,FileShare.Read))
+            catch (Exception ex)
             {
-                filter.Stream.WriteTo(cacheFile);
-            }
-
-            if (filter.FilterTimestamp != null)
-            {
-                file.LastWriteTimeUtc = filter.FilterTimestamp.Value.UtcDateTime;
+                Trace.TraceWarning("Couldn't write the cached ipfilter: " + ex.Message);
             }
         }
     }
