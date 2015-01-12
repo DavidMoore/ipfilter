@@ -122,6 +122,7 @@
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -146,6 +147,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="DeploymentHelper.cs" />
+    <Compile Include="MessageBoxHelper.cs" />
     <Compile Include="Models\ApplicationDetectionResult.cs" />
     <Compile Include="Apps\ApplicationEnumerator.cs" />
     <Compile Include="Apps\BitTorrentApplication.cs" />
@@ -171,9 +174,12 @@
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Models\FilterDownloadResult.cs" />
     <Compile Include="Models\FilterUpdateResult.cs" />
+    <Compile Include="Models\ProgressModel.cs" />
     <Compile Include="OptionsViewModel.cs" />
     <Compile Include="PathSetting.cs" />
     <Compile Include="Models\UpdateState.cs" />
+    <Compile Include="StringListTraceListener.cs" />
+    <Compile Include="UpdateModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

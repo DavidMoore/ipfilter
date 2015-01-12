@@ -4,39 +4,78 @@
     xmlns:local="clr-namespace:IPFilter.UI"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="IPFilter.UI.MainWindow"
-    Title="Torrent IPFilter Updater" Height="283" Width="716" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" MinHeight="172" MinWidth="683">
+    Title="{Binding Update.ProductAndVersion}" Height="283" Width="716" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" MinHeight="172" MinWidth="683">
+    <Window.Resources>
+        <Style x:Key="HyperLinkButtonStyle" TargetType="Button">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock>
+                            <Hyperlink>
+                                <Run Text="{TemplateBinding Content}" />
+                            </Hyperlink>
+                        </TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Window.DataContext>
-        <local:MainWindowViewModel/>
+        <local:MainWindowViewModel>
+            <local:MainWindowViewModel.Update>
+                <local:UpdateModel CurrentVersion="1.0.0.11" IsUpdateRequired="True" MinimumRequiredVersion="{x:Null}" Product="IPFilter Updater" IsUpdateAvailable="True" UpdateSizeBytes="65535" UpdateAvailableVisibility="Visible"/>
+            </local:MainWindowViewModel.Update>
+        </local:MainWindowViewModel>
     </Window.DataContext>
-    <Grid>
+    <DockPanel>
 
-        <TabControl HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Stretch" >
-            <TabItem Header="Synchronize">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="49*"/>
-                        <ColumnDefinition Width="292*"/>
-                    </Grid.ColumnDefinitions>
-                    <ComboBox Height="23" Margin="24,12,12,0" x:Name="cboMirrorProvider" ItemsSource="{Binding Mirrors}" VerticalAlignment="Top" SelectionChanged="cboMirrorProvider_SelectionChanged" Grid.Column="1">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
+        <StatusBar DockPanel.Dock="Top">
+            <StatusBarItem HorizontalAlignment="Left">
+                <Label VerticalAlignment="Bottom" Content="{Binding StatusText}" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Button Width="75" Height="23" Command="{Binding StartCommand}" Content="{Binding ButtonText}" />
+            </StatusBarItem>
+        </StatusBar>
+        <StatusBar DockPanel.Dock="Top">
+            <StatusBarItem HorizontalContentAlignment="Stretch">
+                <ProgressBar IsIndeterminate="{Binding ProgressIsIndeterminate}" Minimum="{Binding ProgressMin}" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}" Height="26" VerticalAlignment="Top" />
+            </StatusBarItem>
+        </StatusBar>
 
-                    </ComboBox>
-                    <Label Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" x:Name="lblMirrorProvider" VerticalAlignment="Top" Width="104" Content="List Provider:" Grid.ColumnSpan="2"/>
-                    <ComboBox Height="23" Margin="24,41,12,0" x:Name="cboMirror" VerticalAlignment="Top" Grid.Column="1" />
-                    <Label Height="23" HorizontalAlignment="Left" Margin="12,41,0,0" x:Name="lblMirror" VerticalAlignment="Top" Width="104" Content="List:" Grid.ColumnSpan="2"/>
-                    <Button HorizontalAlignment="Right" Margin="0,0,12,12" x:Name="btnGo" Width="75" Height="23" VerticalAlignment="Bottom" Click="BtnGoClick" Content="Go" Grid.Column="1"/>
-                    <Label Margin="12,0,93,0" x:Name="lblStatus" Height="35" VerticalAlignment="Bottom" Content="Label" Grid.ColumnSpan="2"/>
-                    <ProgressBar Height="21" Margin="12,71,12,0" x:Name="pbProgress" VerticalAlignment="Top" Grid.ColumnSpan="2" />
-                </Grid>
+        <TabControl HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Stretch">
+            <TabItem Header="Info" Background="Transparent">
+                <ListBox ItemsSource="{Binding LogData}" />
             </TabItem>
-            <TabItem Header="Options">
-                <StackPanel Orientation="Vertical" Margin="10">
+            <TabItem Header="Options" Background="Transparent">
+
+                <ScrollViewer>
+                    
+                <StackPanel CanVerticallyScroll="True" Orientation="Vertical" Margin="10">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="49*"/>
+                            <ColumnDefinition Width="292*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox Height="23" Margin="24,12,12,0" ItemsSource="{Binding MirrorProviders}" VerticalAlignment="Top" SelectedItem="{Binding SelectedMirrorProvider}" Grid.Column="1">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        <Label Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" VerticalAlignment="Top" Width="104" Content="List Provider:" Grid.ColumnSpan="2"/>
+                            
+                        <Label Height="23" HorizontalAlignment="Left" Margin="12,41,0,0" VerticalAlignment="Top" Width="104" Content="List:" Grid.ColumnSpan="2"/>
+                           <ComboBox Height="23" Margin="24,41,12,0" ItemsSource="{Binding Mirrors}" SelectedItem="{Binding SelectedFileMirror}" VerticalAlignment="Top" Grid.Column="1" />
+
+                    </Grid>
+
                     <Label Content="Automatic update schedule" />
 
                     <StackPanel Orientation="Horizontal" Margin="10">
@@ -45,7 +84,7 @@
                         <xctk:IntegerUpDown IsEnabled="{Binding Options.IsScheduleEnabled}" Value="{Binding Options.ScheduleHours}" Maximum="24" Minimum="1"></xctk:IntegerUpDown>
                         <Label Content="hour(s)" />
                     </StackPanel>
-                    
+
                     <Label Content="Custom Paths" />
                     <DataGrid ItemsSource="{Binding Options.Paths }">
 
@@ -54,7 +93,8 @@
                         <Button Content="Save Settings" Command="{Binding Options.SaveSettings}"></Button>
                     </StackPanel>
                 </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
-    </Grid>
+    </DockPanel>
 </Window>

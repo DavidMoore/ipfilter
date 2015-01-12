@@ -6,6 +6,7 @@ namespace IPFilter.UI.Apps
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using IPFilter.Models;
     using Microsoft.Win32;
     using Models;
 
@@ -43,7 +44,7 @@ namespace IPFilter.UI.Apps
             }
         }
 
-        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<int> progress)
+        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var filterPath = CacheProvider.FilterPath;
 

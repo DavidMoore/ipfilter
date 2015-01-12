@@ -4,6 +4,7 @@ namespace IPFilter.UI.Apps
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
+    using IPFilter.Models;
     using Microsoft.Win32;
     using Models;
 
@@ -42,7 +43,7 @@ namespace IPFilter.UI.Apps
             }
         }
 
-        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<int> progress)
+        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
             var destinationPath = Path.Combine(roamingPath, FolderName, "ipfilter.dat");
@@ -53,6 +54,14 @@ namespace IPFilter.UI.Apps
             }
 
             return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
+
+            // TODO: Check if IP Filter is enabled in µTorrent
+//            string settingsPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\settings.dat");
+//            var settings = File.ReadAllText(settingsPath);
+//            if (settings.Contains("15:ipfilter.enablei0e"))
+//            {
+//                MessageBox.Show("You haven't enabled IP Filtering in µTorrent! Go to http://ipfilter.codeplex.com/ for help.", "IP filtering not enabled", MessageBoxButton.OK);
+//            }
         }
     }
 }
