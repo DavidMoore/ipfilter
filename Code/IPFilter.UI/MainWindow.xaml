@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:IPFilter.UI"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="IPFilter.UI.MainWindow"
-    Title="{Binding Update.ProductAndVersion}" Height="283" Width="716" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" MinHeight="172" MinWidth="683">
+    Title="{Binding Update.ProductAndVersion}" Width="716" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize" MinWidth="450" SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="HyperLinkButtonStyle" TargetType="Button">
             <Setter Property="Focusable" Value="False" />
@@ -29,8 +29,9 @@
             </local:MainWindowViewModel.Update>
         </local:MainWindowViewModel>
     </Window.DataContext>
+    
+    
     <DockPanel>
-
         <StatusBar DockPanel.Dock="Top">
             <StatusBarItem HorizontalAlignment="Left">
                 <Label VerticalAlignment="Bottom" Content="{Binding StatusText}" />
@@ -44,10 +45,12 @@
                 <ProgressBar IsIndeterminate="{Binding ProgressIsIndeterminate}" Minimum="{Binding ProgressMin}" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}" Height="26" VerticalAlignment="Top" />
             </StatusBarItem>
         </StatusBar>
-
+        
+        <Expander ExpandDirection="Down" Header="Advanced" IsExpanded="True">
+            
         <TabControl HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Stretch">
             <TabItem Header="Info" Background="Transparent">
-                <ListBox ItemsSource="{Binding LogData}" />
+                <TextBox Text="{Binding LogData, Mode=OneWay}" />
             </TabItem>
             <TabItem Header="Options" Background="Transparent">
 
@@ -96,5 +99,6 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
+        </Expander>
     </DockPanel>
 </Window>

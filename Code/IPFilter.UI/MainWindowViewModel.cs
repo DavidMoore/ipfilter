@@ -2,17 +2,16 @@ namespace IPFilter.UI
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Deployment.Application;
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
-    using System.Windows.Threading;
     using Annotations;
     using ListProviders;
     using Microsoft;
@@ -30,14 +29,13 @@ namespace IPFilter.UI
         int progressValue;
         FileMirror selectedFileMirror;
         string statusText;
+        readonly StringBuilder log = new StringBuilder(500);
 
         const string supportUrl = "https://davidmoore.github.io/ipfilter/";
 
         public MainWindowViewModel()
         {
-            LogData = new ObservableCollection<string>();
-
-            Trace.Listeners.Add(new StringListTraceListener(LogData, Dispatcher.CurrentDispatcher));
+            Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
             
             Trace.TraceInformation("Initializing...");
 
@@ -55,6 +53,18 @@ namespace IPFilter.UI
 
             progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
+        }
+
+        void LogLineAction(string message)
+        {
+            log.AppendLine(message);
+            OnPropertyChanged("LogData");
+        }
+
+        void LogAction(string message)
+        {
+            log.Append(message);
+            OnPropertyChanged("LogData");
         }
 
         void ProgressHandler(ProgressModel progressModel)
@@ -239,7 +249,10 @@ namespace IPFilter.UI
 
         public ICommand StartCommand { get; set; }
 
-        public ObservableCollection<string> LogData { get; set; }
+        public string LogData
+        {
+            get { return log.ToString(); }
+        }
 
         public bool ProgressIsIndeterminate { get; set; }
 

@@ -178,7 +178,7 @@
     <Compile Include="OptionsViewModel.cs" />
     <Compile Include="PathSetting.cs" />
     <Compile Include="Models\UpdateState.cs" />
-    <Compile Include="StringListTraceListener.cs" />
+    <Compile Include="DelegateTraceListener.cs" />
     <Compile Include="UpdateModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

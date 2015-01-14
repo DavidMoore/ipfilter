@@ -1,22 +1,20 @@
 namespace IPFilter.UI
 {
     using System;
-    using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.Windows.Threading;
 
-    public class StringListTraceListener : TraceListener
+    public class DelegateTraceListener : TraceListener
     {
-        readonly ObservableCollection<string> list;
-        readonly Dispatcher dispatcher;
+        readonly Action<string> writeAction;
+        readonly Action<string> writeLineAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Diagnostics.TraceListener"/> class.
         /// </summary>
-        public StringListTraceListener(ObservableCollection<string> list, Dispatcher dispatcher)
+        public DelegateTraceListener(Action<string> writeAction, Action<string> writeLineAction)
         {
-            this.list = list;
-            this.dispatcher = dispatcher;            
+            this.writeAction = writeAction;
+            this.writeLineAction = writeLineAction;
         }
 
         /// <summary>
@@ -25,7 +23,8 @@ namespace IPFilter.UI
         /// <param name="message">A message to write. </param>
         public override void Write(string message)
         {
-            //dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => list.Add(message)));
+            if (writeAction == null) return;
+            writeAction(message);
         }
 
         /// <summary>
@@ -34,7 +33,8 @@ namespace IPFilter.UI
         /// <param name="message">A message to write. </param>
         public override void WriteLine(string message)
         {
-            dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => list.Add(message)));
+            if (writeLineAction == null) return;
+            writeLineAction(message);
         }
     }
 }
