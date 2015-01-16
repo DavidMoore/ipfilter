@@ -146,23 +146,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DelegateCommand.cs" />
-    <Compile Include="DeploymentHelper.cs" />
-    <Compile Include="MessageBoxHelper.cs" />
+    <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="Services\DeploymentHelper.cs" />
+    <Compile Include="ViewModels\MessageBoxHelper.cs" />
     <Compile Include="Models\ApplicationDetectionResult.cs" />
     <Compile Include="Apps\ApplicationEnumerator.cs" />
     <Compile Include="Apps\BitTorrentApplication.cs" />
     <Compile Include="Apps\QBitTorrent.cs" />
     <Compile Include="Apps\UTorrentApplication.cs" />
-    <Compile Include="CacheProvider.cs" />
+    <Compile Include="Services\CacheProvider.cs" />
     <Compile Include="Models\CompressionFormat.cs" />
-    <Compile Include="CryptoHelper.cs" />
-    <Compile Include="DestinationPathsProvider.cs" />
+    <Compile Include="Services\CryptoHelper.cs" />
+    <Compile Include="Services\DestinationPathsProvider.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Models\FileMirror.cs" />
-    <Compile Include="FilterDownloader.cs" />
+    <Compile Include="Services\FilterDownloader.cs" />
     <Compile Include="Apps\IApplication.cs" />
-    <Compile Include="ICacheProvider.cs" />
+    <Compile Include="Services\ICacheProvider.cs" />
     <Compile Include="ListProviders\IMirrorProvider.cs" />
     <Compile Include="ListProviders\BlocklistMirrorProvider.cs" />
     <Compile Include="ListProviders\EmuleSecurity.cs" />
@@ -171,16 +171,16 @@
     <Compile Include="ListProviders\SourceForgeMirrorListDownloader.cs" />
     <Compile Include="ListProviders\SourceForgeMirrorParser.cs" />
     <Compile Include="ListProviders\SourceForgeMirrorProvider.cs" />
-    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Models\FilterDownloadResult.cs" />
     <Compile Include="Models\FilterUpdateResult.cs" />
     <Compile Include="Models\ProgressModel.cs" />
-    <Compile Include="OptionsViewModel.cs" />
-    <Compile Include="PathSetting.cs" />
+    <Compile Include="ViewModels\OptionsViewModel.cs" />
+    <Compile Include="Services\PathSetting.cs" />
     <Compile Include="Models\UpdateState.cs" />
-    <Compile Include="DelegateTraceListener.cs" />
-    <Compile Include="UpdateModel.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="Services\DelegateTraceListener.cs" />
+    <Compile Include="Models\UpdateModel.cs" />
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -190,7 +190,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
