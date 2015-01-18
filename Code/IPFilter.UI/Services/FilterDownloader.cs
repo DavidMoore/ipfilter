@@ -52,6 +52,8 @@ namespace IPFilter.Services
                 {
                     handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
+                    Trace.TraceInformation("Downloading filter from " + result.Uri);
+
                     using (var httpClient = new HttpClient(handler))
                     using (var response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
                     {
@@ -61,7 +63,7 @@ namespace IPFilter.Services
                         result.Etag = response.Headers.ETag;
 
                         Trace.TraceInformation("Online filter's timestamp is " + result.FilterTimestamp);
-                        Trace.TraceInformation("ETag: " + result.Etag);
+                        Trace.TraceInformation("ETag: '{0}'", result.Etag);
 
 
                         // Check if the cached filter is already up to date.

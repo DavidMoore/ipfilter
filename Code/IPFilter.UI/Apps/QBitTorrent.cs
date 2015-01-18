@@ -53,6 +53,9 @@ namespace IPFilter.Apps
 
             if (File.Exists(qBittorrentIniPath))
             {
+                Trace.TraceInformation("Pointing qBittorrent to " + filterPath);
+                Trace.TraceInformation("Updating qBittorent configuration: " + qBittorrentIniPath);
+
                 WritePrivateProfileString("Preferences", @"IPFilter\Enabled", "true", qBittorrentIniPath);
                 WritePrivateProfileString("Preferences", @"IPFilter\File", filterPath.Replace("\\", "\\\\"), qBittorrentIniPath);
             }

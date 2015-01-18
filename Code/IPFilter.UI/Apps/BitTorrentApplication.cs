@@ -1,6 +1,7 @@
 namespace IPFilter.Apps
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -47,6 +48,7 @@ namespace IPFilter.Apps
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
             var destinationPath = Path.Combine(roamingPath, FolderName, "ipfilter.dat");
 
+            Trace.TraceInformation("Writing filter to " + destinationPath);
             using (var destination = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 filter.Stream.WriteTo(destination);
