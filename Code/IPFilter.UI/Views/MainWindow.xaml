@@ -6,7 +6,7 @@
     xmlns:models="clr-namespace:IPFilter.Models"
     x:Class="IPFilter.Views.MainWindow"
     Title="{Binding Update.ProductAndVersion}" Width="716" Loaded="Window_Loaded"
-    WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize" MinWidth="450" SizeToContent="Height">
+    WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize" MinWidth="450" SizeToContent="Height" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="HyperLinkButtonStyle" TargetType="Button">
             <Setter Property="Focusable" Value="False" />
@@ -34,7 +34,9 @@
     <Window.DataContext>
         <viewModels:MainWindowViewModel>
             <viewModels:MainWindowViewModel.Update>
-                <models:UpdateModel CurrentVersion="1.0.0.11" IsUpdateRequired="True" MinimumRequiredVersion="{x:Null}" Product="IPFilter Updater" IsUpdateAvailable="True" UpdateSizeBytes="65535" UpdateAvailableVisibility="Visible"/>
+                <models:UpdateModel IsUpdateRequired="True" MinimumRequiredVersion="{x:Null}" Product="IPFilter Updater" IsUpdateAvailable="True" UpdateSizeBytes="65535">
+                    
+                </models:UpdateModel>
             </viewModels:MainWindowViewModel.Update>
         </viewModels:MainWindowViewModel>
     </Window.DataContext>
@@ -147,10 +149,40 @@
                     </TabItem>
                     <TabItem Header="Help" Background="Transparent">
 
-                        <TextBlock>
-                            Documentation &amp; Support: <Hyperlink NavigateUri="http://davidmoore.github.io/ipfilter/" RequestNavigate="LaunchHelp">http://davidmoore.github.io/ipfilter/</Hyperlink>
-                        </TextBlock>
 
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="292*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.ColumnSpan="2" Padding="5">
+                            Documentation &amp; Support: <Hyperlink NavigateUri="http://davidmoore.github.io/ipfilter/" RequestNavigate="LaunchHelp">http://davidmoore.github.io/ipfilter/</Hyperlink>
+                            </TextBlock>
+                            
+                            <Label Content="Current version:" Grid.Row="1"></Label>
+                            <Label Content="{Binding Update.CurrentVersion}" Grid.Row="1" Grid.Column="1"></Label>
+                            
+<!--                            <Label Content="Latest available version:" Grid.Row="2"></Label>-->
+<!---->
+<!--                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">-->
+<!--                                <Label Content="{Binding Update.AvailableVersion}"></Label>-->
+<!--                                <Button Content="Update Now" Visibility="{Binding Update.UpdateAvailableVisibility}" Command="{Binding Update.UpdateCommand}"></Button>-->
+<!--                            </StackPanel>-->
+<!---->
+<!--                            <ProgressBar Height="20" Margin="5" Visibility="{Binding Update.UpdateAvailableVisibility}" Minimum="0" Maximum="100" Grid.Row="3" Grid.Column="1"></ProgressBar>-->
+<!---->
+<!--                            <Label Content="{Binding Update.ErrorMessage}" Foreground="Red" Padding="5" Grid.Row="4" Grid.ColumnSpan="2"></Label>-->
+
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </Expander.Content>
