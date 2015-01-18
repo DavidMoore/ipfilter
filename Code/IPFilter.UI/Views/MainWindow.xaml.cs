@@ -1,6 +1,7 @@
 ﻿namespace IPFilter.Views
 {
     using System.Windows;
+    using System.Windows.Navigation;
     using ViewModels;
 
     /// <summary>
@@ -24,6 +25,12 @@
         async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.Initialize();
+        }
+
+        void LaunchHelp(object sender, RequestNavigateEventArgs e)
+        {
+            ViewModel.LaunchHelpCommand.Execute(e.Uri);
+            e.Handled = true;
         }
     }
 }

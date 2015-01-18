@@ -38,10 +38,10 @@
             </viewModels:MainWindowViewModel.Update>
         </viewModels:MainWindowViewModel>
     </Window.DataContext>
-    
-    
+
+
     <DockPanel>
-        
+
         <StackPanel DockPanel.Dock="Top" Margin="5">
 
             <Grid>
@@ -52,29 +52,29 @@
                 <Label Grid.Column="0" VerticalAlignment="Bottom" Content="{Binding StatusText}" />
                 <Button Grid.Column="1" Width="75" Height="23" Command="{Binding StartCommand}" Content="{Binding ButtonText}" />
             </Grid>
-            
+
             <ProgressBar Margin="0,5,0,0" IsIndeterminate="{Binding ProgressIsIndeterminate}" Minimum="{Binding ProgressMin}" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}" Height="26" VerticalAlignment="Top" />
         </StackPanel>
-        
-        <Expander ExpandDirection="Down" IsExpanded="True" Margin="5">
+
+        <Expander ExpandDirection="Down" IsExpanded="False" Margin="5">
             <Expander.Header>Advanced</Expander.Header>
             <Expander.Content>
                 <TabControl Height="350" VerticalAlignment="Stretch" Margin="0,5,0,0">
                     <TabItem Header="Options" Background="Transparent">
 
                         <DockPanel>
-                        <StatusBar DockPanel.Dock="Bottom">
-                            <StatusBarItem >
-                                <Button Padding="5" Margin="5" Content="Save Settings" Command="{Binding Options.SaveSettingsCommand}"></Button>
-                            </StatusBarItem>
-                            <StatusBarItem>
-                                <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"></Label>
-                            </StatusBarItem>
-                            <StatusBarItem HorizontalAlignment="Right">
-                                <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding Options.ResetSettingsCommand}"></Button>
-                            </StatusBarItem>
-                        </StatusBar>
-                            
+                            <StatusBar DockPanel.Dock="Bottom">
+                                <StatusBarItem >
+                                    <Button Padding="5" Margin="5" Content="Save Settings" Command="{Binding Options.SaveSettingsCommand}"></Button>
+                                </StatusBarItem>
+                                <StatusBarItem>
+                                    <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"></Label>
+                                </StatusBarItem>
+                                <StatusBarItem HorizontalAlignment="Right">
+                                    <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding Options.ResetSettingsCommand}"></Button>
+                                </StatusBarItem>
+                            </StatusBar>
+
                             <ScrollViewer>
 
                                 <StackPanel CanVerticallyScroll="True" Orientation="Vertical" Margin="5,0,5,5">
@@ -112,7 +112,7 @@
                                     </StackPanel>
 
                                     <Label Content="Custom Paths" Style="{StaticResource Heading}" />
-                                    
+
                                     <DataGrid AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" ItemsSource="{Binding Options.Paths}" CanUserAddRows="True" CanUserDeleteRows="True">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Binding="{Binding Name}" Width="Auto" Header="Name"></DataGridTextColumn>
@@ -146,7 +146,11 @@
                         <TextBox Text="{Binding LogData, Mode=OneWay}" IsReadOnly="True" />
                     </TabItem>
                     <TabItem Header="Help" Background="Transparent">
-                        
+
+                        <TextBlock>
+                            Documentation &amp; Support: <Hyperlink NavigateUri="http://davidmoore.github.io/ipfilter/" RequestNavigate="LaunchHelp">http://davidmoore.github.io/ipfilter/</Hyperlink>
+                        </TextBlock>
+
                     </TabItem>
                 </TabControl>
             </Expander.Content>

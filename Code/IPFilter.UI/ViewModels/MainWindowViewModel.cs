@@ -76,11 +76,12 @@ namespace IPFilter.ViewModels
             State = progressModel.State;
         }
 
-        void LaunchHelp(object o)
+        void LaunchHelp(object uri)
         {
             try
             {
-                Process.Start(supportUrl);
+                var url = (Uri) uri;
+                Process.Start( url.ToString() );
             }
             catch (Exception ex)
             {
