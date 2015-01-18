@@ -21,6 +21,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="Heading" TargetType="Label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="LightSlateGray"/>
+            <Setter Property="Foreground" Value="WhiteSmoke"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
@@ -54,49 +61,82 @@
                 <TabControl Height="350" VerticalAlignment="Stretch" Margin="0,5,0,0">
                     <TabItem Header="Options" Background="Transparent">
 
-                        <ScrollViewer>
+                        <DockPanel>
+                        <StatusBar DockPanel.Dock="Bottom">
+                            <StatusBarItem >
+                                <Button Padding="5" Margin="5" Content="Save Settings" Command="{Binding Options.SaveSettingsCommand}"></Button>
+                            </StatusBarItem>
+                            <StatusBarItem HorizontalAlignment="Right">
+                                <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding Options.ResetSettingsCommand}"></Button>
+                            </StatusBarItem>
+                        </StatusBar>
+                            
+                            <ScrollViewer>
 
-                            <StackPanel CanVerticallyScroll="True" Orientation="Vertical" Margin="10">
+                                <StackPanel CanVerticallyScroll="True" Orientation="Vertical" Margin="5,0,5,5">
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="49*"/>
-                                        <ColumnDefinition Width="292*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <ComboBox Height="23" Margin="24,12,12,0" ItemsSource="{Binding MirrorProviders}" VerticalAlignment="Top" SelectedItem="{Binding SelectedMirrorProvider}" Grid.Column="1">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                    <Label Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" VerticalAlignment="Top" Width="104" Content="List Provider:" Grid.ColumnSpan="2"/>
+                                    <Label Content="Filter Source" Style="{StaticResource Heading}" />
 
-                                    <Label Height="23" HorizontalAlignment="Left" Margin="12,41,0,0" VerticalAlignment="Top" Width="104" Content="List:" Grid.ColumnSpan="2"/>
-                                    <ComboBox Height="23" Margin="24,41,12,0" ItemsSource="{Binding Mirrors}" SelectedItem="{Binding SelectedFileMirror}" VerticalAlignment="Top" Grid.Column="1" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="49*"/>
+                                            <ColumnDefinition Width="292*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox Height="23" Margin="24,12,12,0" ItemsSource="{Binding MirrorProviders}" VerticalAlignment="Top" SelectedItem="{Binding SelectedMirrorProvider}" Grid.Column="1">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Name}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Label Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" VerticalAlignment="Top" Width="104" Content="List Provider:" Grid.ColumnSpan="2"/>
 
-                                </Grid>
+                                        <Label Height="23" HorizontalAlignment="Left" Margin="12,41,0,0" VerticalAlignment="Top" Width="104" Content="List:" Grid.ColumnSpan="2"/>
+                                        <ComboBox Height="23" Margin="24,41,12,0" ItemsSource="{Binding Mirrors}" SelectedItem="{Binding SelectedFileMirror}" VerticalAlignment="Top" Grid.Column="1" />
 
-                                <Label Content="Automatic update schedule" />
+                                    </Grid>
 
-                                <StackPanel Orientation="Horizontal" Margin="10">
-                                    <CheckBox IsChecked="{Binding Options.IsScheduleEnabled}"></CheckBox>
-                                    <Label Content="Check for list updates every: " />
-                                    <xctk:IntegerUpDown IsEnabled="{Binding Options.IsScheduleEnabled}" Value="{Binding Options.ScheduleHours}" Maximum="24" Minimum="1"></xctk:IntegerUpDown>
-                                    <Label Content="hour(s)" />
+                                    <Label Style="{StaticResource Heading}" Content="Automatic list update" />
+
+                                    <StackPanel Orientation="Horizontal" Margin="10">
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding Options.IsScheduleEnabled}"></CheckBox>
+                                        <Label Content="Schedule silent update of list every: " />
+                                        <xctk:IntegerUpDown IsEnabled="{Binding Options.IsScheduleEnabled}" Value="{Binding Options.ScheduleHours}" Maximum="24" Minimum="1"></xctk:IntegerUpDown>
+                                        <Label Content="hour(s)" />
+                                    </StackPanel>
+
+                                    <Label Content="Custom Paths" Style="{StaticResource Heading}" />
+                                    
+                                    <DataGrid AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" ItemsSource="{Binding Options.Paths}" CanUserAddRows="True" CanUserDeleteRows="True">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Name}" Width="Auto" Header="Name"></DataGridTextColumn>
+                                            <DataGridTextColumn Binding="{Binding Path}" Width="*" Header="Path"></DataGridTextColumn>
+                                            <DataGridTemplateColumn Width="Auto" Header="">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="..."/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Width="Auto" Header="">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                        </DataGrid.Columns>
+
+                                    </DataGrid>
                                 </StackPanel>
 
-                                <Label Content="Custom Paths" />
-                                <DataGrid ItemsSource="{Binding Options.Paths }">
 
-                                </DataGrid>
-                                <StackPanel Orientation="Horizontal" Margin="10">
-                                    <Button Content="Save Settings" Command="{Binding Options.SaveSettings}"></Button>
-                                </StackPanel>
-                            </StackPanel>
-                        </ScrollViewer>
+                            </ScrollViewer>
+
+                        </DockPanel>
                     </TabItem>
                     <TabItem Header="Log" Background="Transparent">
                         <TextBox Text="{Binding LogData, Mode=OneWay}" IsReadOnly="True" />

@@ -1,10 +1,8 @@
 namespace IPFilter.UI
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using System.Windows.Input;
     using Annotations;
     using Properties;
 
@@ -13,35 +11,52 @@ namespace IPFilter.UI
         int? scheduleHours;
         bool isScheduleEnabled;
         bool pendingChanges;
+        readonly DestinationPathsProvider pathProvider;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
-        /// </summary>
         public OptionsViewModel()
         {
-            var pathProvider = new DestinationPathsProvider();
+            pathProvider = new DestinationPathsProvider();
 
-            Paths = new ObservableCollection<PathSetting>( pathProvider.GetDestinations() );
+            LoadSettings();
             
+            SaveSettingsCommand = new DelegateCommand(SaveSettings, CanSaveSettings);
+            ResetSettingsCommand = new DelegateCommand(ResetSettings, CanResetSettings);
+        }
+
+        void LoadSettings()
+        {
+            Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
+            Paths.CollectionChanged += (sender, args) => PendingChanges = true;
             IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
             ScheduleHours = Settings.Default.ScheduleHours;
             PendingChanges = false;
-
-            SaveSettings = new DelegateCommand(Action, OnCanExecute);
         }
 
-        bool OnCanExecute(object o)
+        bool CanResetSettings(object o)
         {
             return PendingChanges;
         }
 
-        void Action(object o)
+        void ResetSettings(object o)
+        {
+            Settings.Default.Reload();
+            LoadSettings();
+        }
+
+        bool CanSaveSettings(object o)
+        {
+            return PendingChanges;
+        }
+
+        void SaveSettings(object o)
         {
             Settings.Default.Save();
             PendingChanges = false;
         }
 
-        public DelegateCommand SaveSettings { get; private set; }
+        public DelegateCommand SaveSettingsCommand { get; private set; }
+
+        public DelegateCommand ResetSettingsCommand { get; private set; }
 
 
         public bool PendingChanges
@@ -51,7 +66,8 @@ namespace IPFilter.UI
             {
                 if (value.Equals(pendingChanges)) return;
                 pendingChanges = value;
-                if( SaveSettings != null ) SaveSettings.OnCanExecuteChanged();
+                if( SaveSettingsCommand != null ) SaveSettingsCommand.OnCanExecuteChanged();
+                if (ResetSettingsCommand != null) ResetSettingsCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -68,7 +84,6 @@ namespace IPFilter.UI
                 Settings.Default.IsScheduleEnabled = value;
                 PendingChanges = true;
                 OnPropertyChanged();
-
             }
         }
 
