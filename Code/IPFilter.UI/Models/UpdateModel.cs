@@ -7,33 +7,46 @@ namespace IPFilter.Models
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
+    using System.Windows.Input;
     using UI.Annotations;
+    using ViewModels;
 
     public class UpdateModel : INotifyPropertyChanged
     {
         string product;
-        string currentVersion;
+        Version currentVersion;
         bool isUpdateAvailable;
         Version availableVersion;
         bool isUpdateRequired;
         Version minimumRequiredVersion;
         long updateSizeBytes;
-        Visibility updateAvailableVisibility;
         int downloadPercentage;
-        string productAndVersion;
+        string errorMessage;
+        bool isUpdating;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
         public UpdateModel()
         {
-            CurrentVersion = GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            CurrentVersion = new Version(GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
             Product = GetAttribute<AssemblyProductAttribute>().Product;
+            UpdateCommand = new DelegateCommand(DoUpdate, CanDoUpdate);
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
-                CurrentVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                CurrentVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
             }
+        }
+
+        bool CanDoUpdate(object o)
+        {
+            return AvailableVersion != null && AvailableVersion > CurrentVersion;
+        }
+
+        void DoUpdate(object o)
+        {
+            
         }
 
         public string Product
@@ -48,7 +61,7 @@ namespace IPFilter.Models
             }
         }
 
-        public string CurrentVersion
+        public Version CurrentVersion
         {
             get { return currentVersion; }
             set
@@ -74,6 +87,7 @@ namespace IPFilter.Models
                 isUpdateAvailable = value;
                 OnPropertyChanged();
                 OnPropertyChanged("UpdateAvailableVisibility");
+                UpdateCommand.OnCanExecuteChanged();
             }
         }
 
@@ -85,6 +99,7 @@ namespace IPFilter.Models
                 if (Equals(value, availableVersion)) return;
                 availableVersion = value;
                 OnPropertyChanged();
+                UpdateCommand.OnCanExecuteChanged();
             }
         }
 
@@ -124,12 +139,6 @@ namespace IPFilter.Models
         public Visibility UpdateAvailableVisibility
         {
             get { return IsUpdateAvailable ? Visibility.Visible : Visibility.Hidden; }
-            set
-            {
-                if (value == updateAvailableVisibility) return;
-                updateAvailableVisibility = value;
-                OnPropertyChanged();
-            }
         }
 
         public int DownloadPercentage
@@ -143,8 +152,29 @@ namespace IPFilter.Models
             }
         }
 
-        public bool IsUpdating { get; set; }
-        public string ErrorMessage { get; set; }
+        public bool IsUpdating
+        {
+            get { return isUpdating; }
+            set
+            {
+                if (value.Equals(isUpdating)) return;
+                isUpdating = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get { return errorMessage; }
+            set
+            {
+                if (value == errorMessage) return;
+                errorMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DelegateCommand UpdateCommand { get; private set; }
 
         static T GetAttribute<T>() where T : Attribute
         {
