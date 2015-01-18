@@ -81,9 +81,9 @@
     <Compile Include="DestinationPathsProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Code\IPFilter.UI\IPFilter.UI.csproj">
+    <ProjectReference Include="..\..\..\Code\IPFilter.UI\IPFilter.csproj">
       <Project>{34A454A5-5453-424A-81CE-30FF0A2B004B}</Project>
-      <Name>IPFilter.UI</Name>
+      <Name>IPFilter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

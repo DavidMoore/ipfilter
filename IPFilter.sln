@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.UI", "Code\IPFilter.UI\IPFilter.UI.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter", "Code\IPFilter.UI\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\UnitTests\IPFilter.Tests\IPFilter.Tests.csproj", "{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}"
 EndProject
