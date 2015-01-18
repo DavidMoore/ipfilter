@@ -12,13 +12,14 @@ namespace IPFilter.ViewModels
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
+    using System.Windows.Threading;
     using Apps;
     using ListProviders;
     using Microsoft;
     using Models;
     using Services;
     using UI.Annotations;
-
+    
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         IMirrorProvider selectedMirrorProvider;
@@ -32,14 +33,14 @@ namespace IPFilter.ViewModels
         FileMirror selectedFileMirror;
         string statusText;
         readonly StringBuilder log = new StringBuilder(500);
-
-        const string supportUrl = "https://davidmoore.github.io/ipfilter/";
-
+        readonly Dispatcher dispatcher;
+        
         public MainWindowViewModel()
         {
             Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
-            
             Trace.TraceInformation("Initializing...");
+
+            dispatcher = Dispatcher.CurrentDispatcher;
 
             StatusText = "Ready";
             State = UpdateState.Ready;
@@ -49,12 +50,18 @@ namespace IPFilter.ViewModels
             Update = new UpdateModel();
             MirrorProviders = new List<IMirrorProvider> {new EmuleSecurity(), new BlocklistMirrorProvider()};
             LaunchHelpCommand = new DelegateCommand(LaunchHelp);
-            StartCommand = new DelegateCommand(Start);
+            StartCommand = new DelegateCommand(Start, IsStartEnabled);
             applicationEnumerator = new ApplicationEnumerator();
             downloader = new FilterDownloader();
 
             progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
+        }
+
+
+        bool IsStartEnabled(object arg)
+        {
+            return Update == null || !Update.IsUpdating;
         }
 
         void LogLineAction(string message)
@@ -100,7 +107,7 @@ namespace IPFilter.ViewModels
                     cancellationToken = new CancellationTokenSource();
                     Task.Factory.StartNew(() => StartAsync());
                     break;
-
+                    
                 case UpdateState.Downloading:
                 case UpdateState.Decompressing:
                     cancellationToken.Cancel();
@@ -125,7 +132,7 @@ namespace IPFilter.ViewModels
                     else if (filter.Exception != null)
                     {
                         if (filter.Exception is OperationCanceledException) throw filter.Exception;
-
+                        Trace.TraceError("Problem when downloading: " + filter.Exception);
                         progress.Report(new ProgressModel(UpdateState.Cancelled, "Problem when downloading: " + filter.Exception.Message, 0));
                     }
                     else
@@ -136,16 +143,20 @@ namespace IPFilter.ViewModels
                             await application.Application.UpdateFilterAsync(filter, cancellationToken.Token, progress);
                         }
                     }
+
+                    Trace.TraceInformation("Done.");
+                    progress.Report(new ProgressModel(UpdateState.Done, "Done", 100));
                 }
             }
             catch (OperationCanceledException)
             {
+                Trace.TraceWarning("Update was cancelled.");
                 progress.Report(new ProgressModel(UpdateState.Cancelled, "Update was cancelled.", 0));
             }
             catch (Exception ex)
             {
+                Trace.TraceError("Problem when updating: " + ex);
                 progress.Report(new ProgressModel(UpdateState.Cancelled, "Problem when updating: " + ex.Message, 0));
-                Trace.TraceWarning("Problem when updating: " + ex);
             }
         }
 
@@ -179,7 +190,7 @@ namespace IPFilter.ViewModels
 
                     case UpdateState.Cancelling:
                         return "Cancelling...";
-
+                        
                     default:
                         return "Go";
                 }
@@ -258,14 +269,11 @@ namespace IPFilter.ViewModels
         }
 
         public bool ProgressIsIndeterminate { get; set; }
-
+        
         public async Task Initialize()
         {
             // Check for updates
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                ThreadPool.QueueUserWorkItem(o => CheckForUpdates());
-            }
+            await CheckForUpdates();
             
             SelectedMirrorProvider = MirrorProviders.First();
             
@@ -283,76 +291,97 @@ namespace IPFilter.ViewModels
             }
 
         }
-
-        public void SetState(UpdateState updateState, string caption)
-        {
-            State = updateState;
-            StatusText = caption;
-        }
-
-        void CheckForUpdates()
+        
+        async Task CheckForUpdates()
         {
             try
             {
-//                var d = ApplicationDeployment.CurrentDeployment;
-//
-//                var updateAvailable = d.CheckForDetailedUpdate(false);
-//
-//                Update.UpdateAvailable = updateAvailable.UpdateAvailable;
-//                Update.AvailableVersion = updateAvailable.AvailableVersion;
-//                Update.IsUpdateRequired = updateAvailable.IsUpdateRequired;
-//                Update.MinimumRequiredVersion = updateAvailable.MinimumRequiredVersion;
-//                Update.UpdateSizeBytes = updateAvailable.UpdateSizeBytes;
+                Trace.TraceInformation("Checking for software updates...");
+                progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
 
-                Update.IsUpdateAvailable = true;
-                Update.AvailableVersion = new Version(2,0);
-                Update.IsUpdateRequired = true;
-                Update.MinimumRequiredVersion = new Version(2,0);
-                Update.UpdateSizeBytes = 65535;
-
-                if (!Update.IsUpdateAvailable) return;
-
-                if (MessageBoxHelper.Show("Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, "An update to version {0} is available. Would you like to update now?", Update.AvailableVersion) != MessageBoxResult.Yes)
+                if (!ApplicationDeployment.IsNetworkDeployed)
                 {
+                    Trace.TraceInformation("Not a deployed app. Can't check for updates.");
                     return;
                 }
 
+                // First, we'll hook up the async handlers before doing the update.
+
+                // Handle required restart of the app after update
                 ApplicationDeployment.CurrentDeployment.UpdateCompleted += delegate(object sender, AsyncCompletedEventArgs args)
                 {
+                    progress.Report(new ProgressModel(UpdateState.Ready, "Update applied. Restart the app.", 100));
                     Update.IsUpdating = false;
 
                     if (args.Cancelled)
                     {
-                        Update.ErrorMessage = "Update was cancelled.";
+                        Trace.TraceWarning("Update was cancelled.");
                     }
                     else if (args.Error != null)
                     {
-                        Update.ErrorMessage = "Unexpected update error: " + args.Error.Message;
+                        Trace.TraceWarning("Unexpected update error: " + args.Error.Message);
                     }
                     else
                     {
                         try
                         {
-                            DeploymentHelper.Restart();
+                            if (MessageBoxHelper.Show(dispatcher, "Restart Application Required", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, "You need to restart the app to apply the update. Restart IPFilter now?") != MessageBoxResult.Yes)
+                            {
+                                return;
+                            }
+
+                            dispatcher.Invoke(DispatcherPriority.Normal, new Action(DeploymentHelper.Restart));
                         }
-                        catch (Exception e)
+                        catch (Exception ex)
                         {
-                            Update.ErrorMessage = "There was a problem restarting the application after an update. The update will be applied the next time you run the app.";
+                            Trace.TraceError("Exception when restarting app after an update: " + ex);
+                            Update.ErrorMessage = "Couldn't restart the app to apply update. It will be updated the next time you start the app.";
                         }
                     }
                 };
 
+                // Handle progress of the update.
                 ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += delegate(object sender, DeploymentProgressChangedEventArgs args)
                 {
+                    progress.Report(new ProgressModel(UpdateState.Downloading, "Updating application...", args.ProgressPercentage));
                     Update.IsUpdating = true;
                     Update.DownloadPercentage = args.ProgressPercentage;
                 };
 
+                // Do the actual update check
+                var updateAvailable = ApplicationDeployment.CurrentDeployment.CheckForDetailedUpdate(false);
+
+                Update.IsUpdateAvailable = updateAvailable.UpdateAvailable;
+
+                if (Update.IsUpdateAvailable)
+                {
+                    Update.AvailableVersion = updateAvailable.AvailableVersion;
+                    Update.IsUpdateRequired = updateAvailable.IsUpdateRequired;
+                    Update.MinimumRequiredVersion = updateAvailable.MinimumRequiredVersion;
+                    Update.UpdateSizeBytes = updateAvailable.UpdateSizeBytes;
+                }
+
+                Trace.TraceInformation("Current version: {0}", Update.CurrentVersion);
+                Trace.TraceInformation("Available version: {0}", Update.AvailableVersion == null ? "<no updates>" : Update.AvailableVersion.ToString());
+
+                if (!Update.IsUpdateAvailable ) return;
+
+                if (MessageBoxHelper.Show(dispatcher, "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes,
+                    "An update to version {0} is available. Would you like to update now?", Update.AvailableVersion) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                Trace.TraceInformation("Starting application update...");
                 ApplicationDeployment.CurrentDeployment.UpdateAsync();
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("Application update check failed: " + ex);
+            }
+            finally
+            {
+                progress.Report(new ProgressModel(UpdateState.Ready, "Ready", 0));
             }
         }
 
