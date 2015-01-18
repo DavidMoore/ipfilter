@@ -28,7 +28,7 @@
     <PublishUrl>..\..\..\gh-pages\install\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -39,12 +39,12 @@
     <SupportUrl>https://davidmoore.github.io/ipfilter/</SupportUrl>
     <ProductName>IPFilter Updater</ProductName>
     <PublisherName>David Moore</PublisherName>
-    <MinimumRequiredVersion>1.0.0.11</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>11</ApplicationRevision>
-    <ApplicationVersion>1.0.0.11</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
