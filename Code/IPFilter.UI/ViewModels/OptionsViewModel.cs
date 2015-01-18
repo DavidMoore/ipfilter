@@ -3,7 +3,9 @@ namespace IPFilter.ViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using Microsoft.Win32.TaskScheduler;
     using Properties;
     using Services;
     using UI.Annotations;
@@ -58,8 +60,10 @@ namespace IPFilter.ViewModels
 
             try
             {
+                Trace.TraceInformation("Saving settings...");
                 Settings.Default.Save();
                 PendingChanges = false;
+                Trace.TraceInformation("Settings saved successfully.");
             }
             catch (Exception ex)
             {
@@ -69,12 +73,61 @@ namespace IPFilter.ViewModels
 
             try
             {
+                Trace.TraceInformation("Updating schedule settings...");
 
+                const string taskPath = "IPFilter";
+
+                // Get the service on the local machine
+                using (var service = new TaskService())
+                {
+                    if (!IsScheduleEnabled)
+                    {
+                        // If we're disabling the scheduling, then delete the task if it exists.
+                        Trace.TraceInformation("Schedule is disabled. Removing any existing scheduled task.");
+                        service.RootFolder.DeleteTask(taskPath, false);
+                        Trace.TraceInformation("Finished updating schedule settings.");
+                        return;
+                    }
+
+                    using (var existingTask = service.GetTask(taskPath))
+                    {
+                        Trace.TraceInformation("Setting up the automatic schedule...");
+                        using (TaskDefinition task = existingTask != null ? existingTask.Definition : service.NewTask())
+                        {
+                            task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
+
+                            task.Triggers.Clear();
+
+                            // Schedule for midnight, then check every x hours (6 by default).
+                            var trigger = new TimeTrigger(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
+                            trigger.Repetition.Interval = TimeSpan.FromHours(ScheduleHours ?? 6);
+                            task.Triggers.Add(trigger);
+
+                            task.Actions.Clear();
+                            task.Actions.Add(new ExecAction(Process.GetCurrentProcess().MainModule.FileName, "/silent"));
+
+                            task.Settings.RunOnlyIfNetworkAvailable = true;
+                            task.Settings.StartWhenAvailable = true;
+                            task.Settings.WakeToRun = false;
+                            task.Principal.RunLevel = TaskRunLevel.Highest;
+
+                            if (existingTask == null)
+                            {
+                                service.RootFolder.RegisterTaskDefinition(taskPath, task);
+                            }
+                            else
+                            {
+                                existingTask.RegisterChanges();
+                            }
+                        }
+                    }
+
+                    Trace.TraceInformation("Finished scheduling automatic update.");
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
-                throw;
+                ErrorMessage = "Couldn't schedule automated update: " + ex.Message;
             }
         }
 
