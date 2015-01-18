@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.Services
 {
     using System;
     using System.Runtime.InteropServices;

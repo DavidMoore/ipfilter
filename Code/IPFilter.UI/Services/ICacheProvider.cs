@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.Services
 {
     using System.Threading.Tasks;
     using Models;

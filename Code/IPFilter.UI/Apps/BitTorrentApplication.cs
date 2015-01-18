@@ -1,10 +1,9 @@
-namespace IPFilter.UI.Apps
+namespace IPFilter.Apps
 {
     using System;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using IPFilter.Models;
     using Microsoft.Win32;
     using Models;
 

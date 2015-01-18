@@ -5,7 +5,7 @@ using Moq;
 
 namespace IPFilter.Tests
 {
-    using UI.ListProviders;
+    using ListProviders;
 
     [TestClass]
     public class SourceForgeMirrorTests

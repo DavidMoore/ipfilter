@@ -8,8 +8,8 @@
     <ProjectGuid>{34A454A5-5453-424A-81CE-30FF0A2B004B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IPFilter.UI</RootNamespace>
-    <AssemblyName>IPFilter.UI</AssemblyName>
+    <RootNamespace>IPFilter</RootNamespace>
+    <AssemblyName>IPFilter</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -72,7 +72,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>IPFilter.UI.EntryPoint</StartupObject>
+    <StartupObject>IPFilter.EntryPoint</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip.Reduced">

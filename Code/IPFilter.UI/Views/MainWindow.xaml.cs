@@ -1,6 +1,7 @@
-﻿namespace IPFilter.UI
+﻿namespace IPFilter.Views
 {
     using System.Windows;
+    using ViewModels;
 
     /// <summary>
     /// Interaction logic for the main window.

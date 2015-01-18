@@ -1,13 +1,11 @@
-namespace IPFilter
+namespace IPFilter.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using UI;
-    using UI.Properties;
-
+    using Properties;
 
     public class DestinationPathsProvider
     {

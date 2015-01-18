@@ -1,8 +1,8 @@
-namespace IPFilter
+namespace IPFilter.Apps
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using UI.Apps;
+    using Models;
 
     public class ApplicationEnumerator
     {

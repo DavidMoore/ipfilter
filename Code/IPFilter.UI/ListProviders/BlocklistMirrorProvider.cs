@@ -1,7 +1,8 @@
-namespace IPFilter.UI.ListProviders
+namespace IPFilter.ListProviders
 {
     using System.Collections.Generic;
     using System.Globalization;
+    using Models;
 
     public class BlocklistMirrorProvider : IMirrorProvider {
         /// <summary>

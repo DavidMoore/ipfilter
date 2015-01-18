@@ -1,7 +1,8 @@
-using System.Collections.Generic;
-
-namespace IPFilter
+namespace IPFilter.ListProviders
 {
+    using System.Collections.Generic;
+    using Models;
+
     /// <summary>
     /// Contract for a source that provides mirrors of the file
     /// </summary>

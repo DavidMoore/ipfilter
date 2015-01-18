@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.Models
 {
     public enum CompressionFormat
     {

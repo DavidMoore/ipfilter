@@ -1,4 +1,4 @@
-﻿namespace IPFilter.UI
+﻿namespace IPFilter.Models
 {
     public enum UpdateState
     {

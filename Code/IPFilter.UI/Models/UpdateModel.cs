@@ -1,4 +1,4 @@
-namespace IPFilter.UI
+namespace IPFilter.Models
 {
     using System;
     using System.ComponentModel;
@@ -7,7 +7,7 @@ namespace IPFilter.UI
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
-    using Annotations;
+    using UI.Annotations;
 
     public class UpdateModel : INotifyPropertyChanged
     {

@@ -1,4 +1,4 @@
-namespace IPFilter
+namespace IPFilter.Services
 {
     using System;
     using System.Collections.Generic;
@@ -13,10 +13,8 @@ namespace IPFilter
     using System.Threading;
     using System.Threading.Tasks;
     using Ionic.Zip;
+    using ListProviders;
     using Models;
-    using UI;
-    using UI.ListProviders;
-    using UI.Models;
 
     public class FilterDownloader
     {

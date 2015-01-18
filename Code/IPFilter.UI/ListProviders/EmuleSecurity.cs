@@ -1,7 +1,8 @@
-namespace IPFilter.UI.ListProviders
+namespace IPFilter.ListProviders
 {
     using System;
     using System.Collections.Generic;
+    using Models;
 
     public class EmuleSecurity : IMirrorProvider
     {

@@ -1,10 +1,12 @@
-namespace IPFilter.UI
+namespace IPFilter.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using Annotations;
     using Properties;
+    using Services;
+    using UI.Annotations;
 
     public class OptionsViewModel : INotifyPropertyChanged
     {
@@ -12,6 +14,7 @@ namespace IPFilter.UI
         bool isScheduleEnabled;
         bool pendingChanges;
         readonly DestinationPathsProvider pathProvider;
+        string errorMessage;
 
         public OptionsViewModel()
         {
@@ -25,6 +28,7 @@ namespace IPFilter.UI
 
         void LoadSettings()
         {
+            ErrorMessage = string.Empty;
             Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
             Paths.CollectionChanged += (sender, args) => PendingChanges = true;
             IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
@@ -50,8 +54,28 @@ namespace IPFilter.UI
 
         void SaveSettings(object o)
         {
-            Settings.Default.Save();
-            PendingChanges = false;
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                Settings.Default.Save();
+                PendingChanges = false;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Couldn't save settings: " + ex.Message;
+                return;
+            }
+
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
         }
 
         public DelegateCommand SaveSettingsCommand { get; private set; }
@@ -96,6 +120,17 @@ namespace IPFilter.UI
                 scheduleHours = value;
                 if( value.HasValue ) Settings.Default.ScheduleHours = value.Value;
                 PendingChanges = true;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get { return errorMessage; }
+            set
+            {
+                if (value == errorMessage) return;
+                errorMessage = value;
                 OnPropertyChanged();
             }
         }

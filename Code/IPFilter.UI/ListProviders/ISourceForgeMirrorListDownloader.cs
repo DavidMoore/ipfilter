@@ -1,4 +1,4 @@
-namespace IPFilter.UI.ListProviders
+namespace IPFilter.ListProviders
 {
     using System;
 

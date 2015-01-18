@@ -1,4 +1,4 @@
-namespace IPFilter.UI.Models
+namespace IPFilter.Models
 {
     public class ProgressModel
     {

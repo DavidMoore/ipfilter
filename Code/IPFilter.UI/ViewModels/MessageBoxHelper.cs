@@ -1,8 +1,8 @@
-﻿namespace IPFilter.UI
+﻿namespace IPFilter.ViewModels
 {
     using System.Globalization;
     using System.Windows;
-    
+
     class MessageBoxHelper
     {
         public static MessageBoxResult Show(string title, MessageBoxButton buttons, MessageBoxImage image, MessageBoxResult defaultButton, string message, params object[] args)

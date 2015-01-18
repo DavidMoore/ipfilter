@@ -1,16 +1,18 @@
-﻿namespace IPFilter.UI
+﻿namespace IPFilter
 {
     using System;
     using System.Deployment.Application;
-    using System.IO;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
-    using System.Net.Mime;
     using System.Threading;
     using System.Threading.Tasks;
+    using Apps;
     using Microsoft;
     using Models;
     using Properties;
+    using Services;
+    using Views;
 
     static class EntryPoint
     {

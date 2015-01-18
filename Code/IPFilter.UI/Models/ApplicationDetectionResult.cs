@@ -1,6 +1,7 @@
-namespace IPFilter
+namespace IPFilter.Models
 {
     using System.IO;
+    using Apps;
 
     public class ApplicationDetectionResult
     {

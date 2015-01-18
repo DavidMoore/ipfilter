@@ -1,4 +1,4 @@
-namespace IPFilter.UI.Apps
+namespace IPFilter.Apps
 {
     using System;
     using System.Diagnostics;
@@ -6,9 +6,9 @@ namespace IPFilter.UI.Apps
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using IPFilter.Models;
     using Microsoft.Win32;
     using Models;
+    using Services;
 
     class QBitTorrent : IApplication
     {

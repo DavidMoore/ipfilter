@@ -1,4 +1,4 @@
-namespace IPFilter.UI
+namespace IPFilter.ViewModels
 {
     using System;
     using System.Windows.Input;

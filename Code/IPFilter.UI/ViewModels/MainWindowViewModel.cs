@@ -1,4 +1,4 @@
-namespace IPFilter.UI
+namespace IPFilter.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -12,10 +12,12 @@ namespace IPFilter.UI
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
-    using Annotations;
+    using Apps;
     using ListProviders;
     using Microsoft;
     using Models;
+    using Services;
+    using UI.Annotations;
 
     public class MainWindowViewModel : INotifyPropertyChanged
     {

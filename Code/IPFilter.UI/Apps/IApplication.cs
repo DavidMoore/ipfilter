@@ -1,11 +1,9 @@
-namespace IPFilter
+namespace IPFilter.Apps
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Models;
-    using UI;
-    using UI.Models;
 
     public interface IApplication
     {

@@ -1,6 +1,7 @@
-namespace IPFilter.UI.ListProviders
+namespace IPFilter.ListProviders
 {
     using System.Collections.Generic;
+    using Models;
 
     /// <summary>
     /// Common interface for classes that can parse SourceForge

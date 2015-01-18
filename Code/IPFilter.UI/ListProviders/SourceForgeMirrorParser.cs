@@ -1,8 +1,9 @@
-namespace IPFilter.UI.ListProviders
+namespace IPFilter.ListProviders
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Models;
 
     /// <summary>
     /// Parses SourceForge mirror list HTML into a collection of <see cref="FileMirror"/> objects
