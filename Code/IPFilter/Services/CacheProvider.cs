@@ -64,6 +64,7 @@ namespace IPFilter.Services
                 }
 
                 Trace.TraceInformation("Writing cached ipfilter to " + filterPath);
+                filter.Stream.Seek(0, SeekOrigin.Begin);
                 using (var cacheFile = File.Open(filterPath, FileMode.Create, FileAccess.Write,FileShare.Read))
                 {
                     await filter.Stream.CopyToAsync(cacheFile);
