@@ -59,7 +59,7 @@ namespace IPFilter.Services
                     {
                         if (cancellationToken.IsCancellationRequested) return null;
 
-                        result.FilterTimestamp = response.Headers.Date;
+                        result.FilterTimestamp = response.Content.Headers.LastModified ?? response.Headers.Date;
                         result.Etag = response.Headers.ETag;
 
                         Trace.TraceInformation("Online filter's timestamp is " + result.FilterTimestamp);

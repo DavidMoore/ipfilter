@@ -144,8 +144,17 @@ namespace IPFilter.ViewModels
                         }
                     }
 
-                    Trace.TraceInformation("Done.");
-                    progress.Report(new ProgressModel(UpdateState.Done, "Done", 100));
+                    if (filter != null && filter.FilterTimestamp != null)
+                    {
+                        var message = string.Format("Done. List timestamp: {0}", filter.FilterTimestamp.Value.ToLocalTime());
+                        Trace.TraceInformation(message);
+                        progress.Report(new ProgressModel(UpdateState.Done, message, 100));
+                    }
+                    else
+                    {
+                        Trace.TraceInformation("Done.");
+                        progress.Report(new ProgressModel(UpdateState.Done, "Done", 100));
+                    }
                 }
             }
             catch (OperationCanceledException)
@@ -297,14 +306,14 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Checking for software updates...");
-                progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
-
                 if (!ApplicationDeployment.IsNetworkDeployed)
                 {
                     Trace.TraceInformation("Not a deployed app. Can't check for updates.");
                     return;
                 }
 
+                progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
+                
                 // First, we'll hook up the async handlers before doing the update.
 
                 // Handle required restart of the app after update

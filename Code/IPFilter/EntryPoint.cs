@@ -8,7 +8,6 @@
     using Apps;
     using Microsoft;
     using Models;
-    using Properties;
     using Services;
     using Views;
 
