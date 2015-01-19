@@ -53,12 +53,11 @@ namespace IPFilter.ViewModels
             StartCommand = new DelegateCommand(Start, IsStartEnabled);
             applicationEnumerator = new ApplicationEnumerator();
             downloader = new FilterDownloader();
-
+            
             progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
         }
-
-
+        
         bool IsStartEnabled(object arg)
         {
             return Update == null || !Update.IsUpdating;
@@ -78,6 +77,8 @@ namespace IPFilter.ViewModels
 
         void ProgressHandler(ProgressModel progressModel)
         {
+            if (progressModel == null) return;
+
             ProgressValue = progressModel.Value;
             StatusText = progressModel.Caption;
             State = progressModel.State;
@@ -105,7 +106,7 @@ namespace IPFilter.ViewModels
                 case UpdateState.Cancelled:
                     cancellationToken.Dispose();
                     cancellationToken = new CancellationTokenSource();
-                    Task.Factory.StartNew(() => StartAsync());
+                    Task.Factory.StartNew(() => StartAsync(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
                     break;
                     
                 case UpdateState.Downloading:
