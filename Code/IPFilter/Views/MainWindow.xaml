@@ -70,7 +70,7 @@
                                     <Button Padding="5" Margin="5" Content="Save Settings" Command="{Binding Options.SaveSettingsCommand}"></Button>
                                 </StatusBarItem>
                                 <StatusBarItem>
-                                    <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"></Label>
+                                    <Label Content="{Binding Options.ErrorMessage}" Foreground="Red" Width="Auto"></Label>
                                 </StatusBarItem>
                                 <StatusBarItem HorizontalAlignment="Right">
                                     <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding Options.ResetSettingsCommand}"></Button>
@@ -145,7 +145,7 @@
                         </DockPanel>
                     </TabItem>
                     <TabItem Header="Log" Background="Transparent">
-                        <TextBox Text="{Binding LogData, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBox Text="{Binding LogData, Mode=OneWay}" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
                     </TabItem>
                     <TabItem Header="Help" Background="Transparent">
 

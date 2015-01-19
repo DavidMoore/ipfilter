@@ -17,7 +17,6 @@
         [STAThread]
         internal static void Main(string[] args)
         {
-            UpgradeSettings();
 
             if (args.Length > 0)
             {
@@ -92,19 +91,6 @@
             }
 
             Trace.TraceInformation("Done.");
-        }
-
-        static void UpgradeSettings()
-        {
-            try
-            {
-                // Upgrade / migrate custom settings if necessary
-                Settings.Default.Upgrade();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Couldn't upgrade settings: " + ex);
-            }
         }
     }
 }

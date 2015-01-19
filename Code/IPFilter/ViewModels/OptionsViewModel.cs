@@ -30,12 +30,20 @@ namespace IPFilter.ViewModels
 
         void LoadSettings()
         {
-            ErrorMessage = string.Empty;
-            Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
-            Paths.CollectionChanged += (sender, args) => PendingChanges = true;
-            IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
-            ScheduleHours = Settings.Default.ScheduleHours;
-            PendingChanges = false;
+            try
+            {
+                ErrorMessage = string.Empty;
+                Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
+                Paths.CollectionChanged += (sender, args) => PendingChanges = true;
+                IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
+                ScheduleHours = Settings.Default.ScheduleHours;
+                PendingChanges = false;
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("Couldn't load settings: " + e);
+                ErrorMessage = "Couldn't load settings: " + e.Message;
+            }
         }
 
         bool CanResetSettings(object o)
@@ -127,6 +135,7 @@ namespace IPFilter.ViewModels
             }
             catch (Exception ex)
             {
+                Trace.TraceError("Couldn't schedule automated update: " + ex);
                 ErrorMessage = "Couldn't schedule automated update: " + ex.Message;
             }
         }
