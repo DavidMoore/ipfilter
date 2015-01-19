@@ -113,9 +113,9 @@
                                         <Label Content="hour(s)" />
                                     </StackPanel>
 
-                                    <Label Content="Custom Paths" Style="{StaticResource Heading}" />
+                                    <Label Content="Custom Paths" Style="{StaticResource Heading}" Visibility="Collapsed" />
 
-                                    <DataGrid AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" ItemsSource="{Binding Options.Paths}" CanUserAddRows="True" CanUserDeleteRows="True">
+                                    <DataGrid  Visibility="Collapsed" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" ItemsSource="{Binding Options.Paths}" CanUserAddRows="True" CanUserDeleteRows="True">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Binding="{Binding Name}" Width="Auto" Header="Name"></DataGridTextColumn>
                                             <DataGridTextColumn Binding="{Binding Path}" Width="*" Header="Path"></DataGridTextColumn>
