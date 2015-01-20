@@ -5,6 +5,7 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using System.Security.Principal;
     using Microsoft.Win32.TaskScheduler;
     using Properties;
     using Services;
@@ -97,37 +98,34 @@ namespace IPFilter.ViewModels
                         return;
                     }
 
-                    using (var existingTask = service.GetTask(taskPath))
+                    var identity = WindowsIdentity.GetCurrent();
+                    if (identity == null)
                     {
-                        Trace.TraceInformation("Setting up the automatic schedule...");
-                        using (TaskDefinition task = existingTask != null ? existingTask.Definition : service.NewTask())
-                        {
-                            task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
+                        Trace.TraceWarning("Couldn't get the user identity; can't schedule task.");
+                        return;
+                    }
 
-                            task.Triggers.Clear();
+                    Trace.TraceInformation("Setting up the automatic schedule...");
+                    using (var task = service.NewTask())
+                    {
+                        task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
 
-                            // Schedule for midnight, then check every x hours (6 by default).
-                            var trigger = new TimeTrigger(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
-                            trigger.Repetition.Interval = TimeSpan.FromHours(ScheduleHours ?? 6);
-                            task.Triggers.Add(trigger);
+                        task.Triggers.Clear();
 
-                            task.Actions.Clear();
-                            task.Actions.Add(new ExecAction(Process.GetCurrentProcess().MainModule.FileName, "/silent"));
+                        // Schedule for midnight, then check every x hours (6 by default).
+                        var trigger = new TimeTrigger(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
+                        trigger.Repetition.Interval = TimeSpan.FromHours(ScheduleHours ?? 6);
+                        task.Triggers.Add(trigger);
 
-                            task.Settings.RunOnlyIfNetworkAvailable = true;
-                            task.Settings.StartWhenAvailable = true;
-                            task.Settings.WakeToRun = false;
-                            task.Principal.RunLevel = TaskRunLevel.Highest;
+                        task.Actions.Add(new ExecAction(Process.GetCurrentProcess().MainModule.FileName, "/silent"));
 
-                            if (existingTask == null)
-                            {
-                                service.RootFolder.RegisterTaskDefinition(taskPath, task);
-                            }
-                            else
-                            {
-                                existingTask.RegisterChanges();
-                            }
-                        }
+                        task.Settings.RunOnlyIfNetworkAvailable = true;
+                        task.Settings.StartWhenAvailable = true;
+                        task.Settings.WakeToRun = false;
+                        task.Principal.RunLevel = TaskRunLevel.LUA;
+                        task.Principal.UserId = identity.Name;
+
+                        service.RootFolder.RegisterTaskDefinition(taskPath, task, TaskCreation.CreateOrUpdate, identity.Name);
                     }
 
                     Trace.TraceInformation("Finished scheduling automatic update.");
