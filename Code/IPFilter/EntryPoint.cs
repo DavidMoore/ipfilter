@@ -3,19 +3,22 @@
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Apps;
-    using Microsoft;
     using Models;
     using Services;
     using Views;
 
     static class EntryPoint
     {
+        static Assembly assembly = typeof (EntryPoint).Assembly;
+
         [STAThread]
         internal static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.AssemblyResolve +=  CurrentDomainOnAssemblyResolve;
 
             if (args.Length > 0)
             {
@@ -54,6 +57,20 @@
             var window = new MainWindow();
             var app = new App();
             app.Run(window);
+        }
+
+        static Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var resourceName = "IPFilter.Assemblies." + new AssemblyName(args.Name).Name + ".dll";
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null) return null;
+
+                var assemblyData = new Byte[stream.Length];
+                stream.Read(assemblyData, 0, assemblyData.Length);
+                return Assembly.Load(assemblyData);
+            }
         }
 
         static async Task SilentMain()
