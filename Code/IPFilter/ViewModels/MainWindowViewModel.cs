@@ -135,6 +135,7 @@ namespace IPFilter.ViewModels
                         if (filter.Exception is OperationCanceledException) throw filter.Exception;
                         Trace.TraceError("Problem when downloading: " + filter.Exception);
                         progress.Report(new ProgressModel(UpdateState.Cancelled, "Problem when downloading: " + filter.Exception.Message, 0));
+                        return;
                     }
                     else
                     {
