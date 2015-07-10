@@ -12,9 +12,9 @@ namespace IPFilter.Services
     using System.Net.Http.Headers;
     using System.Threading;
     using System.Threading.Tasks;
-    using Ionic.Zip;
     using ListProviders;
     using Models;
+    using Properties;
 
     public class FilterDownloader
     {
@@ -67,7 +67,7 @@ namespace IPFilter.Services
 
 
                         // Check if the cached filter is already up to date.
-                        if (cache != null)
+                        if (cache != null && !Settings.Default.DisableCache)
                         {
                             var cacheResult = await cache.GetAsync(result);
 
@@ -170,22 +170,20 @@ namespace IPFilter.Services
 
                     case CompressionFormat.Zip:
 
-                        EventHandler<ReadProgressEventArgs> reportProgress = (sender, args) =>
+                        using (var zipFile = new ZipArchive(stream,ZipArchiveMode.Read))
                         {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            if (args.EventType != ZipProgressEventType.Extracting_EntryBytesWritten) return;
-                            var percentage = (int)Math.Floor( (double)args.BytesTransferred / args.TotalBytesToTransfer * 100);
-                            progress.Report(new ProgressModel(UpdateState.Decompressing, "Unzipping...", percentage));
-                        };
-
-                        using (var zipFile = ZipFile.Read(stream, reportProgress))
-                        {
-                            if (zipFile.Entries.Count == 0) throw new ZipException("There are no entries in the zip file.");
-                            if (zipFile.Entries.Count > 1) throw new ZipException("There is more than one file in the zip file. This application will need to be updated to support this.");
+                            progress.Report(new ProgressModel(UpdateState.Decompressing, "Decompressing...", -1));
+                            
+                            if (zipFile.Entries.Count == 0) throw new IOException("There are no entries in the zip file.");
+                            if (zipFile.Entries.Count > 1) throw new IOException("There is more than one file in the zip file. This application will need to be updated to support this.");
 
                             var entry = zipFile.Entries.First();
 
-                            entry.Extract(result);
+                            using (var entryStream = entry.Open())
+                            {
+                                cancellationToken.ThrowIfCancellationRequested();
+                                await entryStream.CopyToAsync(result);
+                            }
                         }
                         break;
 

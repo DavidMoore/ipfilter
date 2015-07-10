@@ -78,5 +78,17 @@ namespace IPFilter.Properties {
                 this["ScheduleHours"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisableCache {
+            get {
+                return ((bool)(this["DisableCache"]));
+            }
+            set {
+                this["DisableCache"] = value;
+            }
+        }
     }
 }
