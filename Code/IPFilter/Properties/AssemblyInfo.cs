@@ -5,7 +5,7 @@ using System.Windows;
 using System;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("IPFilter Updater Desktop Application")]
+[assembly: AssemblyTitle("IPFilter Updater")]
 [assembly: AssemblyDescription("User Interface for the IPFilter Updater")]
 [assembly: AssemblyProduct("IPFilter Updater")]
 
