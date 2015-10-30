@@ -54,13 +54,27 @@ namespace IPFilter.Apps
             if (File.Exists(qBittorrentIniPath))
             {
                 Trace.TraceInformation("Pointing qBittorrent to " + filterPath);
-                Trace.TraceInformation("Updating qBittorent configuration: " + qBittorrentIniPath);
+                Trace.TraceInformation("Updating qBittorrent configuration: " + qBittorrentIniPath);
 
-                WritePrivateProfileString("Preferences", @"IPFilter\Enabled", "true", qBittorrentIniPath);
-                WritePrivateProfileString("Preferences", @"IPFilter\File", filterPath.Replace("\\", "\\\\"), qBittorrentIniPath);
+                try
+                {
+                    WriteIniSetting("Preferences", @"IPFilter\Enabled", "true", qBittorrentIniPath);
+                    WriteIniSetting("Preferences", @"IPFilter\File", filterPath.Replace("\\", "/"), qBittorrentIniPath);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Couldn't update qBittorrent configuration: " + ex);
+                }
             }
             
             return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
+        }
+
+        internal void WriteIniSetting(string section, string name, string value, string filename)
+        {
+            var result = WritePrivateProfileString(section, name, value, filename);
+            if (result != 0) return;
+            Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
         }
 
         [DllImport("KERNEL32.DLL", EntryPoint = "WritePrivateProfileString")]
