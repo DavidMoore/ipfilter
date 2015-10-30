@@ -18,8 +18,8 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersion("2.0.0.4")]
-[assembly: AssemblyFileVersion("2.0.0.4")]
+[assembly: AssemblyInformationalVersion("2.0.0.5")]
+[assembly: AssemblyFileVersion("2.0.0.5")]
 [assembly: AssemblyVersion("2.0.0.0")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
