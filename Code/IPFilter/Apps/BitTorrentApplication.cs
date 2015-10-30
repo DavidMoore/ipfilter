@@ -18,10 +18,17 @@ namespace IPFilter.Apps
 
         public async Task<ApplicationDetectionResult> DetectAsync()
         {
-            using (var key = Registry.CurrentUser.OpenSubKey(RegistryKeyName, false))
+            // Look in HKCU first (current user install), then fall back to HKLM (all users install).
+            var key = Registry.CurrentUser.OpenSubKey(RegistryKeyName, false);
+            if (key == null)
             {
-                if (key == null) return ApplicationDetectionResult.NotFound();
+                key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(RegistryKeyName, false);
+            }
 
+            if( key == null ) return ApplicationDetectionResult.NotFound();
+
+            using (key)
+            {
                 var installLocation = (string)key.GetValue("InstallLocation");
                 if (installLocation == null) return ApplicationDetectionResult.NotFound();
 
