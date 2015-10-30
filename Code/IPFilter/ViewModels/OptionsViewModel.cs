@@ -122,8 +122,8 @@ namespace IPFilter.ViewModels
                         task.Settings.RunOnlyIfNetworkAvailable = true;
                         task.Settings.StartWhenAvailable = true;
                         task.Settings.WakeToRun = false;
-                        task.Principal.RunLevel = TaskRunLevel.LUA;
-                        task.Principal.UserId = identity.Name;
+                        task.Principal.RunLevel = TaskRunLevel.Highest;
+                        //task.Principal.UserId = identity.Name;
 
                         service.RootFolder.RegisterTaskDefinition(taskPath, task, TaskCreation.CreateOrUpdate, identity.Name);
                     }
