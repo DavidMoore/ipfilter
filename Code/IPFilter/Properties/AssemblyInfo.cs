@@ -6,10 +6,10 @@ using System;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("IPFilter Updater")]
-[assembly: AssemblyDescription("User Interface for the IPFilter Updater")]
+[assembly: AssemblyDescription("IPFilter Updater")]
 [assembly: AssemblyProduct("IPFilter Updater")]
 
-[assembly: AssemblyCopyright("Copyright © David Moore 2015")]
+[assembly: AssemblyCopyright("Copyright © David Moore 2016")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyTrademark("")]
@@ -18,8 +18,8 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersion("2.0.0.5")]
-[assembly: AssemblyFileVersion("2.0.0.5")]
+[assembly: AssemblyInformationalVersion("2.0.0.6")]
+[assembly: AssemblyFileVersion("2.0.0.6")]
 [assembly: AssemblyVersion("2.0.0.0")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]

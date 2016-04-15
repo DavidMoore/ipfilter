@@ -43,8 +43,8 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>2.0.0.5</ApplicationVersion>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>2.0.0.6</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -81,6 +81,10 @@
       <HintPath>..\..\packages\TaskScheduler.2.3.4\lib\net40\Microsoft.Win32.TaskScheduler.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -88,6 +92,10 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xaml" />
@@ -107,6 +115,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Native\Win32Api.cs" />
+    <Compile Include="Native\ProcessInformation.cs" />
+    <Compile Include="Native\ProcessManager.cs" />
+    <Compile Include="Native\SafeLocalMemHandle.cs" />
+    <Compile Include="Native\SecurityAttributes.cs" />
+    <Compile Include="Native\StartupInfo.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="Services\DeploymentHelper.cs" />
     <Compile Include="ViewModels\MessageBoxHelper.cs" />
@@ -311,18 +325,15 @@
     <EmbeddedResource Include="..\..\packages\TaskScheduler.2.3.4\lib\net40\Microsoft.Win32.TaskScheduler.dll">
       <Link>Assemblies\Microsoft.Win32.TaskScheduler.dll</Link>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\..\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.Toolkit.dll">
       <Link>Assemblies\Xceed.Wpf.Toolkit.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll">
+      <Link>Assemblies\Newtonsoft.Json.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll">
+      <Link>Assemblies\System.Net.Http.Formatting.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

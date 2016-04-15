@@ -5,8 +5,11 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Deployment.Application;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,6 +20,7 @@ namespace IPFilter.ViewModels
     using ListProviders;
     using Microsoft;
     using Models;
+    using Native;
     using Services;
     using UI.Annotations;
     
@@ -66,13 +70,13 @@ namespace IPFilter.ViewModels
         void LogLineAction(string message)
         {
             log.AppendLine(message);
-            OnPropertyChanged("LogData");
+            OnPropertyChanged(nameof(LogData));
         }
 
         void LogAction(string message)
         {
             log.Append(message);
-            OnPropertyChanged("LogData");
+            OnPropertyChanged(nameof(LogData));
         }
 
         void ProgressHandler(ProgressModel progressModel)
@@ -106,7 +110,7 @@ namespace IPFilter.ViewModels
                 case UpdateState.Cancelled:
                     cancellationToken.Dispose();
                     cancellationToken = new CancellationTokenSource();
-                    Task.Factory.StartNew(() => StartAsync(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+                    Task.Factory.StartNew(StartAsync, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
                     break;
                     
                 case UpdateState.Downloading:
@@ -148,7 +152,7 @@ namespace IPFilter.ViewModels
 
                     if (filter != null && filter.FilterTimestamp != null)
                     {
-                        var message = string.Format("Done. List timestamp: {0}", filter.FilterTimestamp.Value.ToLocalTime());
+                        var message = $"Done. List timestamp: {filter.FilterTimestamp.Value.ToLocalTime()}";
                         Trace.TraceInformation(message);
                         progress.Report(new ProgressModel(UpdateState.Done, message, 100));
                     }
@@ -268,7 +272,7 @@ namespace IPFilter.ViewModels
                 if (value == state) return;
                 state = value;
                 OnPropertyChanged();
-                OnPropertyChanged("ButtonText");
+                OnPropertyChanged(nameof(ButtonText));
             }
         }
 
@@ -308,72 +312,28 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Checking for software updates...");
-                if (!ApplicationDeployment.IsNetworkDeployed)
-                {
-                    Trace.TraceInformation("Not a deployed app. Can't check for updates.");
-                    return;
-                }
-
                 progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
+
+                var updater = new Updater();
+
+                var result = await updater.CheckForUpdateAsync();
+
+                var currentVersion = new Version(Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion);
+
+                var latestVersion = new Version(result.Version);
                 
-                // First, we'll hook up the async handlers before doing the update.
-
-                // Handle required restart of the app after update
-                ApplicationDeployment.CurrentDeployment.UpdateCompleted += delegate(object sender, AsyncCompletedEventArgs args)
-                {
-                    progress.Report(new ProgressModel(UpdateState.Ready, "Update applied. Restart the app.", 100));
-                    Update.IsUpdating = false;
-
-                    if (args.Cancelled)
-                    {
-                        Trace.TraceWarning("Update was cancelled.");
-                    }
-                    else if (args.Error != null)
-                    {
-                        Trace.TraceWarning("Unexpected update error: " + args.Error.Message);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            if (MessageBoxHelper.Show(dispatcher, "Restart Application Required", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, "You need to restart the app to apply the update. Restart IPFilter now?") != MessageBoxResult.Yes)
-                            {
-                                return;
-                            }
-
-                            dispatcher.Invoke(DispatcherPriority.Normal, new Action(DeploymentHelper.Restart));
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Exception when restarting app after an update: " + ex);
-                            Update.ErrorMessage = "Couldn't restart the app to apply update. It will be updated the next time you start the app.";
-                        }
-                    }
-                };
-
-                // Handle progress of the update.
-                ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += delegate(object sender, DeploymentProgressChangedEventArgs args)
-                {
-                    progress.Report(new ProgressModel(UpdateState.Downloading, "Updating application...", args.ProgressPercentage));
-                    Update.IsUpdating = true;
-                    Update.DownloadPercentage = args.ProgressPercentage;
-                };
-
-                // Do the actual update check
-                var updateAvailable = ApplicationDeployment.CurrentDeployment.CheckForDetailedUpdate(false);
-
-                Update.IsUpdateAvailable = updateAvailable.UpdateAvailable;
+                Update.IsUpdateAvailable = latestVersion > currentVersion;
 
                 if (Update.IsUpdateAvailable)
                 {
-                    Update.AvailableVersion = updateAvailable.AvailableVersion;
-                    Update.IsUpdateRequired = updateAvailable.IsUpdateRequired;
-                    Update.MinimumRequiredVersion = updateAvailable.MinimumRequiredVersion;
-                    Update.UpdateSizeBytes = updateAvailable.UpdateSizeBytes;
+                    Update.AvailableVersion = latestVersion;
+                    Update.IsUpdateRequired = true;
+                    Update.MinimumRequiredVersion = latestVersion;
+                    Update.UpdateSizeBytes = 2000000;
                 }
 
                 Trace.TraceInformation("Current version: {0}", Update.CurrentVersion);
-                Trace.TraceInformation("Available version: {0}", Update.AvailableVersion == null ? "<no updates>" : Update.AvailableVersion.ToString());
+                Trace.TraceInformation("Available version: {0}", Update.AvailableVersion?.ToString() ?? "<no updates>");
 
                 if (!Update.IsUpdateAvailable ) return;
 
@@ -384,7 +344,42 @@ namespace IPFilter.ViewModels
                 }
 
                 Trace.TraceInformation("Starting application update...");
-                ApplicationDeployment.CurrentDeployment.UpdateAsync();
+
+                var sb = new StringBuilder("msiexec.exe ");
+
+                // Enable logging for the installer
+                sb.AppendFormat(" /l*v \"{0}\"", Path.Combine(Path.GetTempPath(), "IPFilter.log"));
+                
+                sb.AppendFormat(" /i \"{0}?{1}\"", result.Uri, DateTime.Now.ToString("yyyyMMddHHmmss"));
+
+                //sb.Append(" /passive");
+
+                ProcessInformation processInformation = new ProcessInformation();
+                StartupInfo startupInfo = new StartupInfo();
+                SecurityAttributes processSecurity = new SecurityAttributes();
+                SecurityAttributes threadSecurity = new SecurityAttributes();
+                processSecurity.nLength = Marshal.SizeOf(processSecurity);
+                threadSecurity.nLength = Marshal.SizeOf(threadSecurity);
+
+                const int NormalPriorityClass = 0x0020;
+
+                if (!ProcessManager.CreateProcess(null, sb, processSecurity,
+                    threadSecurity, false, NormalPriorityClass,
+                    IntPtr.Zero, null, startupInfo, processInformation))
+                {
+                    throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+                }
+                
+                try
+                {
+                    //dispatcher.Invoke(DispatcherPriority.Normal, new Action(Application.Current.Shutdown));
+                    Application.Current.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Exception when shutting down app for update: " + ex);
+                    Update.ErrorMessage = "Couldn't shutdown the app to apply update. It will be updated the next time you start the app.";
+                }
             }
             catch (Exception ex)
             {
@@ -403,5 +398,44 @@ namespace IPFilter.ViewModels
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    class Updater
+    {
+
+        public async Task<UpdateInfo> CheckForUpdateAsync()
+        {
+            const string baseUri = "https://davidmoore.github.io/ipfilter/install/";
+
+            using (var client = new HttpClient())
+            {
+                using (var content = await client.GetAsync(baseUri + "install.json"))
+                {
+                    try
+                    {
+                        content.EnsureSuccessStatusCode();
+
+                        var result = await content.Content.ReadAsAsync<UpdateInfo>();
+
+                        result.Uri = baseUri + result.Uri;
+
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+
+                }
+            }
+        }
+
+    }
+
+    public class UpdateInfo
+    {
+        public string Version { get; set; }
+
+        public string Uri { get; set; }
     }
 }
