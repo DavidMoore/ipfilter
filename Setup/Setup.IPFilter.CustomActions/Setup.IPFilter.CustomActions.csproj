@@ -8,11 +8,12 @@
     <ProjectGuid>{B516A673-36B0-471A-B7FC-FE6A610255FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Setup.IPFilter.CustomActions</RootNamespace>
-    <AssemblyName>Setup.IPFilter.CustomActions</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>IPFilter.Setup.CustomActions</RootNamespace>
+    <AssemblyName>IPFilter.Setup.CustomActions</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <WixCATargetsPath Condition=" '$(WixCATargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.CA.targets</WixCATargetsPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,14 +47,35 @@
   <ItemGroup>
     <Compile Include="ClickOnceRegistry.cs" />
     <Compile Include="CustomAction.cs" />
+    <Compile Include="DeleteHelper.cs" />
+    <Compile Include="IO\ErrorHelper.cs" />
+    <Compile Include="IO\FileAttributes.cs" />
+    <Compile Include="IO\FileSystemEnumerator.cs" />
+    <Compile Include="IO\FileSystemInfoResultHandler.cs" />
+    <Compile Include="IO\FileTime.cs" />
+    <Compile Include="IO\FindData.cs" />
+    <Compile Include="IO\Iterator.cs" />
+    <Compile Include="IO\PathHelper.cs" />
+    <Compile Include="IO\PathHelperMethods.cs" />
+    <Compile Include="IO\SafeFindHandle.cs" />
+    <Compile Include="IO\SearchData.cs" />
+    <Compile Include="IO\SearchResult.cs" />
+    <Compile Include="IO\SearchResultHandler.cs" />
+    <Compile Include="IO\StringExtensions.cs" />
+    <Compile Include="IO\StringResultHandler.cs" />
     <Compile Include="IUninstallStep.cs" />
+    <Compile Include="LoadLibraryException.cs" />
+    <Compile Include="LoadLibraryExFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoveFiles.cs" />
     <Compile Include="RemoveRegistryKeys.cs" />
     <Compile Include="RemoveStartMenuEntry.cs" />
     <Compile Include="RemoveUninstallEntry.cs" />
+    <Compile Include="SafeLibraryHandle.cs" />
     <Compile Include="Uninstaller.cs" />
     <Compile Include="UninstallInfo.cs" />
+    <Compile Include="Win32Api.cs" />
+    <Compile Include="Win32Error.cs" />
     <Content Include="CustomAction.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,7 @@
-﻿namespace Setup.IPFilter.CustomActions
+﻿namespace IPFilter.Setup.CustomActions
 {
     using System;
+    using System.Threading;
     using Microsoft.Deployment.WindowsInstaller;
 
     public class CustomActions
@@ -10,12 +11,7 @@
         {
             session.Log("Begin to uninstall ClickOnce deployment");
 
-            var appName = session["CLICKONCEAPPNAME"];
-            if (string.IsNullOrEmpty(appName))
-            {
-                session.Log("Please set property CLICKONCEAPPNAME.");
-                return ActionResult.Failure;
-            }
+            var appName = "IPFilter Updater";
 
             try
             {
@@ -25,6 +21,9 @@
                     session.Log("No uninstall information found for " + appName);
                     return ActionResult.NotExecuted;
                 }
+
+                session.Log("Waiting for files to become free...");
+                Thread.Sleep(TimeSpan.FromSeconds(10));
 
                 session.Log("Uninstalling " + appName);
                 var uninstaller = new Uninstaller();

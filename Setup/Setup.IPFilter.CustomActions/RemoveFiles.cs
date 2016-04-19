@@ -1,4 +1,4 @@
-﻿namespace Setup.IPFilter.CustomActions
+﻿namespace IPFilter.Setup.CustomActions
 {
     using System;
     using System.Collections.Generic;
@@ -72,18 +72,12 @@
 
             foreach (var folder in _foldersToRemove)
             {
-                try
-                {
-                    Directory.Delete(folder, true);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                }
+                DeleteHelper.DeleteFileSystemInfoWithSchedulingIfNecessary(new DirectoryInfo(folder));
             }
 
             foreach (var file in _filesToRemove)
             {
-                File.Delete(file);
+                DeleteHelper.DeleteFileSystemInfoWithSchedulingIfNecessary(new FileInfo(file));
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace Setup.IPFilter.CustomActions
+﻿namespace IPFilter.Setup.CustomActions
 {
     using System.Collections.Generic;
     using System.Linq;
