@@ -5,8 +5,10 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Deployment.Application;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -336,21 +338,84 @@ namespace IPFilter.ViewModels
                 Trace.TraceInformation("Available version: {0}", Update.AvailableVersion?.ToString() ?? "<no updates>");
 
                 if (!Update.IsUpdateAvailable ) return;
-
+                
                 if (MessageBoxHelper.Show(dispatcher, "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes,
                     "An update to version {0} is available. Would you like to update now?", Update.AvailableVersion) != MessageBoxResult.Yes)
                 {
                     return;
                 }
-
+                
                 Trace.TraceInformation("Starting application update...");
 
+                var msiPath = Path.Combine(Path.GetTempPath(), "IPFilter.msi");
+
+                // Download the installer
+                using (var handler = new WebRequestHandler())
+                {
+                    handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                    var uri = new Uri($"{result.Uri}?{DateTime.Now.ToString("yyyyMMddHHmmss")}");
+
+                    using (var httpClient = new HttpClient(handler))
+                    using (var response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken.Token))
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            progress.Report(new ProgressModel(UpdateState.Ready, "Update cancelled. Ready.", 100));
+                            Update.IsUpdating = false;
+                            return;
+                        }
+
+                        var length = response.Content.Headers.ContentLength;
+                        double lengthInMb = !length.HasValue ? -1 : (double)length.Value / 1024 / 1024;
+                        double bytesDownloaded = 0;
+
+                        using(var stream = await response.Content.ReadAsStreamAsync())
+                        using(var msi = File.Open( msiPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                        {
+                            var buffer = new byte[65535 * 4];
+
+                            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken.Token);
+                            while (bytesRead != 0)
+                            {
+                                await msi.WriteAsync(buffer, 0, bytesRead, cancellationToken.Token);
+                                bytesDownloaded += bytesRead;
+
+                                if (length.HasValue)
+                                {
+                                    double downloadedMegs = bytesDownloaded / 1024 / 1024;
+                                    var percent = (int)Math.Floor((bytesDownloaded / length.Value) * 100);
+
+                                    var status = string.Format(CultureInfo.CurrentUICulture, "Downloaded {0:F2} MB of {1:F2} MB", downloadedMegs, lengthInMb);
+
+                                    Update.IsUpdating = true;
+                                    Update.DownloadPercentage = percent;
+                                    progress.Report(new ProgressModel(UpdateState.Downloading, status, percent));
+                                }
+
+                                if (cancellationToken.IsCancellationRequested)
+                                {
+                                    progress.Report(new ProgressModel(UpdateState.Ready, "Update cancelled. Ready.", 100));
+                                    Update.IsUpdating = false;
+                                    return;
+                                }
+
+                                bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken.Token);
+                            }
+                        }
+                    }
+                }
+
+                progress.Report(new ProgressModel(UpdateState.Ready, "Launching update...", 100));
+                Update.IsUpdating = false;
+                
+                // Now run the installer
                 var sb = new StringBuilder("msiexec.exe ");
 
                 // Enable logging for the installer
                 sb.AppendFormat(" /l*v \"{0}\"", Path.Combine(Path.GetTempPath(), "IPFilter.log"));
                 
-                sb.AppendFormat(" /i \"{0}?{1}\"", result.Uri, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                sb.AppendFormat(" /i \"{0}\"", msiPath);
 
                 //sb.Append(" /passive");
 
@@ -378,7 +443,7 @@ namespace IPFilter.ViewModels
                 catch (Exception ex)
                 {
                     Trace.TraceError("Exception when shutting down app for update: " + ex);
-                    Update.ErrorMessage = "Couldn't shutdown the app to apply update. It will be updated the next time you start the app.";
+                    Update.ErrorMessage = "Couldn't shutdown the app to apply update.";
                 }
             }
             catch (Exception ex)
