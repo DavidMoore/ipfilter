@@ -121,6 +121,14 @@
     <Compile Include="Native\SafeLocalMemHandle.cs" />
     <Compile Include="Native\SecurityAttributes.cs" />
     <Compile Include="Native\StartupInfo.cs" />
+    <Compile Include="Services\Deployment\ClickOnceRegistry.cs" />
+    <Compile Include="Services\Deployment\IUninstallStep.cs" />
+    <Compile Include="Services\Deployment\RemoveFiles.cs" />
+    <Compile Include="Services\Deployment\RemoveRegistryKeys.cs" />
+    <Compile Include="Services\Deployment\RemoveStartMenuEntry.cs" />
+    <Compile Include="Services\Deployment\RemoveUninstallEntry.cs" />
+    <Compile Include="Services\Deployment\Uninstaller.cs" />
+    <Compile Include="Services\Deployment\UninstallInfo.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="Services\DeploymentHelper.cs" />
     <Compile Include="ViewModels\MessageBoxHelper.cs" />

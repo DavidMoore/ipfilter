@@ -24,6 +24,7 @@ namespace IPFilter.ViewModels
     using Models;
     using Native;
     using Services;
+    using Services.Deployment;
     using UI.Annotations;
     
     public class MainWindowViewModel : INotifyPropertyChanged
@@ -313,6 +314,23 @@ namespace IPFilter.ViewModels
         {
             try
             {
+                // Remove any old ClickOnce installs
+                try
+                {
+                    var uninstallInfo = UninstallInfo.Find("IPFilter Updater");
+                    if (uninstallInfo != null)
+                    {
+                        Trace.TraceWarning("Old ClickOnce app installed! Trying to remove...");
+                            var uninstaller = new Uninstaller();
+                            uninstaller.Uninstall(uninstallInfo);
+                            Trace.TraceInformation("Successfully removed ClickOnce app");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Failed to remove old ClickOnce app: " + ex);
+                }
+
                 Trace.TraceInformation("Checking for software updates...");
                 progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
 

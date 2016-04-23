@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="IPFilter" Language="1033" Version="2.1.0.0" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf">
+    <Product Id="*" Name="IPFilter" Language="1033" Version="2.2.0.0" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -32,13 +32,6 @@
         <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
         <InstallExecuteSequence>
             <Custom Action="LaunchApplication" After="InstallFinalize">NOT REMOVE~="ALL"</Custom>
-        </InstallExecuteSequence>
-
-        <!-- Uninstall the ClickOnce version when installing -->
-        <Binary Id="CustomActions" SourceFile="$(var.Setup.IPFilter.CustomActions.TargetDir)\$(var.Setup.IPFilter.CustomActions.TargetName).CA$(var.Setup.IPFilter.CustomActions.TargetExt)" />
-        <CustomAction Id="UninstallClickOnce" BinaryKey="CustomActions" DllEntry="UninstallClickOnce" Execute="immediate" Return="ignore" />
-        <InstallExecuteSequence>
-            <Custom Action="UninstallClickOnce" Before="InstallFinalize">NOT REMOVE~="ALL"</Custom>
         </InstallExecuteSequence>
 
         <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
