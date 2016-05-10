@@ -77,6 +77,10 @@
     <StartupObject>IPFilter.EntryPoint</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.2.0.1\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>..\..\packages\TaskScheduler.2.3.4\lib\net40\Microsoft.Win32.TaskScheduler.dll</HintPath>
       <Private>False</Private>
@@ -366,6 +370,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll">
       <Link>Assemblies\System.Net.Http.Formatting.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\packages\Microsoft.ApplicationInsights.2.0.1\lib\net45\Microsoft.ApplicationInsights.dll">
+      <Link>Assemblies\Microsoft.ApplicationInsights.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

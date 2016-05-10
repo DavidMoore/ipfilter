@@ -1,5 +1,7 @@
 ﻿namespace IPFilter.Views
 {
+    using System;
+    using System.ComponentModel;
     using System.Windows;
     using System.Windows.Interop;
     using System.Windows.Navigation;
@@ -16,13 +18,21 @@
             InitializeComponent();
 
             ViewModel = new MainWindowViewModel();
+
+            this.Closing += OnClosing;
+
             this.Activated += (sender, args) =>
             {
                 var helper = new WindowInteropHelper(Application.Current.MainWindow);
                 Win32Api.BringToFront(helper.Handle);
             };
         }
-        
+
+        private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
+        {
+            ViewModel.Shutdown();
+        }
+
         public MainWindowViewModel ViewModel
         {
             get { return DataContext as MainWindowViewModel; }

@@ -3,7 +3,6 @@ namespace IPFilter.ViewModels
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Deployment.Application;
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
@@ -20,7 +19,7 @@ namespace IPFilter.ViewModels
     using System.Windows.Threading;
     using Apps;
     using ListProviders;
-    using Microsoft;
+    using Microsoft.ApplicationInsights;
     using Models;
     using Native;
     using Services;
@@ -41,7 +40,8 @@ namespace IPFilter.ViewModels
         string statusText;
         readonly StringBuilder log = new StringBuilder(500);
         readonly Dispatcher dispatcher;
-        
+        TelemetryClient telemetryClient;
+
         public MainWindowViewModel()
         {
             Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
@@ -290,6 +290,21 @@ namespace IPFilter.ViewModels
         
         public async Task Initialize()
         {
+            try
+            {
+                telemetryClient = new TelemetryClient();
+                telemetryClient.InstrumentationKey = "23694f6c-53c2-42e2-9427-b7e02cda9c6f";
+                telemetryClient.Context.Component.Version = Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion;
+                telemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
+                telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
+                telemetryClient.TrackPageView("Home");
+                telemetryClient.Flush();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Couldn't initialize telemetry: " + ex);
+            }
+            
             // Check for updates
             await CheckForUpdates();
             
@@ -329,6 +344,7 @@ namespace IPFilter.ViewModels
                 catch (Exception ex)
                 {
                     Trace.TraceError("Failed to remove old ClickOnce app: " + ex);
+                    telemetryClient?.TrackException(ex);
                 }
 
                 Trace.TraceInformation("Checking for software updates...");
@@ -462,11 +478,14 @@ namespace IPFilter.ViewModels
                 {
                     Trace.TraceError("Exception when shutting down app for update: " + ex);
                     Update.ErrorMessage = "Couldn't shutdown the app to apply update.";
+                    telemetryClient?.TrackException(ex);
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("Application update check failed: " + ex);
+                telemetryClient?.TrackException(ex);
+                telemetryClient?.Flush();
             }
             finally
             {
@@ -480,6 +499,11 @@ namespace IPFilter.ViewModels
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Shutdown()
+        {
+            telemetryClient?.Flush();
         }
     }
 
