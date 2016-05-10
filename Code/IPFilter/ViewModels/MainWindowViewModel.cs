@@ -20,6 +20,7 @@ namespace IPFilter.ViewModels
     using Apps;
     using ListProviders;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Win32;
     using Models;
     using Native;
     using Services;
@@ -380,6 +381,26 @@ namespace IPFilter.ViewModels
                 }
                 
                 Trace.TraceInformation("Starting application update...");
+
+                // If we're not "installed", then don't check for updates. This is so the
+                // executable can be stand-alone. Stand-alone self-update to come later.
+                using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\IPFilter"))
+                {
+                    var installPath = (string) key?.GetValue("InstallPath");
+                    if (installPath == null)
+                    {
+                        using (var process = new Process())
+                        {
+                            process.StartInfo = new ProcessStartInfo("https://davidmoore.github.io/ipfilter/")
+                            {
+                                UseShellExecute = true
+                            };
+
+                            process.Start();
+                            return;
+                        }
+                    }
+                }
 
                 var msiPath = Path.Combine(Path.GetTempPath(), "IPFilter.msi");
 
