@@ -99,11 +99,6 @@ namespace IPFilter.ViewModels
                     }
 
                     var identity = WindowsIdentity.GetCurrent();
-                    if (identity == null)
-                    {
-                        Trace.TraceWarning("Couldn't get the user identity; can't schedule task.");
-                        return;
-                    }
 
                     Trace.TraceInformation("Setting up the automatic schedule...");
                     using (var task = service.NewTask())
@@ -122,14 +117,21 @@ namespace IPFilter.ViewModels
                         task.Settings.RunOnlyIfNetworkAvailable = true;
                         task.Settings.StartWhenAvailable = true;
                         task.Settings.WakeToRun = false;
-                        task.Principal.RunLevel = TaskRunLevel.Highest;
-                        //task.Principal.UserId = identity.Name;
+                        task.Principal.RunLevel = TaskRunLevel.LUA;
+                        task.Principal.Id = identity.Name;
+                        task.Principal.LogonType = TaskLogonType.S4U;
 
+                        //task.Principal.UserId = identity.Name;
                         service.RootFolder.RegisterTaskDefinition(taskPath, task, TaskCreation.CreateOrUpdate, identity.Name);
                     }
 
                     Trace.TraceInformation("Finished scheduling automatic update.");
                 }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Trace.TraceError("Can't schedule automated update, as IPFilter isn't being run as an administrator.");
+                ErrorMessage = "You must be an administrator and run IPFilter elevated to schedule a task.";
             }
             catch (Exception ex)
             {
