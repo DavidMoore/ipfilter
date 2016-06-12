@@ -10,13 +10,13 @@ namespace IPFilter.Apps
 
     class BitTorrentApplication : IApplication
     {
-        protected virtual string RegistryKeyName { get { return @"Software\Microsoft\Windows\CurrentVersion\Uninstall\" + FolderName; } }
+        protected virtual string RegistryKeyName => @"Software\Microsoft\Windows\CurrentVersion\Uninstall\" + FolderName;
 
-        protected virtual string DefaultDisplayName { get { return "BitTorrent"; } }
+        protected virtual string DefaultDisplayName => "BitTorrent";
 
-        protected virtual string FolderName { get { return "BitTorrent"; } }
+        protected virtual string FolderName => "BitTorrent";
 
-        public async Task<ApplicationDetectionResult> DetectAsync()
+        public Task<ApplicationDetectionResult> DetectAsync()
         {
             // Look in HKCU first (current user install), then fall back to HKLM (all users install).
             var key = Registry.CurrentUser.OpenSubKey(RegistryKeyName, false);
@@ -25,12 +25,12 @@ namespace IPFilter.Apps
                 key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(RegistryKeyName, false);
             }
 
-            if( key == null ) return ApplicationDetectionResult.NotFound();
+            if( key == null ) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
             using (key)
             {
                 var installLocation = (string)key.GetValue("InstallLocation");
-                if (installLocation == null) return ApplicationDetectionResult.NotFound();
+                if (installLocation == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                 var displayName = (string)key.GetValue("DisplayName") ?? DefaultDisplayName;
                 var version = (string)key.GetValue("DisplayVersion") ?? "Unknown";
@@ -46,11 +46,11 @@ namespace IPFilter.Apps
 
                 if (!result.InstallLocation.Exists) result.IsPresent = false;
 
-                return result;
+                return Task.FromResult(result);
             }
         }
 
-        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
+        public Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
             var destinationPath = Path.Combine(roamingPath, FolderName, "ipfilter.dat");
@@ -61,7 +61,7 @@ namespace IPFilter.Apps
                 filter.Stream.WriteTo(destination);
             }
 
-            return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
+            return Task.FromResult( new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp } );
 
             // TODO: Check if IP Filter is enabled in µTorrent
 //            string settingsPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\settings.dat");

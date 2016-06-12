@@ -12,16 +12,16 @@ namespace IPFilter.Apps
 
     class QBitTorrent : IApplication
     {
-        public async Task<ApplicationDetectionResult> DetectAsync()
+        public Task<ApplicationDetectionResult> DetectAsync()
         {
             using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {
                 using (var key = baseKey.OpenSubKey(@"SOFTWARE\qBittorrent"))
                 {
-                    if (key == null) return ApplicationDetectionResult.NotFound();
+                    if (key == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var installLocation = (string)key.GetValue("InstallLocation");
-                    if (string.IsNullOrWhiteSpace(installLocation)) return ApplicationDetectionResult.NotFound();
+                    if (string.IsNullOrWhiteSpace(installLocation)) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var result = new ApplicationDetectionResult
                     {
@@ -31,20 +31,20 @@ namespace IPFilter.Apps
                         Application = this
                     };
 
-                    if (!result.InstallLocation.Exists) return ApplicationDetectionResult.NotFound();
+                    if (!result.InstallLocation.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var applicationPath = Path.Combine(result.InstallLocation.FullName, "qbittorrent.exe");
-                    if (!File.Exists(applicationPath)) return ApplicationDetectionResult.NotFound();
+                    if (!File.Exists(applicationPath)) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var version = FileVersionInfo.GetVersionInfo(Path.Combine(result.InstallLocation.FullName, "qbittorrent.exe"));
                     result.Version = version.ProductVersion;
 
-                    return result;
+                    return Task.FromResult(result);
                 }
             }
         }
 
-        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
+        public Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var filterPath = CacheProvider.FilterPath;
 
@@ -67,7 +67,7 @@ namespace IPFilter.Apps
                 }
             }
             
-            return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
+            return Task.FromResult(new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp });
         }
 
         internal void WriteIniSetting(string section, string name, string value, string filename)
