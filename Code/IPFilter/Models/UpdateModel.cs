@@ -7,7 +7,6 @@ namespace IPFilter.Models
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
-    using System.Windows.Input;
     using UI.Annotations;
     using ViewModels;
 
@@ -23,10 +22,7 @@ namespace IPFilter.Models
         int downloadPercentage;
         string errorMessage;
         bool isUpdating;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
-        /// </summary>
+        
         public UpdateModel()
         {
             CurrentVersion = new Version(GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
@@ -57,7 +53,7 @@ namespace IPFilter.Models
                 if (value == product) return;
                 product = value;
                 OnPropertyChanged();
-                OnPropertyChanged("ProductAndVersion");
+                OnPropertyChanged(nameof(ProductAndVersion));
             }
         }
 
@@ -69,14 +65,11 @@ namespace IPFilter.Models
                 if (value == currentVersion) return;
                 currentVersion = value;
                 OnPropertyChanged();
-                OnPropertyChanged("ProductAndVersion");
+                OnPropertyChanged(nameof(ProductAndVersion));
             }
         }
 
-        public string ProductAndVersion
-        {
-            get { return Product + " v" + CurrentVersion; }
-        }
+        public string ProductAndVersion => $"{Product} v{CurrentVersion}";
 
         public bool IsUpdateAvailable
         {
@@ -86,7 +79,7 @@ namespace IPFilter.Models
                 if (value.Equals(isUpdateAvailable)) return;
                 isUpdateAvailable = value;
                 OnPropertyChanged();
-                OnPropertyChanged("UpdateAvailableVisibility");
+                OnPropertyChanged(nameof(UpdateAvailableVisibility));
                 UpdateCommand.OnCanExecuteChanged();
             }
         }
@@ -174,7 +167,7 @@ namespace IPFilter.Models
             }
         }
 
-        public DelegateCommand UpdateCommand { get; private set; }
+        public DelegateCommand UpdateCommand { get; }
 
         static T GetAttribute<T>() where T : Attribute
         {
@@ -186,8 +179,7 @@ namespace IPFilter.Models
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
