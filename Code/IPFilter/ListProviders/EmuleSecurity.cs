@@ -26,7 +26,7 @@ namespace IPFilter.ListProviders
         {
             if(string.Equals("Default", mirror.Id, StringComparison.OrdinalIgnoreCase))
             {
-                return "http://upd.emule-security.org/ipfilter.zip";
+                return "https://upd.emule-security.org/ipfilter.zip";
             }
 
             throw new ArgumentOutOfRangeException();
