@@ -1,4 +1,6 @@
-﻿namespace IPFilter
+﻿using System.Net;
+
+namespace IPFilter
 {
     using System;
     using System.Diagnostics;
@@ -6,6 +8,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows;
     using Apps;
     using Models;
     using Services;
@@ -19,6 +22,9 @@
         internal static void Main(string[] args)
         {
             AppDomain.CurrentDomain.AssemblyResolve +=  CurrentDomainOnAssemblyResolve;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             if (args.Length > 0)
             {
@@ -59,6 +65,16 @@
             app.Run(window);
         }
 
+        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            if (Application.Current == null || Application.Current.MainWindow == null) return;
+
+            var ex = args.ExceptionObject as Exception;
+            if (ex == null) return;
+
+            MessageBox.Show(Application.Current.MainWindow, ex.ToString(), "Unhandled Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         static Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
         {
             var resourceName = "IPFilter.Assemblies." + new AssemblyName(args.Name).Name + ".dll";
@@ -67,7 +83,7 @@
             {
                 if (stream == null) return null;
 
-                var assemblyData = new Byte[stream.Length];
+                var assemblyData = new byte[stream.Length];
                 stream.Read(assemblyData, 0, assemblyData.Length);
                 return Assembly.Load(assemblyData);
             }
