@@ -111,3 +111,5 @@ UpgradeLog*.XML
 
 *.DotSettings
 /install
+/.vs
+/.idea
