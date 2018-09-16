@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="IPFilter" Language="1033" Version="2.2.2.0" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf">
-        <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+  <Product Id="*" Name="IPFilter" Language="1033" Version="3.0.0.0" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
 
-        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <!-- Allow upgrades or downgrades -->
+    <InstallExecuteSequence>
+      <RemoveExistingProducts Before="CostInitialize"  />
+    </InstallExecuteSequence>
+    <Upgrade Id="15a0d30b-23cf-400b-ab67-05ca4fc13bdf">
+      <UpgradeVersion Minimum="0.0.0.0" IncludeMinimum="yes" MigrateFeatures="yes" Property="WIX_UPGRADE_DETECTED"/>
+    </Upgrade>
 
-        <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-        <Property Id="ARPNOMODIFY" Value="1"/>
+    <Property Id="ARPNOMODIFY" Value="1"/>
 
-        <Feature Id="ProductFeature" Title="IPFilter" Level="1">
-            <ComponentGroupRef Id="ProductComponents" />
-            <ComponentRef Id="Shortcut" />
-        </Feature>
+    <Feature Id="ProductFeature" Title="IPFilter" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="Shortcut" />
+    </Feature>
 
 
-        <Directory Id="TARGETDIR" Name="SourceDir">
+    <Directory Id="TARGETDIR" Name="SourceDir">
 
-            <Directory Id="LocalAppDataFolder" Name="AppData">
-                <Directory Id="INSTALLFOLDER" Name="IPFilter"/>
-            </Directory>
+      <Directory Id="LocalAppDataFolder" Name="AppData">
+        <Directory Id="INSTALLFOLDER" Name="IPFilter"/>
+      </Directory>
 
-            <Directory Id="ProgramMenuFolder">
-                <Directory Id="ApplicationProgramsFolder" Name="IPFilter"/>
-            </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="IPFilter"/>
+      </Directory>
 
-        </Directory>
+    </Directory>
 
-        <!-- Launch the application after install -->
-        <Property Id="WixShellExecTarget" Value="[#ApplicationExe]" />
-        <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-        <InstallExecuteSequence>
-            <Custom Action="LaunchApplication" After="InstallFinalize">NOT REMOVE~="ALL"</Custom>
-        </InstallExecuteSequence>
+    <!-- Launch the application after install -->
+    <Property Id="WixShellExecTarget" Value="[#ApplicationExe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    <InstallExecuteSequence>
+      <Custom Action="LaunchApplication" After="InstallFinalize">NOT REMOVE~="ALL"</Custom>
+    </InstallExecuteSequence>
 
-        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-            <Component Id="Product" Guid="{B6ED0BDA-B8E1-442C-91A2-AF5B56D3F80A}">
+    <Icon Id="ApplicationIcon.ico" SourceFile="$(var.IPFilter.ProjectDir)App.ico"/>
 
-                <RemoveFolder Id="RemoveDirectoryOnUninstall" On="uninstall"/>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="Product" Guid="{B6ED0BDA-B8E1-442C-91A2-AF5B56D3F80A}">
 
-                <File Id="ApplicationExe" Source="$(var.IPFilter.TargetPath)"/>
+        <RemoveFolder Id="RemoveDirectoryOnUninstall" On="uninstall"/>
 
-                <RegistryKey Root="HKCU" Key="Software\IPFilter">
-                    <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
-                </RegistryKey>
+        <File Id="ApplicationExe" Source="$(var.IPFilter.TargetPath)"/>
 
-            </Component>
-        </ComponentGroup>
+        <RegistryKey Root="HKCU" Key="Software\IPFilter">
+          <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
+        </RegistryKey>
 
-        <DirectoryRef Id="ApplicationProgramsFolder">
-            <Component Id="Shortcut" Guid="{D58B08F5-CAD3-4418-8E0B-BD50E5F0FA29}">
+      </Component>
+    </ComponentGroup>
 
-                <RemoveFolder Id="RemoveShortcutOnUninstall" On="uninstall" />
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="Shortcut" Guid="{D58B08F5-CAD3-4418-8E0B-BD50E5F0FA29}">
 
-                <Shortcut Id="StartMenuShortcut"
-                          Name="IPFilter"
-                          Advertise="no"
-                          Target="[#ApplicationExe]"
+        <RemoveFolder Id="RemoveShortcutOnUninstall" On="uninstall" />
+
+        <Shortcut Id="StartMenuShortcut"
+                  Name="IPFilter"
+                  Advertise="no"
+                  Target="[#ApplicationExe]"
                           />
 
-                <RegistryKey Root="HKCU" Key="Software\IPFilter">
-                    <RegistryValue Name="InstallPath" Value="[INSTALLFOLDER]" Type="string" KeyPath="yes" />
-                </RegistryKey>
+        <RegistryKey Root="HKCU" Key="Software\IPFilter">
+          <RegistryValue Name="InstallPath" Value="[INSTALLFOLDER]" Type="string" KeyPath="yes" />
+        </RegistryKey>
 
-            </Component>
-        </DirectoryRef>
+      </Component>
+    </DirectoryRef>
 
-    </Product>
+  </Product>
 
 </Wix>

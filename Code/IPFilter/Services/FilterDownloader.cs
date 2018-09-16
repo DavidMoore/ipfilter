@@ -29,7 +29,7 @@ namespace IPFilter.Services
         public FilterDownloader(ICacheProvider cache)
         {
             this.cache = cache;
-            Mirrors = new List<IMirrorProvider> { new EmuleSecurity(), new BlocklistMirrorProvider() };
+            Mirrors = new List<IMirrorProvider> { new DefaultList() };
         }
         
         public async Task<FilterDownloadResult> DownloadFilter(Uri uri, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
@@ -42,8 +42,7 @@ namespace IPFilter.Services
                 if (uri == null)
                 {
                     var provider = Mirrors.First();
-                    var mirror = provider.GetMirrors().First();
-                    uri = new Uri(provider.GetUrlForMirror(mirror));
+                    uri = new Uri(provider.GetUrlForMirror());
                 }
 
                 result.Uri = uri.ToString();
@@ -59,22 +58,27 @@ namespace IPFilter.Services
                     {
                         if (cancellationToken.IsCancellationRequested) return null;
 
-                        result.FilterTimestamp = response.Content.Headers.LastModified ?? response.Headers.Date;
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new HttpRequestException( (int)response.StatusCode + ": " + response.ReasonPhrase);
+                        }
+
+                        result.FilterTimestamp = response.Content.Headers.LastModified;
                         result.Etag = response.Headers.ETag;
+                        result.Length = response.Content.Headers.ContentLength;
 
                         Trace.TraceInformation("Online filter's timestamp is " + result.FilterTimestamp);
                         Trace.TraceInformation("ETag: '{0}'", result.Etag);
-
-
+                        
                         // Check if the cached filter is already up to date.
-                        if (cache != null && !Settings.Default.DisableCache)
+                        if (cache != null && !Settings.Default.DisableCache && result.Etag != null && !result.Etag.IsWeak)
                         {
                             var cacheResult = await cache.GetAsync(result);
 
                             if (cacheResult != null && cacheResult.Length > 0)
                             {
                                 Trace.TraceInformation("Found cached ipfilter with timestamp of " + cacheResult.FilterTimestamp);
-                                if (cacheResult.FilterTimestamp >= result.FilterTimestamp)
+                                if (cacheResult.FilterTimestamp >= result.FilterTimestamp && cacheResult.Etag != null && !cacheResult.Etag.IsWeak && cacheResult.Etag.Tag == result.Etag.Tag)
                                 {
                                     Trace.TraceInformation("Using the cached ipfilter as it's the same or newer than the online filter.");
                                     return cacheResult;
@@ -82,7 +86,6 @@ namespace IPFilter.Services
                             }
                         }
                         
-                        result.Length = response.Content.Headers.ContentLength;
 
                         double lengthInMb = !result.Length.HasValue ? -1 : (double) result.Length.Value / 1024 / 1024;
 

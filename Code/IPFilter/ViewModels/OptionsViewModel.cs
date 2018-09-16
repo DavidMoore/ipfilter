@@ -1,3 +1,5 @@
+using System.Configuration;
+
 namespace IPFilter.ViewModels
 {
     using System;
@@ -5,8 +7,6 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using System.Security.Principal;
-    using Microsoft.Win32.TaskScheduler;
     using Properties;
     using Services;
     using UI.Annotations;
@@ -18,11 +18,13 @@ namespace IPFilter.ViewModels
         bool pendingChanges;
         readonly DestinationPathsProvider pathProvider;
         string errorMessage;
+        private string username;
+        bool showNotifications;
+
 
         public OptionsViewModel()
         {
             pathProvider = new DestinationPathsProvider();
-
             LoadSettings();
             
             SaveSettingsCommand = new DelegateCommand(SaveSettings, CanSaveSettings);
@@ -39,6 +41,7 @@ namespace IPFilter.ViewModels
                 IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
                 ScheduleHours = Settings.Default.ScheduleHours;
                 PendingChanges = false;
+                Username = Settings.Default.Username;
             }
             catch (Exception e)
             {
@@ -71,6 +74,17 @@ namespace IPFilter.ViewModels
             {
                 Trace.TraceInformation("Saving settings...");
                 Settings.Default.Save();
+
+                // Ensure the configuration is encrypted
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+                var section = config.GetSection("userSettings/" + typeof(Settings).FullName);
+                if (!section.SectionInformation.IsProtected)
+                {
+                    section.SectionInformation.ProtectSection(nameof(RsaProtectedConfigurationProvider));
+                    section.SectionInformation.ForceSave = true;
+                    config.Save(ConfigurationSaveMode.Full);
+                }
+
                 PendingChanges = false;
                 Trace.TraceInformation("Settings saved successfully.");
             }
@@ -83,50 +97,6 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Updating schedule settings...");
-
-                const string taskPath = "IPFilter";
-
-                // Get the service on the local machine
-                using (var service = new TaskService())
-                {
-                    if (!IsScheduleEnabled)
-                    {
-                        // If we're disabling the scheduling, then delete the task if it exists.
-                        Trace.TraceInformation("Schedule is disabled. Removing any existing scheduled task.");
-                        service.RootFolder.DeleteTask(taskPath, false);
-                        Trace.TraceInformation("Finished updating schedule settings.");
-                        return;
-                    }
-
-                    var identity = WindowsIdentity.GetCurrent();
-
-                    Trace.TraceInformation("Setting up the automatic schedule...");
-                    using (var task = service.NewTask())
-                    {
-                        task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
-
-                        task.Triggers.Clear();
-
-                        // Schedule for midnight, then check every x hours (6 by default).
-                        var trigger = new TimeTrigger(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0));
-                        trigger.Repetition.Interval = TimeSpan.FromHours(ScheduleHours ?? 6);
-                        task.Triggers.Add(trigger);
-
-                        task.Actions.Add(new ExecAction(Process.GetCurrentProcess().MainModule.FileName, "/silent"));
-
-                        task.Settings.RunOnlyIfNetworkAvailable = true;
-                        task.Settings.StartWhenAvailable = true;
-                        task.Settings.WakeToRun = false;
-                        task.Principal.RunLevel = TaskRunLevel.LUA;
-                        task.Principal.Id = identity.Name;
-                        task.Principal.LogonType = TaskLogonType.S4U;
-
-                        //task.Principal.UserId = identity.Name;
-                        service.RootFolder.RegisterTaskDefinition(taskPath, task, TaskCreation.CreateOrUpdate, identity.Name);
-                    }
-
-                    Trace.TraceInformation("Finished scheduling automatic update.");
-                }
             }
             catch (UnauthorizedAccessException)
             {
@@ -147,13 +117,13 @@ namespace IPFilter.ViewModels
 
         public bool PendingChanges
         {
-            get { return pendingChanges; }
+            get => pendingChanges;
             set
             {
                 if (value.Equals(pendingChanges)) return;
                 pendingChanges = value;
-                if( SaveSettingsCommand != null ) SaveSettingsCommand.OnCanExecuteChanged();
-                if (ResetSettingsCommand != null) ResetSettingsCommand.OnCanExecuteChanged();
+                SaveSettingsCommand?.OnCanExecuteChanged();
+                ResetSettingsCommand?.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -162,7 +132,7 @@ namespace IPFilter.ViewModels
 
         public bool IsScheduleEnabled
         {
-            get { return isScheduleEnabled; }
+            get => isScheduleEnabled;
             set
             {
                 if (value.Equals(isScheduleEnabled)) return;
@@ -173,9 +143,22 @@ namespace IPFilter.ViewModels
             }
         }
 
+        public bool ShowNotifications
+        {
+            get => showNotifications;
+            set
+            {
+                if (value == showNotifications) return;
+                showNotifications = value;
+                Settings.Default.ShowNotifications = value;
+                PendingChanges = true;
+                OnPropertyChanged();
+            }
+        }
+
         public int? ScheduleHours
         {
-            get { return scheduleHours; }
+            get => scheduleHours;
             set
             {
                 if (value == scheduleHours) return;
@@ -185,10 +168,10 @@ namespace IPFilter.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        
         public string ErrorMessage
         {
-            get { return errorMessage; }
+            get => errorMessage;
             set
             {
                 if (value == errorMessage) return;
@@ -197,13 +180,25 @@ namespace IPFilter.ViewModels
             }
         }
 
+        public string Username
+        {
+            get => username;
+            set
+            {
+                if (value == username) return;
+                username = value;
+                PendingChanges = true;
+                Settings.Default.Username = value;
+                OnPropertyChanged();
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

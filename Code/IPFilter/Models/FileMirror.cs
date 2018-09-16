@@ -18,6 +18,16 @@ namespace IPFilter.Models
         /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        /// The name of the mirror provider
+        /// </summary>
+        public string Provider { get; set; }
+
+        /// <summary>
+        /// Is the list selected
+        /// </summary>
+        public bool IsSelected { get; set; }
+
         public override string ToString()
         {
             return Name;

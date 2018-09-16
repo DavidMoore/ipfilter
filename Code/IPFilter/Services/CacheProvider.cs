@@ -1,3 +1,6 @@
+using System.Net.Http.Headers;
+using IPFilter.Cli;
+
 namespace IPFilter.Services
 {
     using System;
@@ -13,7 +16,7 @@ namespace IPFilter.Services
 
         static CacheProvider()
         {
-            string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DavidMoore", "IPFilter");
+            string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DavidMoore", "IPFilter");
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -31,14 +34,18 @@ namespace IPFilter.Services
         public async Task<FilterDownloadResult> GetAsync(FilterDownloadResult filter)
         {
             var file = new FileInfo(filterPath);
-
             if (!file.Exists) return null;
 
-            var result = new FilterDownloadResult();
+            // Find the Etag
+            var etagFile = new FileInfo(file.FullName + ".etag");
+            if (!etagFile.Exists) return null;
 
-            result.FilterTimestamp = file.LastWriteTimeUtc;
-
-            result.Stream = new MemoryStream((int) file.Length);
+            var result = new FilterDownloadResult
+            {
+                FilterTimestamp = file.LastWriteTimeUtc,
+                Etag = EntityTagHeaderValue.Parse(File.ReadAllText(etagFile.FullName)),
+                Stream = new MemoryStream((int) file.Length)
+            };
 
             using (var stream = file.OpenRead())
             {
@@ -74,6 +81,8 @@ namespace IPFilter.Services
                 {
                     file.LastWriteTimeUtc = filter.FilterTimestamp.Value.UtcDateTime;
                 }
+
+                File.WriteAllText(file.FullName + ".etag", filter.Etag.ToString());
             }
             catch (Exception ex)
             {

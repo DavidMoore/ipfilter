@@ -1,3 +1,5 @@
+using IPFilter.Properties;
+
 namespace IPFilter.ViewModels
 {
     using System;
@@ -15,18 +17,21 @@ namespace IPFilter.ViewModels
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
+    using System.Windows.Forms;
     using System.Windows.Input;
+    using System.Windows.Interop;
     using System.Windows.Threading;
     using Apps;
     using ListProviders;
-    using Microsoft.ApplicationInsights;
     using Microsoft.Win32;
     using Models;
     using Native;
     using Services;
     using Services.Deployment;
     using UI.Annotations;
-    
+    using Views;
+    using Application = System.Windows.Application;
+
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         IMirrorProvider selectedMirrorProvider;
@@ -41,13 +46,12 @@ namespace IPFilter.ViewModels
         string statusText;
         readonly StringBuilder log = new StringBuilder(500);
         readonly Dispatcher dispatcher;
-        TelemetryClient telemetryClient;
-
+        
         public MainWindowViewModel()
         {
             Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
             Trace.TraceInformation("Initializing...");
-
+            
             dispatcher = Dispatcher.CurrentDispatcher;
 
             StatusText = "Ready";
@@ -56,8 +60,9 @@ namespace IPFilter.ViewModels
             
             Options = new OptionsViewModel();
             Update = new UpdateModel();
-            MirrorProviders = new List<IMirrorProvider> {new EmuleSecurity(), new BlocklistMirrorProvider()};
+            MirrorProviders = MirrorProvidersFactory.Get();
             LaunchHelpCommand = new DelegateCommand(LaunchHelp);
+            ShowOptionsCommand = new DelegateCommand(ShowOptions);
             StartCommand = new DelegateCommand(Start, IsStartEnabled);
             applicationEnumerator = new ApplicationEnumerator();
             downloader = new FilterDownloader();
@@ -65,7 +70,20 @@ namespace IPFilter.ViewModels
             progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
         }
-        
+
+        void ShowOptions(object obj)
+        {
+            var options = new OptionsWindow();
+            options.ShowDialog();
+        }
+
+        void OnNotifyIconClick(object sender, EventArgs e)
+        {
+            Application.Current.MainWindow.Activate();
+            var helper = new WindowInteropHelper(Application.Current.MainWindow);
+            Win32Api.BringToFront(helper.Handle);
+        }
+
         bool IsStartEnabled(object arg)
         {
             return Update == null || !Update.IsUpdating;
@@ -124,11 +142,17 @@ namespace IPFilter.ViewModels
             }
         }
 
-        async Task StartAsync()
+        internal async Task StartAsync()
         {
             try
             {
-                var uri = SelectedMirrorProvider.GetUrlForMirror(SelectedFileMirror);
+                if (SelectedMirrorProvider == null)
+                {
+                    progress.Report(new ProgressModel(UpdateState.Cancelled, "Please select a filter source",0));
+                    return;
+                }
+
+                var uri = SelectedMirrorProvider.GetUrlForMirror();
 
                 using (var filter = await downloader.DownloadFilter(new Uri(uri), cancellationToken.Token, progress))
                 {
@@ -159,11 +183,13 @@ namespace IPFilter.ViewModels
                         var message = $"Done. List timestamp: {filter.FilterTimestamp.Value.ToLocalTime()}";
                         Trace.TraceInformation(message);
                         progress.Report(new ProgressModel(UpdateState.Done, message, 100));
+                        this.ShowNotification("Updated IP Filter", message, ToolTipIcon.Info);
                     }
                     else
                     {
                         Trace.TraceInformation("Done.");
                         progress.Report(new ProgressModel(UpdateState.Done, "Done", 100));
+                        this.ShowNotification("Updated IP Filter", "Finished updating IP Filter", ToolTipIcon.Info);
                     }
                 }
             }
@@ -182,6 +208,7 @@ namespace IPFilter.ViewModels
         public UpdateModel Update { get; set; }
 
         public IList<IMirrorProvider> MirrorProviders { get; set; }
+
         public OptionsViewModel Options { get; private set; }
         public IEnumerable<ApplicationDetectionResult> Providers { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -239,33 +266,10 @@ namespace IPFilter.ViewModels
                 if (Equals(value, selectedMirrorProvider)) return;
                 selectedMirrorProvider = value;
                 OnPropertyChanged();
-                OnPropertyChanged("Mirrors");
                 OnPropertyChanged("SelectedFileMirror");
             }
         }
-
-        public IEnumerable<FileMirror> Mirrors
-        {
-            get
-            {
-                var mirrors = SelectedMirrorProvider == null ? Enumerable.Empty<FileMirror>() : SelectedMirrorProvider.GetMirrors();
-                var fileMirrors = mirrors as IList<FileMirror> ?? mirrors.ToList();
-                SelectedFileMirror = fileMirrors.FirstOrDefault();
-                return fileMirrors;
-            }
-        }
-
-        public FileMirror SelectedFileMirror
-        {
-            get { return selectedFileMirror; }
-            set
-            {
-                if (Equals(value, selectedFileMirror)) return;
-                selectedFileMirror = value;
-                OnPropertyChanged();
-            }
-        }
-
+        
         public ICommand LaunchHelpCommand { get; private set; }
 
         public UpdateState State
@@ -288,24 +292,13 @@ namespace IPFilter.ViewModels
         }
 
         public bool ProgressIsIndeterminate { get; set; }
-        
+
+        public Action<string, string, ToolTipIcon> ShowNotification { get; set; }
+
+        public ICommand ShowOptionsCommand { get; private set; }
+
         public async Task Initialize()
         {
-            try
-            {
-                telemetryClient = new TelemetryClient();
-                telemetryClient.InstrumentationKey = "23694f6c-53c2-42e2-9427-b7e02cda9c6f";
-                telemetryClient.Context.Component.Version = Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion;
-                telemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
-                telemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
-                telemetryClient.TrackPageView("Home");
-                telemetryClient.Flush();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Couldn't initialize telemetry: " + ex);
-            }
-            
             // Check for updates
             await CheckForUpdates();
             
@@ -323,9 +316,17 @@ namespace IPFilter.ViewModels
             {
                 Trace.TraceInformation("Found app {0} version {1} at {2}", result.Description, result.Version, result.InstallLocation);
             }
-
         }
-        
+
+        async Task ScheduledUpdate()
+        {
+            while (true)
+            {
+                await Task.Delay(TimeSpan.FromMinutes(1));
+                await StartAsync();
+            }
+        }
+
         async Task CheckForUpdates()
         {
             try
@@ -345,7 +346,6 @@ namespace IPFilter.ViewModels
                 catch (Exception ex)
                 {
                     Trace.TraceError("Failed to remove old ClickOnce app: " + ex);
-                    telemetryClient?.TrackException(ex);
                 }
 
                 Trace.TraceInformation("Checking for software updates...");
@@ -354,6 +354,7 @@ namespace IPFilter.ViewModels
                 var updater = new Updater();
 
                 var result = await updater.CheckForUpdateAsync();
+                if (result == null) return;
 
                 var currentVersion = new Version(Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion);
 
@@ -499,14 +500,11 @@ namespace IPFilter.ViewModels
                 {
                     Trace.TraceError("Exception when shutting down app for update: " + ex);
                     Update.ErrorMessage = "Couldn't shutdown the app to apply update.";
-                    telemetryClient?.TrackException(ex);
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("Application update check failed: " + ex);
-                telemetryClient?.TrackException(ex);
-                telemetryClient?.Flush();
             }
             finally
             {
@@ -518,52 +516,12 @@ namespace IPFilter.ViewModels
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void Shutdown()
         {
-            telemetryClient?.Flush();
+            
         }
-    }
-
-    class Updater
-    {
-
-        public async Task<UpdateInfo> CheckForUpdateAsync()
-        {
-            const string baseUri = "https://davidmoore.github.io/ipfilter/install/";
-
-            using (var client = new HttpClient())
-            {
-                using (var content = await client.GetAsync(baseUri + "install.json"))
-                {
-                    try
-                    {
-                        content.EnsureSuccessStatusCode();
-
-                        var result = await content.Content.ReadAsAsync<UpdateInfo>();
-
-                        result.Uri = baseUri + result.Uri;
-
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw;
-                    }
-
-                }
-            }
-        }
-
-    }
-
-    public class UpdateInfo
-    {
-        public string Version { get; set; }
-
-        public string Uri { get; set; }
     }
 }

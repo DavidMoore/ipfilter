@@ -22,6 +22,8 @@ namespace IPFilter
     {
         static readonly Assembly assembly = typeof (EntryPoint).Assembly;
 
+        internal static readonly Version Version = new Version(Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion);
+
         [STAThread]
         internal static void Main(string[] args)
         {

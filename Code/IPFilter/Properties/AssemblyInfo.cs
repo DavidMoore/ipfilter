@@ -9,17 +9,17 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("IPFilter Updater")]
 [assembly: AssemblyProduct("IPFilter Updater")]
 
-[assembly: AssemblyCopyright("Copyright © David Moore 2016")]
+[assembly: AssemblyCopyright("Copyright © David Moore 2018")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("David Moore")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersion("2.2.2.0")]
-[assembly: AssemblyFileVersion("2.2.2.0")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyInformationalVersion("3.0.0.0")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
+[assembly: AssemblyVersion("3.0.0.0")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]

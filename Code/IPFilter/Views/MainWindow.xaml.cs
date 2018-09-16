@@ -50,7 +50,7 @@
                     notifyIcon.Icon = new System.Drawing.Icon(iconStream);
                 }
             }
-            notifyIcon.Visible = true;
+            notifyIcon.Visible = false;
             notifyIcon.MouseClick += OnNotifyIconClick;
             notifyIcon.Text = ViewModel.Update.ProductAndVersion;
 
@@ -77,7 +77,7 @@
         {
             if (WindowState == WindowState.Minimized)
             {
-                Hide();
+                //Hide();
             }
 
             base.OnStateChanged(e);
@@ -85,6 +85,7 @@
 
         void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
+            return;
             cancelEventArgs.Cancel = true;
             WindowState = WindowState.Minimized;
         }

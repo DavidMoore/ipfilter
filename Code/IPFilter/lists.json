@@ -1,0 +1,97 @@
+﻿{
+    "lists": [
+        {
+            "id": "{6320B609-41FF-4B99-BF50-8F77C26EBF44",
+            "name": "I-Blocklist",
+            "description": "I-Blocklist is a service dedicated to the distribution of Internet Protocol address lists.",
+            "uri": "https://www.iblocklist.com",
+            "baseUri": "http://list.iblocklist.com/?fileformat=dat&archiveformat=gz&list={0}",
+            "lists": [
+                {
+                    "id": "ydxerpxkpcfqjaybcssw",
+                    "name": "General - Bluetack/level1",
+                    "description": ""
+                },
+                {
+                    "id": "cwworuawihqvocglcoss",
+                    "name": "General - Bluetack/badpeers",
+                    "description": ""
+                },
+                {
+                    "id": "usrcshglbiilevmyfhse",
+                    "name": "General - Bluetack/hijacked",
+                    "description": ""
+                },
+                {
+                    "id": "xpbqleszmajjesnzddhv",
+                    "name": "General - Bluetack/dshield",
+                    "description": ""
+                },
+                {
+                    "id": "dufcxgnbjsdwmwctgfuj",
+                    "name": "General - Pedophiles",
+                    "description": ""
+                },
+                {
+                    "id": "ynkdjqsjyfmilsgbogqf",
+                    "name": "General - abuse/ZeuS",
+                    "description": ""
+                },
+                {
+                    "id": "czvaehmjpsnwwttrdoyl",
+                    "name": "General - CruzIT/cruzit web attacks",
+                    "description": ""
+                },
+                {
+                    "id": "dhuwlruzmglnfaneeizx",
+                    "name": "Other - dchubad/faker",
+                    "description": ""
+                },
+                {
+                    "id": "qpuabqfzsykfvglktzkh",
+                    "name": "Other - dchubad/hacker",
+                    "description": ""
+                },
+                {
+                    "id": "zchgtvitlwnwcjfuxovf",
+                    "name": "Other - dchubad/pedophiles",
+                    "description": ""
+                },
+                {
+                    "id": "falwwczjguruglzisxdr",
+                    "name": "Other - dchubad/spammer",
+                    "description": ""
+                },
+                {
+                    "id": "zfucwtjkfwkalytktyiw",
+                    "name": "Other - peerblock/rapidshare",
+                    "description": ""
+                },
+                {
+                    "id": "tbnuqfclfkemqivekikv",
+                    "name": "Other - tbg/hijacked",
+                    "description": ""
+                },
+                {
+                    "id": "ijfqtofzixtwayqovmxn",
+                    "name": "Other - tbg/primary-threats",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "id": "1CC6EFA1-5B90-4D3D-8284-0AF7FE118410",
+            "name": "CHEF-KOCH's NSA Blocklist'",
+            "description": "[D]esigned to stop known NSA / GCHQ / C.I.A. or F.B.I. servers from being connecting to you without permission",
+            "uri": "https://github.com/CHEF-KOCH/NSABlocklist",
+            "lists": [
+                {
+                    "id": "6B46518F-136C-49C9-B02A-A5E503207002",
+                    "name": "NSA Blocklist",
+                    "description": "",
+                    "uri": "https://github.com/CHEF-KOCH/NSABlocklist/raw/master/test/ip-filter/ipfilter.dat"
+                }
+            ]
+        }
+    ]
+}
