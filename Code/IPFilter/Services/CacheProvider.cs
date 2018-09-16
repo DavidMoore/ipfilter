@@ -16,7 +16,7 @@ namespace IPFilter.Services
 
         static CacheProvider()
         {
-            string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DavidMoore", "IPFilter");
+            string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IPFilter");
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
