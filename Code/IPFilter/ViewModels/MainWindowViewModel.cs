@@ -355,10 +355,12 @@ namespace IPFilter.ViewModels
 
                 var result = await updater.CheckForUpdateAsync();
                 if (result == null) return;
+                
+                // The ProductVersion contains the informational, semantic version e.g. "3.0.0-beta"
+                var versionInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+                var currentVersion = new SemanticVersion(versionInfo.ProductVersion);
 
-                var currentVersion = new Version(Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion);
-
-                var latestVersion = new Version(result.Version);
+                var latestVersion = new SemanticVersion(result.Version);
                 
                 Update.IsUpdateAvailable = latestVersion > currentVersion;
 

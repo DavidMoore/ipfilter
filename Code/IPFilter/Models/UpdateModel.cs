@@ -1,3 +1,5 @@
+using IPFilter.Services.Deployment;
+
 namespace IPFilter.Models
 {
     using System;
@@ -13,11 +15,11 @@ namespace IPFilter.Models
     public class UpdateModel : INotifyPropertyChanged
     {
         string product;
-        Version currentVersion;
+        SemanticVersion currentVersion;
         bool isUpdateAvailable;
-        Version availableVersion;
+        SemanticVersion availableVersion;
         bool isUpdateRequired;
-        Version minimumRequiredVersion;
+        SemanticVersion minimumRequiredVersion;
         long updateSizeBytes;
         int downloadPercentage;
         string errorMessage;
@@ -25,13 +27,13 @@ namespace IPFilter.Models
         
         public UpdateModel()
         {
-            CurrentVersion = new Version(GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+            CurrentVersion = new SemanticVersion(GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
             Product = GetAttribute<AssemblyProductAttribute>().Product;
             UpdateCommand = new DelegateCommand(DoUpdate, CanDoUpdate);
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
-                CurrentVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
+                CurrentVersion = new SemanticVersion(ApplicationDeployment.CurrentDeployment.CurrentVersion);
             }
         }
 
@@ -57,7 +59,7 @@ namespace IPFilter.Models
             }
         }
 
-        public Version CurrentVersion
+        public SemanticVersion CurrentVersion
         {
             get { return currentVersion; }
             set
@@ -84,7 +86,7 @@ namespace IPFilter.Models
             }
         }
 
-        public Version AvailableVersion
+        public SemanticVersion AvailableVersion
         {
             get { return availableVersion; }
             set
@@ -107,7 +109,7 @@ namespace IPFilter.Models
             }
         }
 
-        public Version MinimumRequiredVersion
+        public SemanticVersion MinimumRequiredVersion
         {
             get { return minimumRequiredVersion; }
             set
