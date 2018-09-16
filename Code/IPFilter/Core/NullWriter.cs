@@ -11,8 +11,18 @@ namespace IPFilter.Core
             return empty;
         }
 
+        public void Flush()
+        {
+            
+        }
+
         public void Dispose()
         {
+        }
+
+        Task IFilterWriter.Flush()
+        {
+            return empty;
         }
     }
 }

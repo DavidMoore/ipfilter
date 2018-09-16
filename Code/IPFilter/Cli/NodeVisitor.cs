@@ -21,15 +21,6 @@ namespace IPFilter.Cli
             return node.Accept(this);
         }
 
-//        public async Task Visit(UriNode node)
-//        {
-//            await node.Accept(this);
-//        }
-//
-//        public Task Visit(FileNode node)
-//        {
-//            throw new NotImplementedException();
-//        }
         public void Dispose()
         {
             Context?.Dispose();

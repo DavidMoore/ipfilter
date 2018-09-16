@@ -27,10 +27,10 @@ namespace IPFilter.Cli
                     if (trimmed.Length > 0)
                     {
                         // If we find any binary characters, skip this entire file.
-                        foreach (var character in trimmed)
-                        {
-                            if (char.IsControl(character)) return;
-                        }
+//                        foreach (var character in trimmed)
+//                        {
+//                            if (char.IsControl(character)) return;
+//                        }
 
                         await visitor.Context.Filter.WriteLineAsync(line);
                     }

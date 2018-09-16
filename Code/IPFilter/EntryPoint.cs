@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using IPFilter.Cli;
+using IPFilter.Core;
 
 namespace IPFilter
 {
@@ -16,7 +20,7 @@ namespace IPFilter
 
     static class EntryPoint
     {
-        static Assembly assembly = typeof (EntryPoint).Assembly;
+        static readonly Assembly assembly = typeof (EntryPoint).Assembly;
 
         [STAThread]
         internal static void Main(string[] args)
@@ -123,6 +127,48 @@ namespace IPFilter
             }
 
             Trace.TraceInformation("Done.");
+        }
+
+        static async Task CurateList(string[] args)
+        {
+            var options = Options.Parse(args);
+
+            var context = new FilterContext();
+
+            // Configure outputs
+            if (options.Outputs.Count > 0)
+            {
+                context.Filter = new TextFilterWriter(options.Outputs.First());
+            }
+            else
+            {
+                // Output to the current directory by default
+                context.Filter = new TextFilterWriter( Path.GetFullPath(@".\ipfilter.dat"));
+            }
+            
+            // Resolve the input URIs to nodes to visit
+            var nodes = new List<UriNode>();
+
+            foreach (var input in options.Inputs)
+            {
+                var uri = context.UriResolver.Resolve(input);
+                if (uri == null) continue;
+                nodes.Add(new UriNode(uri));
+            }
+
+            using (INodeVisitor visitor = new NodeVisitor(context))
+            {
+                Console.WriteLine("Acquiring list(s)...");
+                foreach (var node in nodes)
+                {
+                    await visitor.Visit(node);
+                }
+
+                Console.WriteLine("Flushing...");
+                await visitor.Context.Filter.Flush();
+
+                Console.WriteLine("Written.");
+            }
         }
     }
 }
