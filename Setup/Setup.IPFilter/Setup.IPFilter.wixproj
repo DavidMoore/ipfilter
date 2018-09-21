@@ -44,12 +44,10 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
-  <!--
-	To modify your build process, add your task inside one of the targets below and uncomment it.
-	Other similar extension points exist, see Wix.targets.
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="AfterBuild">
-	</Target>
-	-->
+  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <SignToolArgs>sign /sha1 8d72fc3e61f4653dfd192baea0708186f05b163b /fd sha256 /tr http://timestamp.digicert.com /td sha256</SignToolArgs>
+    </PropertyGroup>
+    <Exec Command="&quot;$(ProgramFiles)\Windows Kits\10\bin\x86\SignTool.exe&quot; $(SignToolArgs) $(TargetPath)" />
+  </Target>
 </Project>
