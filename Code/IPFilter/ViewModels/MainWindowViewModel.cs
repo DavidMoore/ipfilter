@@ -70,7 +70,7 @@ namespace IPFilter.ViewModels
             progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
         }
-
+        
         void ShowOptions(object obj)
         {
             var options = new OptionsWindow();
@@ -296,7 +296,7 @@ namespace IPFilter.ViewModels
         public Action<string, string, ToolTipIcon> ShowNotification { get; set; }
 
         public ICommand ShowOptionsCommand { get; private set; }
-
+        
         public async Task Initialize()
         {
             // Check for updates

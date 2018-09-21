@@ -1,4 +1,6 @@
-﻿namespace IPFilter.Views
+﻿using System.Diagnostics;
+
+namespace IPFilter.Views
 {
     using System;
     using System.ComponentModel;
@@ -112,8 +114,14 @@
 
         void LaunchHelp(object sender, RequestNavigateEventArgs e)
         {
-            ViewModel.LaunchHelpCommand.Execute(e.Uri);
             e.Handled = true;
+            ViewModel.LaunchHelpCommand.Execute(e.Uri);
+        }
+
+        void Options(object sender, RequestNavigateEventArgs e)
+        {
+            e.Handled = true;
+            ViewModel.ShowOptionsCommand.Execute(e.Uri);
         }
     }
 }

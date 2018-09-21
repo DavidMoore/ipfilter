@@ -1,13 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Cache;
 using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
 
 namespace IPFilter.Services
@@ -72,6 +66,8 @@ namespace IPFilter.Services
         public string tag_name { get; set; }
 
         public ICollection<GitHubAsset> assets { get;set; }
+
+        public bool prerelease { get; set; }
     }
 
     class GitHubAsset
