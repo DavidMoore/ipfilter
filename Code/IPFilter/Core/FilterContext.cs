@@ -12,7 +12,7 @@ namespace IPFilter.Core
             FileSystem = new FileSystem();
         }
 
-        public CancellationToken CancellationToken { get; set; }
+        public virtual CancellationToken CancellationToken { get; set; }
 
         //public IProgress<ProgressModel> Progress { get; set; }
 

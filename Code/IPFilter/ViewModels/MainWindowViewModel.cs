@@ -1,3 +1,4 @@
+using IPFilter.Formats;
 using IPFilter.Properties;
 
 namespace IPFilter.ViewModels
@@ -36,7 +37,7 @@ namespace IPFilter.ViewModels
     {
         IMirrorProvider selectedMirrorProvider;
         UpdateState state;
-        readonly IProgress<ProgressModel> progress;
+        IProgress<ProgressModel> progress;
         readonly ApplicationEnumerator applicationEnumerator;
         CancellationTokenSource cancellationToken;
         List<ApplicationDetectionResult> apps;
@@ -67,7 +68,6 @@ namespace IPFilter.ViewModels
             applicationEnumerator = new ApplicationEnumerator();
             downloader = new FilterDownloader();
             
-            progress = new Progress<ProgressModel>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
         }
         
@@ -132,7 +132,7 @@ namespace IPFilter.ViewModels
                 case UpdateState.Cancelled:
                     cancellationToken.Dispose();
                     cancellationToken = new CancellationTokenSource();
-                    Task.Factory.StartNew(StartAsync, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+                    Task.Factory.StartNew(StartAsync, cancellationToken.Token);//, TaskCreationOptions.None);//, TaskScheduler.FromCurrentSynchronizationContext());
                     break;
                     
                 case UpdateState.Downloading:
@@ -171,6 +171,21 @@ namespace IPFilter.ViewModels
                     }
                     else
                     {
+                        filter.Stream.Seek(0, SeekOrigin.Begin);
+                        using (var reader = new StreamReader(filter.Stream, Encoding.Default, false, 65535, true))
+                        {
+                            var line = await reader.ReadLineAsync();
+                            
+                            while (line != null)
+                            {
+                                var entry = DatParser.ParseEntry(line);
+                                if( entry != null) filter.Entries.Add(entry);
+                                var percent = (int)Math.Floor( (double)filter.Stream.Position / filter.Stream.Length * 100);
+                                if( percent > ProgressValue) progress.Report(new ProgressModel(UpdateState.Decompressing, "Parsed " + filter.Entries.Count + " entries",  percent));
+                                line = await reader.ReadLineAsync();
+                            }
+                        }
+
                         foreach (var application in apps)
                         {
                             Trace.TraceInformation("Updating app {0} {1}", application.Description, application.Version);
@@ -266,7 +281,6 @@ namespace IPFilter.ViewModels
                 if (Equals(value, selectedMirrorProvider)) return;
                 selectedMirrorProvider = value;
                 OnPropertyChanged();
-                OnPropertyChanged("SelectedFileMirror");
             }
         }
         
@@ -299,6 +313,8 @@ namespace IPFilter.ViewModels
         
         public async Task Initialize()
         {
+            progress = new Progress<ProgressModel>(ProgressHandler);
+
             // Check for updates
             await CheckForUpdates();
             

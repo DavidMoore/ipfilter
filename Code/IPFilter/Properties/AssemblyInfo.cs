@@ -4,6 +4,7 @@ using System.Windows;
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("IPFilter Updater")]
 [assembly: AssemblyDescription("IPFilter Updater")]
@@ -23,3 +24,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("3.0.0.0")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
+[assembly: InternalsVisibleTo("IPFilter.Tests")]

@@ -4,7 +4,7 @@ using IPFilter.Core;
 
 namespace IPFilter.Cli
 {
-    interface INodeVisitor : IDisposable
+    public interface INodeVisitor : IDisposable
     {
         FilterContext Context { get; }
 

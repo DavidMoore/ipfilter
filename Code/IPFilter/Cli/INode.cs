@@ -2,7 +2,7 @@
 
 namespace IPFilter.Cli
 {
-    interface INode
+    public interface INode
     {
         Task Accept(INodeVisitor visitor);
     }

@@ -101,6 +101,9 @@ namespace IPFilter.Services
 
                             result.CompressionFormat = DetectCompressionFormat(buffer, response.Content.Headers.ContentType);
 
+                            // We only want to report the percentage when it increments by at least 1
+                            var currentPercentage = -1;
+
                             while (bytesRead != 0)
                             {
                                 await result.Stream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
@@ -110,10 +113,13 @@ namespace IPFilter.Services
                                 {
                                     double downloadedMegs = bytesDownloaded / 1024 / 1024;
                                     var percent = (int)Math.Floor((bytesDownloaded / result.Length.Value) * 100);
-                                    
-                                    var status = string.Format(CultureInfo.CurrentUICulture, "Downloaded {0:F2} MB of {1:F2} MB", downloadedMegs, lengthInMb);
+                                    if (percent > currentPercentage)
+                                    {
+                                        var status = string.Format(CultureInfo.CurrentUICulture, "Downloaded {0:F2} MB of {1:F2} MB", downloadedMegs, lengthInMb);
+                                       progress.Report(new ProgressModel(UpdateState.Downloading, status, percent));
+                                    }
 
-                                    progress.Report(new ProgressModel(UpdateState.Downloading, status, percent));
+                                    currentPercentage = percent;
                                 }
 
                                 if (cancellationToken.IsCancellationRequested) return null;

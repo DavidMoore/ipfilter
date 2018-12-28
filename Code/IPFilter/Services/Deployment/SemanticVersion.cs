@@ -14,38 +14,25 @@ namespace IPFilter.Services.Deployment
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
         private const RegexOptions _flags = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
-        private static readonly Regex _semanticVersionRegex = new Regex(@"^(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$", _flags);
-        private static readonly Regex _strictSemanticVersionRegex = new Regex(@"^(?<Version>\d+(\.\d+){2})(?<Release>-[a-z][0-9a-z-]*)?$", _flags);
-        private readonly string _originalString;
-        private string _normalizedVersionString;
+        private static readonly Regex semanticVersionRegex = new Regex(@"^(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$", _flags);
+        private static readonly Regex strictSemanticVersionRegex = new Regex(@"^(?<Version>\d+(\.\d+){2})(?<Release>-[a-z][0-9a-z-]*)?$", _flags);
+        private readonly string originalString;
+        private string normalizedVersionString;
 
-        public SemanticVersion(string version)
-            : this(Parse(version))
+        public SemanticVersion(string version) : this(Parse(version))
         {
             // The constructor normalizes the version string so that it we do not need to normalize it every time we need to operate on it. 
             // The original string represents the original form in which the version is represented to be used when printing.
-            _originalString = version;
+            originalString = version;
         }
 
-        public SemanticVersion(int major, int minor, int build, int revision)
-            : this(new Version(major, minor, build, revision))
-        {
-        }
+        public SemanticVersion(int major, int minor, int build, int revision) : this(new Version(major, minor, build, revision)) {}
 
-        public SemanticVersion(int major, int minor, int build, string specialVersion)
-            : this(new Version(major, minor, build), specialVersion)
-        {
-        }
+        public SemanticVersion(int major, int minor, int build, string specialVersion) : this(new Version(major, minor, build), specialVersion) {}
 
-        public SemanticVersion(Version version)
-            : this(version, String.Empty)
-        {
-        }
+        public SemanticVersion(Version version) : this(version, string.Empty) {}
 
-        public SemanticVersion(Version version, string specialVersion)
-            : this(version, specialVersion, null)
-        {
-        }
+        public SemanticVersion(Version version, string specialVersion) : this(version, specialVersion, null) {}
 
         private SemanticVersion(Version version, string specialVersion, string originalString)
         {
@@ -54,13 +41,13 @@ namespace IPFilter.Services.Deployment
                 throw new ArgumentNullException("version");
             }
             Version = NormalizeVersionValue(version);
-            SpecialVersion = specialVersion ?? String.Empty;
-            _originalString = String.IsNullOrEmpty(originalString) ? version.ToString() + (!String.IsNullOrEmpty(specialVersion) ? '-' + specialVersion : null) : originalString;
+            SpecialVersion = specialVersion ?? string.Empty;
+            this.originalString = string.IsNullOrEmpty(originalString) ? version + (!string.IsNullOrEmpty(specialVersion) ? '-' + specialVersion : null) : originalString;
         }
 
         internal SemanticVersion(SemanticVersion semVer)
         {
-            _originalString = semVer.ToString();
+            originalString = semVer.ToString();
             Version = semVer.Version;
             SpecialVersion = semVer.SpecialVersion;
         }
@@ -85,45 +72,38 @@ namespace IPFilter.Services.Deployment
 
         public string[] GetOriginalVersionComponents()
         {
-            if (!String.IsNullOrEmpty(_originalString))
+            if (!string.IsNullOrEmpty(originalString))
             {
                 string original;
 
                 // search the start of the SpecialVersion part, if any
-                int dashIndex = _originalString.IndexOf('-');
+                int dashIndex = originalString.IndexOf('-');
                 if (dashIndex != -1)
                 {
                     // remove the SpecialVersion part
-                    original = _originalString.Substring(0, dashIndex);
+                    original = originalString.Substring(0, dashIndex);
                 }
                 else
                 {
-                    original = _originalString;
+                    original = originalString;
                 }
 
                 return SplitAndPadVersionString(original);
             }
-            else
-            {
-                return SplitAndPadVersionString(Version.ToString());
-            }
+
+            return SplitAndPadVersionString(Version.ToString());
         }
 
         private static string[] SplitAndPadVersionString(string version)
         {
             string[] a = version.Split('.');
-            if (a.Length == 4)
-            {
-                return a;
-            }
-            else
-            {
-                // if 'a' has less than 4 elements, we pad the '0' at the end 
-                // to make it 4.
-                var b = new string[4] { "0", "0", "0", "0" };
-                Array.Copy(a, 0, b, 0, a.Length);
-                return b;
-            }
+            if (a.Length == 4) return a;
+
+            // if 'a' has less than 4 elements, we pad the '0' at the end 
+            // to make it 4.
+            var b = new [] { "0", "0", "0", "0" };
+            Array.Copy(a, 0, b, 0, a.Length);
+            return b;
         }
 
         /// <summary>
@@ -131,15 +111,14 @@ namespace IPFilter.Services.Deployment
         /// </summary>
         public static SemanticVersion Parse(string version)
         {
-            if (String.IsNullOrEmpty(version))
+            if (string.IsNullOrEmpty(version))
             {
                 throw new ArgumentException($"{nameof(version)} cannot be null or an empty string", nameof(version));
             }
 
-            SemanticVersion semVer;
-            if (!TryParse(version, out semVer))
+            if (!TryParse(version, out var semVer))
             {
-                throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, "'{0}' is not a valid version string.", version), "version");
+                throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, "'{0}' is not a valid version string.", version), nameof(version));
             }
             return semVer;
         }
@@ -149,7 +128,7 @@ namespace IPFilter.Services.Deployment
         /// </summary>
         public static bool TryParse(string version, out SemanticVersion value)
         {
-            return TryParseInternal(version, _semanticVersionRegex, out value);
+            return TryParseInternal(version, semanticVersionRegex, out value);
         }
 
         /// <summary>
@@ -157,20 +136,19 @@ namespace IPFilter.Services.Deployment
         /// </summary>
         public static bool TryParseStrict(string version, out SemanticVersion value)
         {
-            return TryParseInternal(version, _strictSemanticVersionRegex, out value);
+            return TryParseInternal(version, strictSemanticVersionRegex, out value);
         }
 
         private static bool TryParseInternal(string version, Regex regex, out SemanticVersion semVer)
         {
             semVer = null;
-            if (String.IsNullOrEmpty(version))
+            if (string.IsNullOrEmpty(version))
             {
                 return false;
             }
 
             var match = regex.Match(version.Trim());
-            Version versionValue;
-            if (!match.Success || !Version.TryParse(match.Groups["Version"].Value, out versionValue))
+            if (!match.Success || !Version.TryParse(match.Groups["Version"].Value, out var versionValue))
             {
                 return false;
             }
@@ -185,26 +163,19 @@ namespace IPFilter.Services.Deployment
         /// <returns>An instance of SemanticVersion if it parses correctly, null otherwise.</returns>
         public static SemanticVersion ParseOptionalVersion(string version)
         {
-            SemanticVersion semVer;
-            TryParse(version, out semVer);
+            TryParse(version, out var semVer);
             return semVer;
         }
 
         private static Version NormalizeVersionValue(Version version)
         {
-            return new Version(version.Major,
-                               version.Minor,
-                               Math.Max(version.Build, 0),
-                               Math.Max(version.Revision, 0));
+            return new Version(version.Major, version.Minor, Math.Max(version.Build, 0), Math.Max(version.Revision, 0));
         }
 
         public int CompareTo(object obj)
         {
-            if (Object.ReferenceEquals(obj, null))
-            {
-                return 1;
-            }
-            SemanticVersion other = obj as SemanticVersion;
+            if (ReferenceEquals(obj, null)) return 1;
+            var other = obj as SemanticVersion;
             if (other == null)
             {
                 throw new ArgumentException("Type to compare must be an instance of SemanticVersion.", "obj");
@@ -214,32 +185,17 @@ namespace IPFilter.Services.Deployment
 
         public int CompareTo(SemanticVersion other)
         {
-            if (Object.ReferenceEquals(other, null))
-            {
-                return 1;
-            }
+            if (ReferenceEquals(other, null)) return 1;
 
             int result = Version.CompareTo(other.Version);
 
-            if (result != 0)
-            {
-                return result;
-            }
+            if (result != 0) return result;
 
-            bool empty = String.IsNullOrEmpty(SpecialVersion);
-            bool otherEmpty = String.IsNullOrEmpty(other.SpecialVersion);
-            if (empty && otherEmpty)
-            {
-                return 0;
-            }
-            else if (empty)
-            {
-                return 1;
-            }
-            else if (otherEmpty)
-            {
-                return -1;
-            }
+            var empty = string.IsNullOrEmpty(SpecialVersion);
+            var otherEmpty = string.IsNullOrEmpty(other.SpecialVersion);
+            if (empty && otherEmpty) return 0;
+            if (empty) return 1;
+            if (otherEmpty) return -1;
             return StringComparer.OrdinalIgnoreCase.Compare(SpecialVersion, other.SpecialVersion);
         }
 
@@ -287,7 +243,7 @@ namespace IPFilter.Services.Deployment
 
         public override string ToString()
         {
-            return _originalString;
+            return originalString;
         }
 
         /// <summary>
@@ -299,7 +255,7 @@ namespace IPFilter.Services.Deployment
         /// <returns>The normalized string representation.</returns>
         public string ToNormalizedString()
         {
-            if (_normalizedVersionString == null)
+            if (normalizedVersionString == null)
             {
                 var builder = new StringBuilder();
                 builder
@@ -321,10 +277,10 @@ namespace IPFilter.Services.Deployment
                            .Append(SpecialVersion);
                 }
 
-                _normalizedVersionString = builder.ToString();
+                normalizedVersionString = builder.ToString();
             }
 
-            return _normalizedVersionString;
+            return normalizedVersionString;
         }
 
         public bool Equals(SemanticVersion other)

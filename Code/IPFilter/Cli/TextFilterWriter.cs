@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using IPFilter.Core;
+using IPFilter.Formats;
+using IPFilter.Models;
 
 namespace IPFilter.Cli
 {
@@ -29,7 +30,14 @@ namespace IPFilter.Cli
 
         public async Task WriteLineAsync(string line)
         {
-            await writer.WriteLineAsync(line);
+            var parsed = DatParser.ParseLine(line);
+            if (parsed == null)
+            {
+                Trace.TraceWarning("Invalid line: " + line);
+                return;
+            }
+
+            await writer.WriteLineAsync(parsed);
         }
 
         public async Task Flush()
@@ -37,23 +45,26 @@ namespace IPFilter.Cli
             await writer.FlushAsync();
             writer.Dispose();
 
-            var lines = new List<string>();
-
+            var filters = new List<FilterEntry>();
+            
             using(var input = new StreamReader(temp.OpenShareableRead()))
             {
                 string line;
                 while ((line = await input.ReadLineAsync()) != null)
                 {
-                    lines.Add(line);
+                    var filter = DatParser.ParseEntry(line);
+                    if( filter != null) filters.Add(filter);
                 }
             }
 
-            using (var finalWriter = new StreamWriter(file.Open(FileMode.Create, FileAccess.Write, FileShare.Read)))
+            // Sort and merge the list
+            var list = FilterCollection.Merge(filters);
+
+            // Flush the list out
+            using (var stream = file.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var listWriter = new EmuleWriter(stream))
             {
-                foreach (var line in lines.OrderBy(x => x).Distinct())
-                {
-                    await finalWriter.WriteLineAsync(line);
-                }
+                await listWriter.Write(list, null);
             }
         }
     }

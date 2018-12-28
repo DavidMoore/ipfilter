@@ -1,3 +1,5 @@
+using IPFilter.Formats;
+
 namespace IPFilter.Apps
 {
     using System;
@@ -50,18 +52,19 @@ namespace IPFilter.Apps
             }
         }
 
-        public Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
+        public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
             var destinationPath = Path.Combine(roamingPath, FolderName, "ipfilter.dat");
 
             Trace.TraceInformation("Writing filter to " + destinationPath);
             using (var destination = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new BitTorrentWriter(destination))
             {
-                filter.Stream.WriteTo(destination);
+                await writer.Write(filter.Entries, progress);
             }
 
-            return Task.FromResult( new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp } );
+            return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
 
             // TODO: Check if IP Filter is enabled in µTorrent
 //            string settingsPath = Environment.ExpandEnvironmentVariables(@"%APPDATA%\uTorrent\settings.dat");
