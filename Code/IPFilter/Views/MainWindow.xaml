@@ -40,6 +40,7 @@
 
             <StackPanel>
                 <TextBlock TextAlignment="Right">
+                    <Hyperlink RequestNavigate="OpenLog" NavigateUri="https://www.sadrobot.co.nz/ipfilter">View Log</Hyperlink>
                     <Hyperlink RequestNavigate="LaunchHelp" NavigateUri="https://www.sadrobot.co.nz/ipfilter">Support</Hyperlink>
                     <!-- <Hyperlink RequestNavigate="Options" NavigateUri="https://www.sadrobot.co.nz/ipfilter">Options</Hyperlink> -->
                 </TextBlock>

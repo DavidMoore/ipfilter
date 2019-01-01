@@ -23,8 +23,7 @@ namespace IPFilter.Services
         /// <param name="message">A message to write. </param>
         public override void Write(string message)
         {
-            if (writeAction == null) return;
-            writeAction(message);
+            writeAction?.Invoke(message);
         }
 
         /// <summary>
@@ -33,8 +32,7 @@ namespace IPFilter.Services
         /// <param name="message">A message to write. </param>
         public override void WriteLine(string message)
         {
-            if (writeLineAction == null) return;
-            writeLineAction(message);
+            writeLineAction?.Invoke(message);
         }
     }
 }

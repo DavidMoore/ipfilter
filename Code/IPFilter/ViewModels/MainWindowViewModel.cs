@@ -1,4 +1,5 @@
 using IPFilter.Formats;
+using IPFilter.Logging;
 using IPFilter.Properties;
 
 namespace IPFilter.ViewModels
@@ -64,13 +65,29 @@ namespace IPFilter.ViewModels
             MirrorProviders = MirrorProvidersFactory.Get();
             LaunchHelpCommand = new DelegateCommand(LaunchHelp);
             ShowOptionsCommand = new DelegateCommand(ShowOptions);
+            ShowLogCommand = new DelegateCommand(ShowLog);
             StartCommand = new DelegateCommand(Start, IsStartEnabled);
             applicationEnumerator = new ApplicationEnumerator();
             downloader = new FilterDownloader();
             
             cancellationToken = new CancellationTokenSource();
         }
-        
+
+        void ShowLog(object obj)
+        {
+            try
+            {
+                var listener = Trace.Listeners["file"] as FileTraceListener;
+                if (listener?.fileName == null) return;
+                if (!File.Exists(listener.fileName)) return;
+                Process.Start(listener.fileName);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Couldn't launch support URL: " + ex);
+            }
+        }
+
         void ShowOptions(object obj)
         {
             var options = new OptionsWindow();
@@ -310,6 +327,8 @@ namespace IPFilter.ViewModels
         public Action<string, string, ToolTipIcon> ShowNotification { get; set; }
 
         public ICommand ShowOptionsCommand { get; private set; }
+
+        public ICommand ShowLogCommand { get; private set; }
         
         public async Task Initialize()
         {

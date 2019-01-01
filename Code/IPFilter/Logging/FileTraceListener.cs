@@ -15,7 +15,7 @@ namespace IPFilter.Logging
     public class FileTraceListener : TraceListener
     {
         internal TextWriter writer;
-        string fileName;
+        internal string fileName;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.Diagnostics.TextWriterTraceListener'/> class with

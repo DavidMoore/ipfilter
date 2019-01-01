@@ -123,5 +123,11 @@ namespace IPFilter.Views
             e.Handled = true;
             ViewModel.ShowOptionsCommand.Execute(e.Uri);
         }
+
+        void OpenLog(object sender, RequestNavigateEventArgs e)
+        {
+            e.Handled = true;
+            ViewModel.ShowLogCommand.Execute(e.Uri);
+        }
     }
 }
