@@ -16,12 +16,12 @@ namespace IPFilter.Models
 
         public static IPAddressComparer AddressComparer { get; } = new IPAddressComparer();
 
-        public FilterEntry([NotNull] string from, [NotNull] string to) : this(DatParser.ParseAddress(from), DatParser.ParseAddress(to)) { }
+        public FilterEntry([NotNull] string from, [NotNull] string to) : this(IpAddress.Parse(from), IpAddress.Parse(to)) { }
 
-        public FilterEntry([NotNull] IPAddress from, [NotNull] IPAddress to)
+        public FilterEntry(uint from, uint to)
         {
-            From = from ?? throw new ArgumentNullException(nameof(from));
-            To = to ?? throw new ArgumentNullException(nameof(to));
+            From = from;
+            To = to;
         }
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace IPFilter.Models
         /// <summary>
         /// The bottom range of the blocked IP address(es). Inclusive.
         /// </summary>
-        public IPAddress From { get; set; }
+        public uint From { get; set; }
 
         /// <summary>
         /// The upper range of the blocked IP address(es). Inclusive.
         /// </summary>
-        public IPAddress To { get; set; }
+        public uint To { get; set; }
 
         public override string ToString()
         {

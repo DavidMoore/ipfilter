@@ -40,14 +40,14 @@ namespace IPFilter.Formats
                     var entry = entries[i - 1];
                     sb.Clear();
 
-                    var from = entry.From.GetAddressBytes();
+                    var from = BitConverter.GetBytes(entry.From);
                     address.Clear();
                     address.Append(from[0].ToString("D3")).Append(".").Append(from[1].ToString("D3")).Append(".").Append(from[2].ToString("D3")).Append(".").Append(from[3].ToString("D3"));
                     sb.Append(address);
 
                     sb.Append(" - ");
 
-                    var to = entry.To.GetAddressBytes();
+                    var to = BitConverter.GetBytes(entry.To);
                     address.Clear();
                     address.Append(to[0].ToString("D3")).Append(".").Append(to[1].ToString("D3")).Append(".").Append(to[2].ToString("D3")).Append(".").Append(to[3].ToString("D3"));
                     sb.Append(address);

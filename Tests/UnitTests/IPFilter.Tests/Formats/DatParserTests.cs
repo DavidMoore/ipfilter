@@ -27,8 +27,8 @@ namespace IPFilter.Tests.Formats
         public void ParseEntry()
         {
             var entry = DatParser.ParseEntry("001.002.003.001 - 001.002.003.254 , 000 , Description text");
-            Assert.AreEqual(0x01030201, entry.From.Address);
-            Assert.AreEqual(0xFE030201, entry.To.Address);
+            Assert.AreEqual((uint)0x01020301, entry.From);
+            Assert.AreEqual((uint)0x010203FE, entry.To);
             Assert.AreEqual(0, entry.Level);
             Assert.AreEqual("Description text", entry.Description);
         }

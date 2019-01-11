@@ -19,7 +19,7 @@ namespace IPFilter.Tests.Formats
         {
             var entries = new List<FilterEntry>
             {
-                new FilterEntry(new IPAddress(0x04030201), new IPAddress(0xFF030201))
+                new FilterEntry(0x04030201, 0xFF030201)
                 {
                     Description = "Testing the description"
                 }

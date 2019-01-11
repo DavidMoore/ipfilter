@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Net;
+using System.Text;
 using IPFilter.Models;
 
 namespace IPFilter.Formats
@@ -11,6 +11,8 @@ namespace IPFilter.Formats
     /// </summary>
     public class DatParser
     {
+        static readonly StringBuilder sb = new StringBuilder(33);
+
         public static string ParseLine(string line)
         {
             if (line == null) return null;
@@ -49,51 +51,31 @@ namespace IPFilter.Formats
             var fromText = range.Substring(0, dash).Trim();
             var toText = range.Substring(dash + 1).Trim();
             
-            IPAddress from = ParseAddress(fromText);
-            if( from == null) return null;
+            var from = IpAddress.Parse(fromText);
+            if( from == 0) return null;
 
-            IPAddress to = ParseAddress(toText);
-            if (to == null) return null;
+            var to = IpAddress.Parse(toText);
+            if (to == 0) return null;
             
-            // The ranges must be the same format
-            if (from.AddressFamily != to.AddressFamily) return null;
-
             // The from address must come before the to address (or be the same).
-            if (from.AddressFamily > to.AddressFamily) return null;
+            if (from > to) return null;
+
             
-            return from + " - " + to;
-        }
+            var fromBytes = IpAddress.GetBytes(from);
+            var toBytes = IpAddress.GetBytes(to);
 
-        internal static IPAddress ParseAddress(string address)
-        {
-            if (string.IsNullOrEmpty(address)) return null;
+            sb.Clear();
 
-            if (address.IndexOf(':') == -1)
-            {
-                // Treat as an IPv4 address
-                var numbers = address.Split(new[] { '.' }, 4);
-                if (numbers.Length < 4) return null;
+            sb.Append(fromBytes[0]).Append(".")
+                .Append(fromBytes[1]).Append(".")
+                .Append(fromBytes[2]).Append(".")
+                .Append(fromBytes[3]).Append(" - ")
+                .Append(toBytes[0]).Append(".")
+                .Append(toBytes[1]).Append(".")
+                .Append(toBytes[2]).Append(".")
+                .Append(toBytes[3]);
 
-                var bytes = new byte[4];
-
-                for (var i = 0; i < numbers.Length; i++)
-                {
-                    if (!int.TryParse(numbers[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out var number)) return null;
-                    if (number < 0 || number > 255) return null;
-                    bytes[i] = (byte) number;
-                }
-
-                return new IPAddress(bytes);
-            }
-
-            try
-            {
-                return IPAddress.Parse(address);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return sb.ToString();
         }
 
         public static FilterEntry ParseEntry(string line)
@@ -106,8 +88,6 @@ namespace IPFilter.Formats
 
             byte level = 0;
             string description = null;
-            IPAddress from = null;
-            IPAddress to = null;
 
             // The first part is the IP address range, with optional parts delimited by comma
             var firstDelimiter = value.IndexOf(',');
@@ -141,18 +121,15 @@ namespace IPFilter.Formats
 
             var fromText = range.Substring(0, dash).Trim();
             var toText = range.Substring(dash + 1).Trim();
+            
+            var from = IpAddress.Parse(fromText);
+            if (from == 0) return null;
 
-            from = ParseAddress(fromText);
-            if (from == null) return null;
-
-            to = ParseAddress(toText);
-            if (to == null) return null;
-
-            // The ranges must be the same format
-            if (from.AddressFamily != to.AddressFamily) return null;
-
+            var to = IpAddress.Parse(toText);
+            if (to == 0) return null;
+            
             // The from address must come before the to address (or be the same).
-            if (from.AddressFamily > to.AddressFamily) return null;
+            if (from > to) return null;
 
             return new FilterEntry(from, to)
             {

@@ -57,8 +57,8 @@ namespace IPFilter.Core
                 if ( FilterEntry.AddressComparer.Compare(x.From, y.From) < 1 && FilterEntry.AddressComparer.Compare(y.From, x.To) <= 1)
                 {
                     // The two ranges overlap, so merge them.
-                    x.From.Address = Math.Min(x.From.Address, y.From.Address);
-                    x.To.Address = Math.Max(x.To.Address, y.To.Address);
+                    x.From = Math.Min(x.From, y.From);
+                    x.To = Math.Max(x.To, y.To);
                     return 0;
                 }
 

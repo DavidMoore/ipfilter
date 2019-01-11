@@ -121,10 +121,12 @@
     <Compile Include="Formats\DatParser.cs" />
     <Compile Include="Formats\EmuleWriter.cs" />
     <Compile Include="Formats\BitTorrentWriter.cs" />
+    <Compile Include="Formats\IpAddress.cs" />
     <Compile Include="ListProviders\MirrorProvidersFactory.cs" />
     <Compile Include="Logging\FileTraceListener.cs" />
     <Compile Include="Models\FilterEntry.cs" />
     <Compile Include="Models\FilterSource.cs" />
+    <Compile Include="Models\ProgressModelExtensions.cs" />
     <Compile Include="Models\UpdateInfo.cs" />
     <Compile Include="Native\Win32Api.cs" />
     <Compile Include="Native\ProcessInformation.cs" />

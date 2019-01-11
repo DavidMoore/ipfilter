@@ -1,44 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
+﻿using System.Collections.Generic;
 
 namespace IPFilter.Core
 {
-    public class IPAddressComparer : IComparer<IPAddress>, IEqualityComparer<IPAddress>
+    public class IPAddressComparer : IComparer<uint>, IEqualityComparer<uint>
     {
-        public int Compare(IPAddress x, IPAddress y)
+        public int Compare(uint x, uint y)
         {
-            if (x == null && y == null) return 0;
-            if (x == null) return -1;
-            if (y == null) return 1;
-
-            if (x.AddressFamily != AddressFamily.InterNetwork || y.AddressFamily != AddressFamily.InterNetwork) throw new ArgumentException("Only IPv4 is supported");
-
-#pragma warning disable 618 // We only support IPv4 so far so it's ok to use the integer address
-            var xAddress = (long) (uint)IPAddress.NetworkToHostOrder( (int)x.Address);
-            var yAddress = (long) (uint) IPAddress.NetworkToHostOrder( (int)y.Address);
+            var xAddress = (long) x;
+            var yAddress = (long) y;
 
             if (xAddress == yAddress) return 0;
 
             var distance = xAddress - yAddress;
+
             if (distance > int.MaxValue) return int.MaxValue;
             if (distance < int.MinValue) return int.MinValue;
+
             return (int)distance;
-#pragma warning restore 618
         }
 
-        public bool Equals(IPAddress x, IPAddress y)
+        public bool Equals(uint x, uint y)
         {
-            if (x == null && y == null) return false;
-            if (x == null || y == null) return false;
-            if (ReferenceEquals(x, y)) return true;
-            return x.GetHashCode() == y.GetHashCode();
+            return x == y;
         }
 
-        public int GetHashCode(IPAddress obj)
+        public int GetHashCode(uint obj)
         {
-            return IPAddress.NetworkToHostOrder((int) obj.Address);
+            return obj.GetHashCode();
         }
     }
 }
