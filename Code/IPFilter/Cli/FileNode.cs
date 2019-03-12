@@ -17,11 +17,11 @@ namespace IPFilter.Cli
 
         public string FullName => file.FullName;
 
-        internal Task<DataFormat> DetectFormat()
+        internal async Task<DataFormat> DetectFormat()
         {
             using (var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                return FormatDetector.DetectFormat(stream);
+                return await FormatDetector.DetectFormat(stream);
             }
         }
 
