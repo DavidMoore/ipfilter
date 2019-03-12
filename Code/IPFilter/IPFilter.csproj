@@ -118,6 +118,7 @@
     <Compile Include="FilterServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Formats\Address.cs" />
     <Compile Include="Formats\DatParser.cs" />
     <Compile Include="Formats\EmuleWriter.cs" />
     <Compile Include="Formats\BitTorrentWriter.cs" />
