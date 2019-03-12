@@ -37,24 +37,23 @@ namespace IPFilter.Formats
             {
                 for (var i = 1; i <= entries.Count; i++)
                 {
-                    var entry = entries[i - 1];
                     sb.Clear();
 
-                    var from = BitConverter.GetBytes(entry.From);
+                    var from = BitConverter.GetBytes(entries[i - 1].From);
                     address.Clear();
-                    address.Append(from[0].ToString("D3")).Append(".").Append(from[1].ToString("D3")).Append(".").Append(from[2].ToString("D3")).Append(".").Append(from[3].ToString("D3"));
+                    address.Append(from[3].ToString("D3")).Append(".").Append(from[2].ToString("D3")).Append(".").Append(from[1].ToString("D3")).Append(".").Append(from[0].ToString("D3"));
                     sb.Append(address);
 
                     sb.Append(" - ");
 
-                    var to = BitConverter.GetBytes(entry.To);
+                    var to = BitConverter.GetBytes(entries[i - 1].To);
                     address.Clear();
-                    address.Append(to[0].ToString("D3")).Append(".").Append(to[1].ToString("D3")).Append(".").Append(to[2].ToString("D3")).Append(".").Append(to[3].ToString("D3"));
+                    address.Append(to[3].ToString("D3")).Append(".").Append(to[2].ToString("D3")).Append(".").Append(to[1].ToString("D3")).Append(".").Append(to[0].ToString("D3"));
                     sb.Append(address);
 
-                    sb.Append(" , ").Append(entry.Level.ToString("D3").PadLeft(3)).Append(" , ");
+                    sb.Append(" , ").Append(entries[i - 1].Level.ToString("D3").PadLeft(3)).Append(" , ");
 
-                    sb.Append(entry.Description);
+                    sb.Append(entries[i - 1].Description);
 
                     await writer.WriteLineAsync(sb.ToString());
 

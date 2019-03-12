@@ -19,7 +19,7 @@ namespace IPFilter.Tests.Formats
         {
             var entries = new List<FilterEntry>
             {
-                new FilterEntry(0x04030201, 0xFF030201)
+                new FilterEntry(0x01020304, 0x010203FF)
                 {
                     Description = "Testing the description"
                 }
