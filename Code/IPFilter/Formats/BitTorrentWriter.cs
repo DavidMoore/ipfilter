@@ -55,8 +55,8 @@ namespace IPFilter.Formats
 
                     sb.Append(entries[i - 1].Description);
 
-                    await writer.WriteLineAsync(sb.ToString());
-
+                    writer.WriteLine(sb.ToString());
+                    
                     if (progress == null) continue;
                     var percent = (int)Math.Floor((double)i / entries.Count * 100);
 
@@ -67,6 +67,8 @@ namespace IPFilter.Formats
 
                     currentPercentage = percent;
                 }
+
+                await writer.FlushAsync();
             }
         }
     }
