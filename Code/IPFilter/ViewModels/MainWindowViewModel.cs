@@ -1,7 +1,3 @@
-using IPFilter.Formats;
-using IPFilter.Logging;
-using IPFilter.Properties;
-
 namespace IPFilter.ViewModels
 {
     using System;
@@ -34,6 +30,9 @@ namespace IPFilter.ViewModels
     using Views;
     using Application = System.Windows.Application;
 
+    using IPFilter.Formats;
+    using IPFilter.Logging;
+
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         IMirrorProvider selectedMirrorProvider;
@@ -44,7 +43,6 @@ namespace IPFilter.ViewModels
         List<ApplicationDetectionResult> apps;
         readonly FilterDownloader downloader;
         int progressValue;
-        FileMirror selectedFileMirror;
         string statusText;
         readonly StringBuilder log = new StringBuilder(500);
         readonly Dispatcher dispatcher;
@@ -149,7 +147,7 @@ namespace IPFilter.ViewModels
                 case UpdateState.Cancelled:
                     cancellationToken.Dispose();
                     cancellationToken = new CancellationTokenSource();
-                    Task.Factory.StartNew(StartAsync, cancellationToken.Token);//, TaskCreationOptions.None);//, TaskScheduler.FromCurrentSynchronizationContext());
+                    Task.Run(StartAsync, cancellationToken.Token);//, TaskCreationOptions.None);//, TaskScheduler.FromCurrentSynchronizationContext());
                     break;
                     
                 case UpdateState.Downloading:
@@ -161,6 +159,10 @@ namespace IPFilter.ViewModels
 
         internal async Task StartAsync()
         {
+            var message = "Done";
+
+            progress.Report(UpdateState.Downloading, "Starting...");
+
             try
             {
                 if (SelectedMirrorProvider == null)
@@ -198,6 +200,7 @@ namespace IPFilter.ViewModels
                                 var entry = DatParser.ParseEntry(line);
                                 if( entry != null) filter.Entries.Add(entry);
                                 var percent = (int)Math.Floor( (double)filter.Stream.Position / filter.Stream.Length * 100);
+                                await Task.Yield();
                                 if( percent > ProgressValue) progress.Report(new ProgressModel(UpdateState.Decompressing, "Parsed " + filter.Entries.Count + " entries",  percent));
                                 line = await reader.ReadLineAsync();
                             }
@@ -210,18 +213,9 @@ namespace IPFilter.ViewModels
                         }
                     }
 
-                    if (filter != null && filter.FilterTimestamp != null)
+                    if (filter?.FilterTimestamp != null)
                     {
-                        var message = $"Done. List timestamp: {filter.FilterTimestamp.Value.ToLocalTime()}";
-                        Trace.TraceInformation(message);
-                        progress.Report(new ProgressModel(UpdateState.Done, message, 100));
-                        this.ShowNotification("Updated IP Filter", message, ToolTipIcon.Info);
-                    }
-                    else
-                    {
-                        Trace.TraceInformation("Done.");
-                        progress.Report(new ProgressModel(UpdateState.Done, "Done", 100));
-                        this.ShowNotification("Updated IP Filter", "Finished updating IP Filter", ToolTipIcon.Info);
+                        message = $"Done. List timestamp: {filter.FilterTimestamp.Value.ToLocalTime()}";
                     }
                 }
             }
@@ -229,12 +223,23 @@ namespace IPFilter.ViewModels
             {
                 Trace.TraceWarning("Update was cancelled.");
                 progress.Report(new ProgressModel(UpdateState.Cancelled, "Update was cancelled.", 0));
+                return;
             }
             catch (Exception ex)
             {
                 Trace.TraceError("Problem when updating: " + ex);
                 progress.Report(new ProgressModel(UpdateState.Cancelled, "Problem when updating: " + ex.Message, 0));
+                return;
             }
+
+            progress.Report(UpdateState.Decompressing, "Cleaning up...", -1);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            Trace.TraceInformation(message);
+            progress.Report(new ProgressModel(UpdateState.Done, message, 100));
+            ShowNotification("Updated IP Filter", message, ToolTipIcon.Info);
         }
 
         public UpdateModel Update { get; set; }
