@@ -2,11 +2,11 @@
 
   <!-- Authenticode signing -->
   <Target Name="SignAuthenticode" AfterTargets="AfterBuild" Condition="'$(SignAuthenticode)' == 'true' and '$(MSBuildProjectExtension)' == '.csproj'">
-    <Exec EchoOff="true" Command= "&quot;$(SignToolPath)&quot; $(SignToolArguments) &quot;$(TargetPath)&quot;" />
+    <Exec EchoOff="$(SignAuthenticodeEchoOff)" Command= "&quot;$(SignToolPath)&quot; $(SignToolArguments) &quot;$(TargetPath)&quot;" />
   </Target>
 
   <!-- Authenticode signing for WiX -->
   <Target Name="SignMsi">
-    <Exec EchoOff="true" Command= "&quot;$(SignToolPath)&quot; $(SignToolArguments) &quot;%(SignMsi.FullPath)&quot;" />
+    <Exec EchoOff="$(SignAuthenticodeEchoOff)" Command= "&quot;$(SignToolPath)&quot; $(SignToolArguments) &quot;%(SignMsi.FullPath)&quot;" />
   </Target>
 </Project>
