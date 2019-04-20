@@ -77,7 +77,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignToolPath>$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\ClickOnce\SignTool`, `Path`, null, RegistryView.Registry32, RegistryView.Default))signtool.exe</SignToolPath>
-    <SignToolArguments>sign /fd sha256 /f &quot;$(DOWNLOADSECUREFILE_SECUREFILEPATH)&quot; /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
+    <SignToolArguments>sign /fd sha256 /f &quot;$(DOWNLOADSECUREFILE_SECUREFILEPATH)&quot; /p &quot;$(AuthenticodeP)&quot; /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
   </PropertyGroup>
 
   <!-- Windows SDK -->
