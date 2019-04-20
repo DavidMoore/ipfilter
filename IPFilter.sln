@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27924.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\UnitTests\IPFilter.Tests\IPFilter.Tests.csproj", "{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}"
 EndProject
@@ -18,9 +18,6 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup.IPFilter", "Setup\Set
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		AppVeyor|Any CPU = AppVeyor|Any CPU
-		AppVeyor|x64 = AppVeyor|x64
-		AppVeyor|x86 = AppVeyor|x86
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
@@ -29,12 +26,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|Any CPU.ActiveCfg = Release|Any CPU
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|Any CPU.Build.0 = Release|Any CPU
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|x64.ActiveCfg = Debug|Any CPU
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|x64.Build.0 = Debug|Any CPU
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|x86.ActiveCfg = Release|Any CPU
-		{34A454A5-5453-424A-81CE-30FF0A2B004B}.AppVeyor|x86.Build.0 = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -47,12 +38,6 @@ Global
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x64.Build.0 = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.ActiveCfg = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.Build.0 = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|Any CPU.ActiveCfg = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|Any CPU.Build.0 = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|x64.ActiveCfg = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|x64.Build.0 = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|x86.ActiveCfg = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.AppVeyor|x86.Build.0 = Release|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -65,18 +50,11 @@ Global
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x64.Build.0 = Release|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x86.Build.0 = Release|Any CPU
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|Any CPU.ActiveCfg = Release|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|Any CPU.Build.0 = Release|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|x64.ActiveCfg = Debug|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|x64.Build.0 = Debug|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|x86.ActiveCfg = Release|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.AppVeyor|x86.Build.0 = Release|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|x64.ActiveCfg = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|x86.ActiveCfg = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|x86.Build.0 = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Release|Any CPU.ActiveCfg = Release|x86
-		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Release|Any CPU.Build.0 = Release|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Release|x64.ActiveCfg = Release|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Release|x86.ActiveCfg = Release|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Release|x86.Build.0 = Release|x86

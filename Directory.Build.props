@@ -1,0 +1,97 @@
+<Project>
+
+  <!-- Versioning -->
+  <PropertyGroup>
+    <MajorVersion Condition="'$(MajorVersion)' == ''">3</MajorVersion>
+    <MinorVersion Condition="'$(MinorVersion)' == ''">0</MinorVersion>
+    <BuildVersion Condition="'$(BuildVersion)' == ''">0</BuildVersion>
+    <RevisionVersion Condition="'$(RevisionVersion)' == ''">0</RevisionVersion>
+    <TagVersion Condition="'$(TagVersion)' == ''">beta2</TagVersion>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildVersion)-$(TagVersion)</InformationalVersion>
+  </PropertyGroup>
+
+  <!-- Branding and file properties -->
+  <PropertyGroup>
+    <TodayTimeStamp>$([System.DateTime]::Now.ToString(yyyyMMdd))</TodayTimeStamp>
+    <Company Condition="'$(Company)' == ''">David Moore</Company>
+    <Copyright Condition="'$(Copyright)' == ''">%A9 $(Company) $([System.DateTime]::Now.ToString(yyyy))</Copyright>
+    <Product Condition="'$(Product)' == ''">IPFilter</Product>
+    <AssemblyTitle Condition="'$(AssemblyTitle)' == ''">$(AssemblyName)</AssemblyTitle>
+    <Description Condition="'$(Description)' == ''">$(AssemblyName)</Description>
+    <FileVersion Condition="'$(FileVersion)' == '' and '$(AssemblyFileVersion)' != ''">$(AssemblyFileVersion)</FileVersion>
+  </PropertyGroup>
+
+  <!-- Project type detection -->
+  <PropertyGroup>
+    <IsTestProject Condition="'$(IsTestProject)'=='' And ($(MSBuildProjectFullPath.Contains('\tests\')) OR $(MSBuildProjectFullPath.Contains('/tests/')))">true</IsTestProject>
+    <IsPerformanceTestProject Condition="'$(IsPerformanceTestProject)' == '' AND '$(IsTestProject)' == 'true' AND $(MSBuildProjectName.EndsWith('Performance.Tests'))">true</IsPerformanceTestProject>
+  </PropertyGroup>
+
+  <!-- Build configuration -->
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+  </PropertyGroup>
+
+  <!-- Build configuration specifics -->
+  <Choose>
+    <When Condition="'$(Configuration)'=='Debug'">
+      <PropertyGroup>
+        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+        <Optimize Condition="'$(Optimize)' == ''">false</Optimize>
+        <DebugType Condition="'$(DebugType)' == ''">full</DebugType>
+        <DefineConstants>$(DefineConstants),DEBUG,TRACE</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <PropertyGroup>
+        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+        <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+        <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
+        <DefineConstants>$(DefineConstants),TRACE</DefineConstants>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <!-- Language configuration -->
+  <PropertyGroup>
+    <!-- default to allowing all language features -->
+    <LangVersion>latest</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
+    <!-- Enables Strict mode for Roslyn compiler -->
+    <Features>strict</Features>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <CLSCompliant Condition="'$(CLSCompliant)'=='' and '$(IsTestProject)'=='true'">false</CLSCompliant>
+    <CLSCompliant Condition="'$(CLSCompliant)'==''">true</CLSCompliant>
+  </PropertyGroup>
+
+  <!-- Signing -->
+  <PropertyGroup>
+    <SignAuthenticode Condition="'$(SignAuthenticode)' == '' and '$(DOWNLOADSECUREFILE_SECUREFILEPATH)' != '' and Exists($(DOWNLOADSECUREFILE_SECUREFILEPATH))">true</SignAuthenticode>
+    <SignAuthenticode Condition="'$(SignAuthenticode)' == ''">false</SignAuthenticode>
+    <SignAuthenticodeTimestamp Condition="'$(SignAuthenticodeTimestamp)' == ''">http://timestamp.digicert.com</SignAuthenticodeTimestamp>
+    <SignOutput Condition="'$(SignOutput)' == '' and '$(SignAuthenticode)' == 'true'">true</SignOutput>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignToolPath>$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\ClickOnce\SignTool`, `Path`, null, RegistryView.Registry32, RegistryView.Default))signtool.exe</SignToolPath>
+    <SignToolArguments>sign /fd sha256 /f &quot;$(DOWNLOADSECUREFILE_SECUREFILEPATH)&quot; /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
+  </PropertyGroup>
+
+  <!-- Windows SDK -->
+  <PropertyGroup>
+    <!-- Detect host machine bitness (X86, X64, Arm, Arm64) -->
+    <OperatingSystemPlatform>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</OperatingSystemPlatform>
+    
+    <WindowsSdkDir Condition=" '$(WindowsSdkRootDir)' == ''">$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft SDKs\Windows\v10.0`, `InstallationFolder`, null, RegistryView.Registry32, RegistryView.Default))</WindowsSdkDir>
+    <WindowsSdkVersion Condition=" '$(WindowsSdkVersion)' == ''">$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft SDKs\Windows\v10.0`, `ProductVersion`, null, RegistryView.Registry32, RegistryView.Default))</WindowsSdkVersion>
+
+    <!-- If the SDK version doesn't end with ".0" then tag it onto the end. -->
+    <WindowsSdkVersion Condition="'$(WindowsSdkVersion)' != '' AND !$(WindowsSdkVersion.EndsWith('.0'))">$(WindowsSdkVersion).0</WindowsSdkVersion>
+
+    <WindowsSdkRootDir>$(WindowsSdkDir)bin\$(WindowsSdkVersion)\$(OperatingSystemPlatform)\</WindowsSdkRootDir>
+  </PropertyGroup>
+
+</Project>

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\Directory.Build.props"/>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.10</ProductVersion>
+    <ProductVersion>3.11</ProductVersion>
     <ProjectGuid>345ff54a-fca9-48d5-99b8-ac15669abdee</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>IPFilter</OutputName>
@@ -23,6 +24,7 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <SuppressIces>ICE27</SuppressIces>
     <SuppressValidation>False</SuppressValidation>
+    <SignOutput>true</SignOutput>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
@@ -44,10 +46,5 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
-  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
-    <PropertyGroup>
-      <SignToolArgs>sign /sha1 8d72fc3e61f4653dfd192baea0708186f05b163b /fd sha256 /tr http://timestamp.digicert.com /td sha256</SignToolArgs>
-    </PropertyGroup>
-    <Exec Command="&quot;$(ProgramFiles)\Windows Kits\10\bin\x86\SignTool.exe&quot; $(SignToolArgs) $(TargetPath)" />
-  </Target>
+  <Import Project="..\..\Directory.Build.targets"/>
 </Project>

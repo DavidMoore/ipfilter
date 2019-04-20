@@ -1,251 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <LangVersion>latest</LangVersion>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{34A454A5-5453-424A-81CE-30FF0A2B004B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net45</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ProjectGuid>{34A454A5-5453-424A-81CE-30FF0A2B004B}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IPFilter</RootNamespace>
     <AssemblyName>IPFilter</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>IPFilter.EntryPoint</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>App.ico</ApplicationIcon>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>3.0.0</Version>
+    <Description>Tool for downloading ipfilter blocklists for your Bit Torrent client(s)</Description>
+    <RepositoryUrl>https://github.com/DavidMoore/ipfilter</RepositoryUrl>
+    <PackageProjectUrl>https://www.sadrobot.co.nz/ipfilter</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <None Remove="App.ico" />
+    <None Remove="App.xaml" />
+    <None Remove="Views\MainWindow.xaml" />
+    <None Remove="Views\OptionsWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Apps\EmuleApplication.cs" />
-    <Compile Include="Cli\CachingFileFetcher.cs" />
-    <Compile Include="Cli\CryptographicAlgorithmExtensions.cs" />
-    <Compile Include="Cli\FileFetcher.cs" />
-    <Compile Include="Cli\FileNode.cs" />
-    <Compile Include="Cli\GZipNode.cs" />
-    <Compile Include="Cli\INode.cs" />
-    <Compile Include="Cli\INodeVisitor.cs" />
-    <Compile Include="Cli\JsonNode.cs" />
-    <Compile Include="Cli\NodeVisitor.cs" />
-    <Compile Include="Cli\Options.cs" />
-    <Compile Include="Cli\TextFilterWriter.cs" />
-    <Compile Include="Cli\TextNode.cs" />
-    <Compile Include="Cli\UriNode.cs" />
-    <Compile Include="Cli\ZipNode.cs" />
-    <Compile Include="Core\Blocklist.cs" />
-    <Compile Include="Core\BlocklistBundle.cs" />
-    <Compile Include="Core\BlocklistProvider.cs" />
-    <Compile Include="Core\Benchmark.cs" />
-    <Compile Include="Core\DataFormat.cs" />
-    <Compile Include="Core\FileInfoExtensions.cs" />
-    <Compile Include="Core\FileSystem.cs" />
-    <Compile Include="Core\FilterCollection.cs" />
-    <Compile Include="Core\FilterContext.cs" />
-    <Compile Include="Core\FormatDetector.cs" />
-    <Compile Include="Core\IFileSystem.cs" />
-    <Compile Include="Core\IFilterEnumerator.cs" />
-    <Compile Include="Core\IFilterWriter.cs" />
-    <Compile Include="Core\IPAddressComparer.cs" />
-    <Compile Include="Core\IUriResolver.cs" />
-    <Compile Include="Core\NullWriter.cs" />
-    <Compile Include="Core\StreamExtensions.cs" />
-    <Compile Include="Core\TempFile.cs" />
-    <Compile Include="Core\TempStream.cs" />
-    <Compile Include="Core\UriResolver.cs" />
-    <Compile Include="Core\Win32Api.cs" />
-    <Compile Include="FilterServiceInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Formats\Address.cs" />
-    <Compile Include="Formats\DatParser.cs" />
-    <Compile Include="Formats\EmuleWriter.cs" />
-    <Compile Include="Formats\BitTorrentWriter.cs" />
-    <Compile Include="Formats\IpAddress.cs" />
-    <Compile Include="ListProviders\MirrorProvidersFactory.cs" />
-    <Compile Include="Logging\FileTraceListener.cs" />
-    <Compile Include="Models\FilterEntry.cs" />
-    <Compile Include="Models\FilterSource.cs" />
-    <Compile Include="Models\ProgressModelExtensions.cs" />
-    <Compile Include="Models\UpdateInfo.cs" />
-    <Compile Include="Native\Win32Api.cs" />
-    <Compile Include="Native\ProcessInformation.cs" />
-    <Compile Include="Native\ProcessManager.cs" />
-    <Compile Include="Native\SafeLocalMemHandle.cs" />
-    <Compile Include="Native\SecurityAttributes.cs" />
-    <Compile Include="Native\StartupInfo.cs" />
-    <Compile Include="FilterService.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FilterService.Designer.cs">
-      <DependentUpon>FilterService.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Services\Deployment\SemanticVersion.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\ClickOnceRegistry.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\IUninstallStep.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\RemoveFiles.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\RemoveRegistryKeys.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\RemoveStartMenuEntry.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\RemoveUninstallEntry.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\Uninstaller.cs" />
-    <Compile Include="Services\Deployment\ClickOnce\UninstallInfo.cs" />
-    <Compile Include="Services\Deployment\Updater.cs" />
-    <Compile Include="ViewModels\DelegateCommand.cs" />
-    <Compile Include="Services\Deployment\DeploymentHelper.cs" />
-    <Compile Include="ViewModels\Interval.cs" />
-    <Compile Include="ViewModels\MessageBoxHelper.cs" />
-    <Compile Include="Models\ApplicationDetectionResult.cs" />
-    <Compile Include="Apps\ApplicationEnumerator.cs" />
-    <Compile Include="Apps\BitTorrentApplication.cs" />
-    <Compile Include="Apps\QBitTorrent.cs" />
-    <Compile Include="Apps\UTorrentApplication.cs" />
-    <Compile Include="Services\CacheProvider.cs" />
-    <Compile Include="Models\CompressionFormat.cs" />
-    <Compile Include="Services\CryptoHelper.cs" />
-    <Compile Include="Services\DestinationPathsProvider.cs" />
-    <Compile Include="EntryPoint.cs" />
-    <Compile Include="Models\FileMirror.cs" />
-    <Compile Include="Services\FilterDownloader.cs" />
-    <Compile Include="Apps\IApplication.cs" />
-    <Compile Include="Services\ICacheProvider.cs" />
-    <Compile Include="ListProviders\IMirrorProvider.cs" />
-    <Compile Include="ListProviders\DefaultList.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Models\FilterDownloadResult.cs" />
-    <Compile Include="Models\FilterUpdateResult.cs" />
-    <Compile Include="Models\ProgressModel.cs" />
-    <Compile Include="ViewModels\OptionsViewModel.cs" />
-    <Compile Include="Services\PathSetting.cs" />
-    <Compile Include="Models\UpdateState.cs" />
-    <Compile Include="Services\DelegateTraceListener.cs" />
-    <Compile Include="Models\UpdateModel.cs" />
-    <Compile Include="Views\OptionsWindow.xaml.cs">
-      <DependentUpon>OptionsWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Views\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Views\OptionsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="lists.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OptionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' AND '' == 'true'">
-    <PropertyGroup>
-      <SignToolArgs>sign /sha1 8d72fc3e61f4653dfd192baea0708186f05b163b /fd sha256 /tr http://timestamp.digicert.com /td sha256</SignToolArgs>
-    </PropertyGroup>
-    <Exec Command="&quot;$(ProgramFiles)\Windows Kits\10\bin\x86\SignTool.exe&quot; $(SignToolArgs) $(TargetPath)" />
-  </Target>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="lists.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
