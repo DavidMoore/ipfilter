@@ -8,6 +8,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IPFilter</RootNamespace>
     <AssemblyName>IPFilter</AssemblyName>
+    <OutputPath>..\..\Bin\</OutputPath>
+    <OutDir>..\..\Bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>IPFilter.EntryPoint</StartupObject>

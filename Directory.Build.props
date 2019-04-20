@@ -74,12 +74,18 @@
     <SignAuthenticode Condition="'$(SignAuthenticode)' == ''">false</SignAuthenticode>
     <SignAuthenticodeThumbprint Condition="'$(SignAuthenticodeThumbprint)' == ''">8d72fc3e61f4653dfd192baea0708186f05b163b</SignAuthenticodeThumbprint>
     <SignAuthenticodeTimestamp Condition="'$(SignAuthenticodeTimestamp)' == ''">http://timestamp.digicert.com</SignAuthenticodeTimestamp>
-    <SignAuthenticodeEchoOff Condition="'$(SignAuthenticodeEchoOff)' == ''">false</SignAuthenticodeEchoOff>
+    <SignAuthenticodeEchoOff Condition="'$(SignAuthenticodeEchoOff)' == ''">true</SignAuthenticodeEchoOff>
     <SignOutput Condition="'$(SignOutput)' == '' and '$(SignAuthenticode)' == 'true'">true</SignOutput>
   </PropertyGroup>
   <PropertyGroup>
+    <!-- We should be able to use the ClickOnce signing tool -->
     <SignToolPath>$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\ClickOnce\SignTool`, `Path`, null, RegistryView.Registry32, RegistryView.Default))signtool.exe</SignToolPath>
-    <SignToolArguments>sign /fd sha256 /f &quot;$(SignAuthenticodeCertificate)&quot; /p &quot;$(SignAuthenticodePassword)&quot; /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
+    <!-- Baseline signing arguments -->
+    <SignToolArguments>sign /fd sha256 /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
+    <!-- Sign using user store certificate identified by thumbprint, if path to key file wasn't specified -->
+    <SignToolArguments Condition="'$(SignAuthenticodeCertificate)' != ''" >$(SignToolArguments) /f &quot;$(SignAuthenticodeCertificate)&quot; /p &quot;$(SignAuthenticodePassword)&quot;</SignToolArguments>
+    <!-- Sign using key file if specified -->
+    <SignToolArguments Condition="'$(SignAuthenticodeCertificate)' == ''">$(SignToolArguments) /sha1 $(SignAuthenticodeThumbprint)</SignToolArguments>
   </PropertyGroup>
 
   <!-- Windows SDK -->
