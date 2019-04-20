@@ -5,15 +5,6 @@ VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\UnitTests\IPFilter.Tests\IPFilter.Tests.csproj", "{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{74AFF634-F59E-4BE0-B7E4-5476A51220C1}"
-	ProjectSection(SolutionItems) = preProject
-		IPFilter.vsmdi = IPFilter.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup.IPFilter", "Setup\Setup.IPFilter\Setup.IPFilter.wixproj", "{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}"
 EndProject
 Global
@@ -38,18 +29,6 @@ Global
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x64.Build.0 = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.ActiveCfg = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.Build.0 = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|x64.Build.0 = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Debug|x86.Build.0 = Debug|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x64.ActiveCfg = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x64.Build.0 = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x86.ActiveCfg = Release|Any CPU
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}.Release|x86.Build.0 = Release|Any CPU
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|x64.ActiveCfg = Debug|x86
 		{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}.Debug|x86.ActiveCfg = Debug|x86
@@ -61,9 +40,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4} = {74AFF634-F59E-4BE0-B7E4-5476A51220C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF751B36-B446-4E63-BF70-2D8B03FCA7B2}
