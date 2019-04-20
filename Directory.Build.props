@@ -70,14 +70,15 @@
 
   <!-- Signing -->
   <PropertyGroup>
-    <SignAuthenticode Condition="'$(SignAuthenticode)' == '' and '$(DOWNLOADSECUREFILE_SECUREFILEPATH)' != '' and Exists($(DOWNLOADSECUREFILE_SECUREFILEPATH))">true</SignAuthenticode>
+    <SignAuthenticode Condition="'$(SignAuthenticode)' == '' and '$(Configuration)' == 'Release'">true</SignAuthenticode>
     <SignAuthenticode Condition="'$(SignAuthenticode)' == ''">false</SignAuthenticode>
+    <SignAuthenticodeThumbprint Condition="'$(SignAuthenticodeThumbprint)' == ''">8d72fc3e61f4653dfd192baea0708186f05b163b</SignAuthenticodeThumbprint>
     <SignAuthenticodeTimestamp Condition="'$(SignAuthenticodeTimestamp)' == ''">http://timestamp.digicert.com</SignAuthenticodeTimestamp>
     <SignOutput Condition="'$(SignOutput)' == '' and '$(SignAuthenticode)' == 'true'">true</SignOutput>
   </PropertyGroup>
   <PropertyGroup>
     <SignToolPath>$([MSBuild]::GetRegistryValueFromView(`HKEY_LOCAL_MACHINE\Software\Microsoft\ClickOnce\SignTool`, `Path`, null, RegistryView.Registry32, RegistryView.Default))signtool.exe</SignToolPath>
-    <SignToolArguments>sign /fd sha256 /f &quot;$(DOWNLOADSECUREFILE_SECUREFILEPATH)&quot; /p &quot;$(AuthenticodeP)&quot; /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
+    <SignToolArguments>sign /fd sha256 /sha1 $(SignAuthenticodeThumbprint) /t &quot;$(SignAuthenticodeTimestamp)&quot;</SignToolArguments>
   </PropertyGroup>
 
   <!-- Windows SDK -->
