@@ -215,7 +215,7 @@ namespace IPFilter.Logging
             try
             {
                 if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                writer = new StreamWriter(File.Open(fullPath, FileMode.Truncate, FileAccess.Write, FileShare.ReadWrite), encoding, 4096);
+                writer = new StreamWriter(File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), encoding, 4096);
                 return;
             }
             catch (IOException)

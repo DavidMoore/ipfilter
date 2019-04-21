@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using IPFilter.Cli;
 using IPFilter.Core;
+using IPFilter.Logging;
 
 namespace IPFilter
 {
@@ -27,6 +28,16 @@ namespace IPFilter
         [STAThread]
         internal static void Main(string[] args)
         {
+            if (Trace.Listeners["file"] == null)
+            {
+                Trace.AutoFlush = true;
+                Trace.UseGlobalLock = false;
+                Trace.IndentSize = 2;
+
+                var listener = new FileTraceListener {Name = "file"};
+                Trace.Listeners.Add(listener);
+            }
+
             AppDomain.CurrentDomain.AssemblyResolve +=  CurrentDomainOnAssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -35,6 +46,7 @@ namespace IPFilter
             if (args.Length > 0)
             {
                 var commandLine = string.Join(" ", args);
+                Trace.TraceInformation("Arguments: " + commandLine);
 
                 if (commandLine.IndexOf("/silent", StringComparison.OrdinalIgnoreCase) > -1)
                 {
@@ -60,7 +72,8 @@ namespace IPFilter
                 }
                 else
                 {
-                    Trace.TraceWarning("Invalid command line: " + commandLine);
+                    CurateList(args).GetAwaiter().GetResult();
+                    //Trace.TraceWarning("Invalid command line: " + commandLine);
                 }
 
                 return;
@@ -73,11 +86,12 @@ namespace IPFilter
 
         static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            if (Application.Current == null || Application.Current.MainWindow == null) return;
-
             var ex = args.ExceptionObject as Exception;
             if (ex == null) return;
 
+            Trace.TraceError(ex.ToString());
+
+            if (Application.Current == null || Application.Current.MainWindow == null) return;
             MessageBox.Show(Application.Current.MainWindow, ex.ToString(), "Unhandled Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
@@ -133,43 +147,50 @@ namespace IPFilter
 
         static async Task CurateList(string[] args)
         {
-            var options = Options.Parse(args);
-
-            var context = new FilterContext();
-
-            // Configure outputs
-            if (options.Outputs.Count > 0)
+            try
             {
-                context.Filter = new TextFilterWriter(options.Outputs.First());
-            }
-            else
-            {
-                // Output to the current directory by default
-                context.Filter = new TextFilterWriter( Path.GetFullPath(@".\ipfilter.dat"));
-            }
-            
-            // Resolve the input URIs to nodes to visit
-            var nodes = new List<UriNode>();
+                var options = Options.Parse(args);
 
-            foreach (var input in options.Inputs)
-            {
-                var uri = context.UriResolver.Resolve(input);
-                if (uri == null) continue;
-                nodes.Add(new UriNode(uri));
-            }
+                var context = new FilterContext();
 
-            using (INodeVisitor visitor = new NodeVisitor(context))
-            {
-                Console.WriteLine("Acquiring list(s)...");
-                foreach (var node in nodes)
+                // Configure outputs
+                if (options.Outputs.Count > 0)
                 {
-                    await visitor.Visit(node);
+                    context.Filter = new TextFilterWriter(options.Outputs.First());
+                }
+                else
+                {
+                    // Output to the current directory by default
+                    context.Filter = new TextFilterWriter( Path.GetFullPath(@".\ipfilter.dat"));
+                }
+            
+                // Resolve the input URIs to nodes to visit
+                var nodes = new List<UriNode>();
+
+                foreach (var input in options.Inputs)
+                {
+                    var uri = context.UriResolver.Resolve(input);
+                    if (uri == null) continue;
+                    nodes.Add(new UriNode(uri));
                 }
 
-                Console.WriteLine("Flushing...");
-                await visitor.Context.Filter.Flush();
+                using (INodeVisitor visitor = new NodeVisitor(context))
+                {
+                    Console.WriteLine("Acquiring list(s)...");
+                    foreach (var node in nodes)
+                    {
+                        await visitor.Visit(node);
+                    }
 
-                Console.WriteLine("Written.");
+                    Console.WriteLine("Flushing...");
+                    await visitor.Context.Filter.Flush();
+
+                    Console.WriteLine("Written.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
             }
         }
     }
