@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\Directory.Build.props"/>
+  <Import Project="..\..\Directory.Build.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -10,11 +10,12 @@
     <OutputName>IPFilter</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath>$(MSBuildProgramFiles32)\MSBuild\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <DefineConstants>MajorVersion=$(MajorVersion);MinorVersion=$(MinorVersion);BuildNumberMajor=$(BuildNumberMajor);BuildNumberMinor=$(BuildNumberMinor);TagVersion=$(TagVersion);InformationalVersion=$(InformationalVersion)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\Bin\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
+    <DefineConstants>Debug;$(DefineConstants)</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE27</SuppressIces>
   </PropertyGroup>
@@ -45,5 +46,5 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
-  <Import Project="..\..\Directory.Build.targets"/>
+  <Import Project="..\..\Directory.Build.targets" />
 </Project>

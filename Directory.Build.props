@@ -4,11 +4,12 @@
   <PropertyGroup>
     <MajorVersion Condition="'$(MajorVersion)' == ''">3</MajorVersion>
     <MinorVersion Condition="'$(MinorVersion)' == ''">0</MinorVersion>
-    <BuildVersion Condition="'$(BuildVersion)' == ''">0</BuildVersion>
-    <RevisionVersion Condition="'$(RevisionVersion)' == ''">0</RevisionVersion>
-    <TagVersion Condition="'$(TagVersion)' == ''">beta2</TagVersion>
+    <BuildNumberMajor Condition="'$(BuildNumberMajor)' == ''">1</BuildNumberMajor>
+    <BuildNumberMinor Condition="'$(BuildNumberMinor)' == ''">0</BuildNumberMinor>
+    <TagVersion Condition="'$(TagVersion)' == ''">beta</TagVersion>
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
-    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildVersion)-$(TagVersion)</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == '' and '$(TagVersion)' != ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)-$(TagVersion)</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)</InformationalVersion>
   </PropertyGroup>
 
   <!-- Branding and file properties -->
@@ -19,7 +20,7 @@
     <Product Condition="'$(Product)' == ''">IPFilter</Product>
     <AssemblyTitle Condition="'$(AssemblyTitle)' == ''">$(AssemblyName)</AssemblyTitle>
     <Description Condition="'$(Description)' == ''">$(AssemblyName)</Description>
-    <FileVersion Condition="'$(FileVersion)' == '' and '$(AssemblyFileVersion)' != ''">$(AssemblyFileVersion)</FileVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor).$(BuildNumberMinor)</FileVersion>
   </PropertyGroup>
 
   <!-- Project type detection -->
