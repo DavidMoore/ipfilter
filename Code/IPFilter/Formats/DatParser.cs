@@ -66,14 +66,7 @@ namespace IPFilter.Formats
 
             sb.Clear();
 
-            sb.Append(fromBytes[0]).Append(".")
-                .Append(fromBytes[1]).Append(".")
-                .Append(fromBytes[2]).Append(".")
-                .Append(fromBytes[3]).Append(" - ")
-                .Append(toBytes[0]).Append(".")
-                .Append(toBytes[1]).Append(".")
-                .Append(toBytes[2]).Append(".")
-                .Append(toBytes[3]);
+            sb.AppendFormat("{0}.{1}.{2}.{3} - {4}.{5}.{6}.{7}", fromBytes[0], fromBytes[1], fromBytes[2], fromBytes[3], toBytes[0], toBytes[1], toBytes[2], toBytes[3]);
 
             return sb.ToString();
         }

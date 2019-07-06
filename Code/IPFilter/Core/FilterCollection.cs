@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using IPFilter.Models;
 
 namespace IPFilter.Core
@@ -41,7 +42,7 @@ namespace IPFilter.Core
                 }
             }
             
-            return list;
+            return list.ToList();
         }
 
         class MutableFilterEntryComparer : IComparer<FilterEntry>
