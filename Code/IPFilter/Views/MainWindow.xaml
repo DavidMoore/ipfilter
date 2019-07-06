@@ -38,13 +38,19 @@
 
             <ProgressBar Margin="0,5,0,0" IsIndeterminate="{Binding ProgressIsIndeterminate}" Minimum="{Binding ProgressMin}" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}" Height="26" VerticalAlignment="Top" />
 
-            <StackPanel>
-                <TextBlock TextAlignment="Right">
-                    <Hyperlink RequestNavigate="OpenLog" NavigateUri="https://www.sadrobot.co.nz/ipfilter">View Log</Hyperlink>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock TextAlignment="Left" Grid.Column="0">
                     <Hyperlink RequestNavigate="LaunchHelp" NavigateUri="https://www.sadrobot.co.nz/ipfilter">Support</Hyperlink>
-                    <!-- <Hyperlink RequestNavigate="Options" NavigateUri="https://www.sadrobot.co.nz/ipfilter">Options</Hyperlink> -->
                 </TextBlock>
-            </StackPanel>
+                <TextBlock TextAlignment="Right" Grid.Column="1">
+                    <Hyperlink RequestNavigate="OpenLog" NavigateUri="https://www.sadrobot.co.nz/ipfilter">View Log</Hyperlink>
+                    <Hyperlink RequestNavigate="Options" NavigateUri="https://www.sadrobot.co.nz/ipfilter">Options</Hyperlink>
+                </TextBlock>
+            </Grid>
         </StackPanel>
     </DockPanel>
 </Window>

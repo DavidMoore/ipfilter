@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:IPFilter.Views"
         xmlns:ViewModels="clr-namespace:IPFilter.ViewModels" x:Class="IPFilter.Views.OptionsWindow"
         mc:Ignorable="d"
-    WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip" MinWidth="450" WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow" ResizeMode="NoResize" MinWidth="450" WindowStartupLocation="CenterScreen"
         Title="Options" Height="200.642" Width="660" Loaded="Window_Loaded">
     <Window.DataContext>
         <ViewModels:OptionsViewModel/>
@@ -22,29 +22,20 @@
                 <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding ResetSettingsCommand}"/>
+                <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding ResetSettingsCommand}" />
             </StatusBarItem>
         </StatusBar>
 
         <StackPanel Orientation="Vertical" Margin="5,0,5,5">
             <Label Content="Automatic list update" />
             <StackPanel Orientation="Horizontal" Margin="10">
-                <CheckBox IsChecked="{Binding IsScheduleEnabled}" Content="Schedule automatic update of list every: "/>
-                <Slider Minimum="1" Maximum="24" Value="{Binding ScheduleHours}"/>
-                <Label Content="hour(s)" />
+                <CheckBox IsChecked="{Binding IsScheduleEnabled}" Content="Schedule automatic background update of list"/>
+                <!-- <Slider Width="200" Minimum="1" Maximum="24" Value="{Binding ScheduleHours}"/> -->
+                <!-- <Label Content="{Binding ScheduleHours}" ContentStringFormat=" {0} hour(s)" /> -->
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="10">
-                <CheckBox IsChecked="{Binding ShowNotifications}" Content="Show notifications"/>
-            </StackPanel>
+            <!-- <StackPanel Orientation="Horizontal" Margin="10"> -->
+            <!--     <CheckBox IsChecked="{Binding ShowNotifications}" Content="Show notifications"/> -->
+            <!-- </StackPanel> -->
         </StackPanel>
-
-
-
     </DockPanel>
-
-
-
 </Window>
-
-
-

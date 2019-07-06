@@ -100,6 +100,7 @@ namespace IPFilter.Commands
                 var folder = service.GetFolder("\\");
                 
                 var registered = folder.RegisterTaskDefinition(taskPath, task, (int)_TASK_CREATION.TASK_CREATE_OR_UPDATE, null,null,_TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN);
+                Trace.TraceInformation("Finished creating / updating scheduled task");
             }
         }
     }

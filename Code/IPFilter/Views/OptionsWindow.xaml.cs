@@ -19,7 +19,7 @@ namespace IPFilter.Views
             set { DataContext = value; }
         }
 
-        async private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             
         }

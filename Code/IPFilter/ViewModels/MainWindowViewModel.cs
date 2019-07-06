@@ -49,9 +49,9 @@ namespace IPFilter.ViewModels
         
         public MainWindowViewModel()
         {
-            Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
-            Trace.TraceInformation("Initializing...");
-            
+            //Trace.TraceInformation("Initializing...");
+            //Trace.Listeners.Add(new DelegateTraceListener(null,LogLineAction ));
+
             dispatcher = Dispatcher.CurrentDispatcher;
 
             StatusText = "Ready";

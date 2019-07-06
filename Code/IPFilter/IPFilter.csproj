@@ -45,6 +45,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Deployment" />
@@ -61,6 +62,17 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="FilterService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="FilterService.Designer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="FilterServiceInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="lists.json">

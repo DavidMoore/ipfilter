@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using IPFilter.Cli;
+using IPFilter.Commands;
 using IPFilter.Core;
 using IPFilter.Logging;
 
@@ -70,8 +71,22 @@ namespace IPFilter
                         Trace.TraceWarning("There was a problem when trying to update the filter: " + ex);
                     }
                 }
+                else if (commandLine.IndexOf("task", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    try
+                    {
+                        ScheduledTaskCommand.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError(ex.ToString());
+                        Console.WriteLine("Couldn't schedule task: \r\n" + ex);
+                    }
+                }
                 else
                 {
+
+
                     CurateList(args).GetAwaiter().GetResult();
                     //Trace.TraceWarning("Invalid command line: " + commandLine);
                 }

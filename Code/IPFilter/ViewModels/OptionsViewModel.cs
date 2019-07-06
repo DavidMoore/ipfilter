@@ -40,8 +40,9 @@ namespace IPFilter.ViewModels
                 Paths.CollectionChanged += (sender, args) => PendingChanges = true;
                 IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
                 ScheduleHours = Settings.Default.ScheduleHours;
-                PendingChanges = false;
                 Username = Settings.Default.Username;
+                ShowNotifications = Settings.Default.ShowNotifications;
+                PendingChanges = false;
             }
             catch (Exception e)
             {
@@ -97,6 +98,7 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Updating schedule settings...");
+                Commands.ScheduledTaskCommand.Execute();
             }
             catch (UnauthorizedAccessException)
             {
