@@ -32,7 +32,7 @@ namespace IPFilter.Services
                     var serializer = new JavaScriptSerializer();
                     var results = serializer.Deserialize<List<GitHubRelease>>(content);
 
-                    var latest = results.FirstOrDefault(x => !x.tag_name.Equals("lists", StringComparison.OrdinalIgnoreCase));
+                    var latest = results.FirstOrDefault(x => !x.prerelease && !x.tag_name.Equals("lists", StringComparison.OrdinalIgnoreCase));
                     if (latest == null)
                     {
                         Trace.TraceWarning("Couldn't find a release from the list returned by GitHub");
@@ -57,33 +57,32 @@ namespace IPFilter.Services
             }
         }
 
-    }
+        class GitHubRelease
+        {
+            public string name { get; set; }
 
-    class GitHubRelease
-    {
-        public string name { get; set; }
+            public string tag_name { get; set; }
 
-        public string tag_name { get; set; }
+            public ICollection<GitHubAsset> assets { get; set; }
 
-        public ICollection<GitHubAsset> assets { get;set; }
+            public bool prerelease { get; set; }
+        }
 
-        public bool prerelease { get; set; }
-    }
+        class GitHubAsset
+        {
+            public long id { get; set; }
 
-    class GitHubAsset
-    {
-        public long id { get; set; }
+            public string name { get; set; }
 
-        public string name { get; set; }
+            public Uri browser_download_url { get; set; }
 
-        public Uri browser_download_url { get; set; }
+            public string content_type { get; set; }
 
-        public string content_type { get; set; }
+            public long size { get; set; }
 
-        public long size { get;set; }
+            public DateTimeOffset created_at { get; set; }
 
-        public DateTimeOffset created_at { get;set; }
-
-        public DateTimeOffset updated_at { get;set; }
+            public DateTimeOffset updated_at { get; set; }
+        }
     }
 }
