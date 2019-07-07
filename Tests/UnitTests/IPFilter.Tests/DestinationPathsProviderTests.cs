@@ -1,4 +1,6 @@
-﻿namespace IPFilter.Tests
+﻿using IPFilter.Services;
+
+namespace IPFilter.Tests
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

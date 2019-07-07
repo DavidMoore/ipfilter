@@ -1,0 +1,15 @@
+﻿{
+  "settings": {
+    "update": {
+      "isDisabled": false,
+      "isPreReleaseEnabled": false
+    },
+    "task": {
+      "isEnabled": false
+    },
+    "cache": {
+      "isEnabled":  false
+    } 
+  },
+  "outputs": []
+}

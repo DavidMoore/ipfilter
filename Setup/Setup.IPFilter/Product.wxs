@@ -57,6 +57,9 @@
           <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
         </RegistryKey>
 
+        <!-- Remove the old style app.config -->
+        <RemoveFile Id="app.config" Name="$(var.IPFilter.TargetFileName).config" On="both" />
+
       </Component>
     </ComponentGroup>
 

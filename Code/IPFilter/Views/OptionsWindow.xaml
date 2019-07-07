@@ -6,8 +6,11 @@
         xmlns:local="clr-namespace:IPFilter.Views"
         xmlns:ViewModels="clr-namespace:IPFilter.ViewModels" x:Class="IPFilter.Views.OptionsWindow"
         mc:Ignorable="d"
-    WindowStyle="SingleBorderWindow" ResizeMode="NoResize" MinWidth="450" WindowStartupLocation="CenterScreen"
-        Title="Options" Height="200.642" Width="660" Loaded="Window_Loaded">
+    WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" MinWidth="450" WindowStartupLocation="CenterScreen"
+        Title="Options" Height="200.642" Width="660" Loaded="Window_Loaded" SizeToContent="Height">
+    <Window.Resources>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </Window.Resources>
     <Window.DataContext>
         <ViewModels:OptionsViewModel/>
     </Window.DataContext>
@@ -33,9 +36,12 @@
                 <!-- <Slider Width="200" Minimum="1" Maximum="24" Value="{Binding ScheduleHours}"/> -->
                 <!-- <Label Content="{Binding ScheduleHours}" ContentStringFormat=" {0} hour(s)" /> -->
             </StackPanel>
-            <!-- <StackPanel Orientation="Horizontal" Margin="10"> -->
-            <!--     <CheckBox IsChecked="{Binding ShowNotifications}" Content="Show notifications"/> -->
-            <!-- </StackPanel> -->
+            <Label Content="Software Updates" />
+            <StackPanel Orientation="Vertical" Margin="10">
+                <CheckBox IsChecked="{Binding IsUpdateDisabled}" Content="Disable software update check at startup"/>
+                <CheckBox IsChecked="{Binding IsPreReleaseEnabled}" IsEnabled="{Binding IsUpdateDisabled, Converter={StaticResource InverseBoolConverter}}" Content="Allow updating to pre-release versions"/>
+                <!--     <CheckBox IsChecked="{Binding ShowNotifications}" Content="Show notifications"/> -->
+            </StackPanel>
         </StackPanel>
     </DockPanel>
 </Window>

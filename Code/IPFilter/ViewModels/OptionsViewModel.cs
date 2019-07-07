@@ -20,6 +20,8 @@ namespace IPFilter.ViewModels
         string errorMessage;
         private string username;
         bool showNotifications;
+        bool isUpdateDisabled;
+        bool isPreReleaseEnabled;
 
 
         public OptionsViewModel()
@@ -38,10 +40,15 @@ namespace IPFilter.ViewModels
                 ErrorMessage = string.Empty;
                 Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
                 Paths.CollectionChanged += (sender, args) => PendingChanges = true;
-                IsScheduleEnabled = Settings.Default.IsScheduleEnabled;
-                ScheduleHours = Settings.Default.ScheduleHours;
-                Username = Settings.Default.Username;
-                ShowNotifications = Settings.Default.ShowNotifications;
+
+                IsScheduleEnabled = Config.Default.settings.update.isDisabled;
+                IsPreReleaseEnabled = Config.Default.settings.update.isPreReleaseEnabled;
+                IsUpdateDisabled = Config.Default.settings.update.isDisabled;
+
+                //ScheduleHours = Config.Default.settings.update.isDisabled;
+                //Username = Settings.Default.Username;
+                //ShowNotifications = Settings.Default.ShowNotifications;
+                
                 PendingChanges = false;
             }
             catch (Exception e)
@@ -58,7 +65,7 @@ namespace IPFilter.ViewModels
 
         void ResetSettings(object o)
         {
-            Settings.Default.Reload();
+            Config.Reload();
             LoadSettings();
         }
 
@@ -74,17 +81,17 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Saving settings...");
-                Settings.Default.Save();
+                Config.Save(Config.Default, Config.DefaultSettings);
 
                 // Ensure the configuration is encrypted
-                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-                var section = config.GetSection("userSettings/" + typeof(Settings).FullName);
-                if (!section.SectionInformation.IsProtected)
-                {
-                    section.SectionInformation.ProtectSection(nameof(RsaProtectedConfigurationProvider));
-                    section.SectionInformation.ForceSave = true;
-                    config.Save(ConfigurationSaveMode.Full);
-                }
+//                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+//                var section = config.GetSection("userSettings/" + typeof(Settings).FullName);
+//                if (!section.SectionInformation.IsProtected)
+//                {
+//                    section.SectionInformation.ProtectSection(nameof(RsaProtectedConfigurationProvider));
+//                    section.SectionInformation.ForceSave = true;
+//                    config.Save(ConfigurationSaveMode.Full);
+//                }
 
                 PendingChanges = false;
                 Trace.TraceInformation("Settings saved successfully.");
@@ -132,6 +139,19 @@ namespace IPFilter.ViewModels
 
         public ObservableCollection<PathSetting> Paths { get; set; }
 
+        public bool IsUpdateDisabled
+        {
+            get => isUpdateDisabled;
+            set
+            {
+                if (value.Equals(isUpdateDisabled)) return;
+                isUpdateDisabled = value;
+                Config.Default.settings.update.isDisabled = value;
+                PendingChanges = true;
+                OnPropertyChanged();
+            }
+        }
+
         public bool IsScheduleEnabled
         {
             get => isScheduleEnabled;
@@ -139,7 +159,7 @@ namespace IPFilter.ViewModels
             {
                 if (value.Equals(isScheduleEnabled)) return;
                 isScheduleEnabled = value;
-                Settings.Default.IsScheduleEnabled = value;
+                Config.Default.settings.task.isEnabled = value;
                 PendingChanges = true;
                 OnPropertyChanged();
             }
@@ -152,20 +172,7 @@ namespace IPFilter.ViewModels
             {
                 if (value == showNotifications) return;
                 showNotifications = value;
-                Settings.Default.ShowNotifications = value;
-                PendingChanges = true;
-                OnPropertyChanged();
-            }
-        }
-
-        public int? ScheduleHours
-        {
-            get => scheduleHours;
-            set
-            {
-                if (value == scheduleHours) return;
-                scheduleHours = value;
-                if( value.HasValue ) Settings.Default.ScheduleHours = value.Value;
+                //Settings.Default.ShowNotifications = value;
                 PendingChanges = true;
                 OnPropertyChanged();
             }
@@ -190,11 +197,24 @@ namespace IPFilter.ViewModels
                 if (value == username) return;
                 username = value;
                 PendingChanges = true;
-                Settings.Default.Username = value;
+                //Settings.Default.Username = value;
                 OnPropertyChanged();
             }
         }
-        
+
+        public bool IsPreReleaseEnabled
+        {
+            get => isPreReleaseEnabled;
+            set
+            {
+                if (value.Equals(isPreReleaseEnabled)) return;
+                isPreReleaseEnabled = value;
+                Config.Default.settings.update.isPreReleaseEnabled = value;
+                PendingChanges = true;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

@@ -13,7 +13,7 @@ namespace IPFilter.Services
 
     class Updater
     {        
-        public async Task<UpdateInfo> CheckForUpdateAsync()
+        public async Task<UpdateInfo> CheckForUpdateAsync(bool isPreReleaseEnabled = false)
         {
             const string latestReleases = "https://api.github.com/repos/DavidMoore/IPFilter/releases";
 
@@ -32,7 +32,7 @@ namespace IPFilter.Services
                     var serializer = new JavaScriptSerializer();
                     var results = serializer.Deserialize<List<GitHubRelease>>(content);
 
-                    var latest = results.FirstOrDefault(x => !x.prerelease && !x.tag_name.Equals("lists", StringComparison.OrdinalIgnoreCase));
+                    var latest = results.FirstOrDefault(x => (isPreReleaseEnabled || !x.prerelease) && !x.tag_name.Equals("lists", StringComparison.OrdinalIgnoreCase));
                     if (latest == null)
                     {
                         Trace.TraceWarning("Couldn't find a release from the list returned by GitHub");

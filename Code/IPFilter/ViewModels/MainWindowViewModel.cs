@@ -103,19 +103,7 @@ namespace IPFilter.ViewModels
         {
             return Update == null || !Update.IsUpdating;
         }
-
-        void LogLineAction(string message)
-        {
-            log.AppendLine(message);
-            OnPropertyChanged(nameof(LogData));
-        }
-
-        void LogAction(string message)
-        {
-            log.Append(message);
-            OnPropertyChanged(nameof(LogData));
-        }
-
+        
         void ProgressHandler(ProgressModel progressModel)
         {
             if (progressModel == null) return;
@@ -321,12 +309,7 @@ namespace IPFilter.ViewModels
         }
 
         public ICommand StartCommand { get; set; }
-
-        public string LogData
-        {
-            get { return log.ToString(); }
-        }
-
+        
         public bool ProgressIsIndeterminate { get; set; }
 
         public Action<string, string, ToolTipIcon> ShowNotification { get; set; }
@@ -371,6 +354,12 @@ namespace IPFilter.ViewModels
         {
             try
             {
+                if (Config.Default.settings.update.isDisabled)
+                {
+                    Trace.TraceInformation("The software update check is disabled by the user; skipping check");
+                    return;
+                }
+
                 // Remove any old ClickOnce installs
                 try
                 {
@@ -393,7 +382,7 @@ namespace IPFilter.ViewModels
 
                 var updater = new Updater();
 
-                var result = await updater.CheckForUpdateAsync();
+                var result = await updater.CheckForUpdateAsync(Config.Default.settings.update.isPreReleaseEnabled);
                 if (result == null) return;
                 
                 // The ProductVersion contains the informational, semantic version e.g. "3.0.0-beta"

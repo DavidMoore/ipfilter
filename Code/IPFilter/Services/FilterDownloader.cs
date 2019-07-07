@@ -71,7 +71,7 @@ namespace IPFilter.Services
                         Trace.TraceInformation("ETag: '{0}'", result.Etag);
                         
                         // Check if the cached filter is already up to date.
-                        if (cache != null && !Settings.Default.DisableCache && result.Etag != null && !result.Etag.IsWeak)
+                        if (cache != null && Config.Default.settings.cache.isEnabled && result.Etag != null && !result.Etag.IsWeak)
                         {
                             var cacheResult = await cache.GetAsync(result);
 

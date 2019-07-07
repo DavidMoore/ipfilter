@@ -38,7 +38,7 @@ namespace IPFilter
                 var listener = new FileTraceListener {Name = "file"};
                 Trace.Listeners.Add(listener);
             }
-
+            
             AppDomain.CurrentDomain.AssemblyResolve +=  CurrentDomainOnAssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 

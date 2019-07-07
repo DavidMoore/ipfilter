@@ -31,12 +31,12 @@ namespace IPFilter.Services
             try
             {
                 // Try to combine our defaults with the custom ones
-                if (Settings.Default.CustomPaths == null)
+                if (Config.Default.outputs == null)
                 {
                     return Enumerable.Empty<PathSetting>();
                 }
                 
-                return Settings.Default.CustomPaths.Cast<string>().Select(ParseCustomPath);
+                return Config.Default.outputs.Select(ParseCustomPath);
             }
             catch (Exception ex)
             {
