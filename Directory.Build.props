@@ -1,12 +1,21 @@
 <Project>
 
   <!-- Versioning -->
+  <PropertyGroup Condition="'$(BuildNumber)'!=''">
+    <BuildNumberRegex>(\d+)\.(\d+)\.(\d+)\.(\d+)-?(\w+)?</BuildNumberRegex>
+    <MajorVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$1'))</MajorVersion>
+    <MinorVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$2'))</MinorVersion>
+    <BuildNumberMajor>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$3'))</BuildNumberMajor>
+    <BuildNumberMinor>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$4'))</BuildNumberMinor>
+    <TagVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$5'))</TagVersion>
+  </PropertyGroup>
+
   <PropertyGroup>
     <MajorVersion Condition="'$(MajorVersion)' == ''">3</MajorVersion>
     <MinorVersion Condition="'$(MinorVersion)' == ''">0</MinorVersion>
     <BuildNumberMajor Condition="'$(BuildNumberMajor)' == ''">1</BuildNumberMajor>
     <BuildNumberMinor Condition="'$(BuildNumberMinor)' == ''">0</BuildNumberMinor>
-    <TagVersion Condition="'$(TagVersion)' == ''">beta</TagVersion>
+    <TagVersion Condition="'$(TagVersion)' == ''"></TagVersion>
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
     <InformationalVersion Condition="'$(InformationalVersion)' == '' and '$(TagVersion)' != ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)-$(TagVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)</InformationalVersion>
