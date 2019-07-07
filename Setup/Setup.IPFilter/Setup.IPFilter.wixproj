@@ -11,20 +11,13 @@
     <OutputType>Package</OutputType>
     <WixTargetsPath>$(MSBuildProgramFiles32)\MSBuild\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <DefineConstants>MajorVersion=$(MajorVersion);MinorVersion=$(MinorVersion);BuildNumberMajor=$(BuildNumberMajor);BuildNumberMinor=$(BuildNumberMinor);TagVersion=$(TagVersion);InformationalVersion=$(InformationalVersion)</DefineConstants>
+    <OutputPath>..\..\Bin\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <SuppressIces>ICE27</SuppressIces>
+    <SuppressValidation>False</SuppressValidation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\..\Bin\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug;$(DefineConstants)</DefineConstants>
-    <SuppressValidation>False</SuppressValidation>
-    <SuppressIces>ICE27</SuppressIces>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\..\Bin\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <SuppressIces>ICE27</SuppressIces>
-    <SuppressValidation>False</SuppressValidation>
-    <SignOutput>true</SignOutput>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
