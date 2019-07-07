@@ -2,7 +2,7 @@
 
   <!-- Versioning -->
   <PropertyGroup Condition="'$(BuildNumber)'!=''">
-    <BuildNumberRegex>.+(\d+)\.(\d+)\.(\d+)\.(\d+)-?(\w+)?</BuildNumberRegex>
+    <BuildNumberRegex>v?(\d+)\.(\d+)\.(\d+)\.(\d+)-?(\w+)?</BuildNumberRegex>
     <MajorVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$1'))</MajorVersion>
     <MinorVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$2'))</MinorVersion>
     <BuildNumberMajor>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildNumber)',$(BuildNumberRegex), '$3'))</BuildNumberMajor>
