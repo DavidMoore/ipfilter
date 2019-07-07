@@ -71,8 +71,7 @@
         <Shortcut Id="StartMenuShortcut"
                   Name="IPFilter"
                   Advertise="no"
-                  Target="[#ApplicationExe]"
-                          />
+                  Target="[#ApplicationExe]" WorkingDirectory="INSTALLFOLDER" />
 
         <RegistryKey Root="HKCU" Key="Software\IPFilter">
           <RegistryValue Name="InstallPath" Value="[INSTALLFOLDER]" Type="string" KeyPath="yes" />
