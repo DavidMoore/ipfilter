@@ -63,6 +63,7 @@
     <Compile Include="DestinationPathsProviderTests.cs" />
     <Compile Include="ListMergerTests.cs" />
     <Compile Include="Services\ConfigTests.cs" />
+    <Compile Include="Services\SemanticVersionTests.cs" />
     <Compile Include="StreamHelper.cs" />
     <Compile Include="TestFilterData.cs" />
     <Compile Include="AddressTests.cs" />
