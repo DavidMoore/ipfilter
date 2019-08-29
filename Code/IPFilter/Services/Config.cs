@@ -12,7 +12,7 @@ namespace IPFilter.Services
 
         public static Configuration Default => defaultConfig.Value;
 
-        internal const string DefaultSettings = "settings.json";
+        internal const string DefaultSettings = "ipfilter.json";
 
         internal static readonly JavaScriptSerializer serializer = new JavaScriptSerializer();
 
@@ -20,7 +20,7 @@ namespace IPFilter.Services
         {
             try
             {
-                if (File.Exists("settings.json"))
+                if (File.Exists(DefaultSettings))
                 {
                     var json = File.ReadAllText(DefaultSettings);
                     return Parse(json);

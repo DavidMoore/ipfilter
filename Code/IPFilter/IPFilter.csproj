@@ -76,7 +76,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="settings.json">
+    <None Update="ipfilter.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="lists.json">
