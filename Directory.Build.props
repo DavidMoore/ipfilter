@@ -13,11 +13,11 @@
   <PropertyGroup>
     <MajorVersion Condition="'$(MajorVersion)' == ''">3</MajorVersion>
     <MinorVersion Condition="'$(MinorVersion)' == ''">0</MinorVersion>
-    <BuildNumberMajor Condition="'$(BuildNumberMajor)' == ''">1</BuildNumberMajor>
+    <BuildNumberMajor Condition="'$(BuildNumberMajor)' == ''">2</BuildNumberMajor>
     <BuildNumberMinor Condition="'$(BuildNumberMinor)' == ''">0</BuildNumberMinor>
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
-    <InformationalVersion Condition="'$(InformationalVersion)' == '' and '$(TagVersion)' != ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)-$(TagVersion)</InformationalVersion>
-    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor)</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == '' and '$(TagVersion)' != ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor).$(BuildNumberMinor)-$(TagVersion)</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor).$(BuildNumberMinor)</InformationalVersion>
   </PropertyGroup>
 
   <!-- Branding and file properties -->
