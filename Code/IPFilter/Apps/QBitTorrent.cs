@@ -1,3 +1,5 @@
+using IPFilter.Native;
+
 namespace IPFilter.Apps
 {
     using System;
@@ -29,14 +31,8 @@ namespace IPFilter.Apps
                     var installLocation = (string)key.GetValue("InstallLocation");
                     if (string.IsNullOrWhiteSpace(installLocation)) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
-                    var result = new ApplicationDetectionResult
-                    {
-                        IsPresent = true,
-                        Description = "qBittorrent",
-                        InstallLocation = new DirectoryInfo(installLocation),
-                        Application = this
-                    };
-
+                    var result = ApplicationDetectionResult.Create(this, "qBittorrent", installLocation);
+                    
                     if (!result.InstallLocation.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var applicationPath = Path.Combine(result.InstallLocation.FullName, "qbittorrent.exe");

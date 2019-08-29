@@ -67,6 +67,7 @@
     <Compile Include="StreamHelper.cs" />
     <Compile Include="TestFilterData.cs" />
     <Compile Include="AddressTests.cs" />
+    <Compile Include="PathHelperTests.cs" />
     <Compile Include="UriResolverTests.cs" />
     <Compile Include="ZipEnumeratorTests.cs" />
   </ItemGroup>

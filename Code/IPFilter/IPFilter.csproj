@@ -21,6 +21,7 @@
     <Description>Tool for downloading ipfilter blocklists for your Bit Torrent client(s)</Description>
     <RepositoryUrl>https://github.com/DavidMoore/ipfilter</RepositoryUrl>
     <PackageProjectUrl>https://www.sadrobot.co.nz/ipfilter</PackageProjectUrl>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="App.ico" />

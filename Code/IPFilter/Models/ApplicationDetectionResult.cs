@@ -1,3 +1,5 @@
+using IPFilter.Native;
+
 namespace IPFilter.Models
 {
     using System.IO;
@@ -17,7 +19,20 @@ namespace IPFilter.Models
 
         public static ApplicationDetectionResult NotFound()
         {
-            return new ApplicationDetectionResult() {IsPresent = false};
+            return new ApplicationDetectionResult();
+        }
+
+        public static ApplicationDetectionResult Create(IApplication application, string description, string installLocation)
+        {
+            var directory = PathHelper.GetDirectoryInfo(installLocation);
+            
+            return new ApplicationDetectionResult
+            {
+                Application = application, 
+                Description = description, 
+                InstallLocation = directory, 
+                IsPresent = true
+            };
         }
     }
 }

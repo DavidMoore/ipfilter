@@ -26,14 +26,8 @@ namespace IPFilter.Apps
                 var installLocation = (string)key.GetValue("Install Path");
                 if (installLocation == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
                 
-                var result = new ApplicationDetectionResult
-                {
-                    IsPresent = true,
-                    Description = DefaultDisplayName,
-                    InstallLocation = new DirectoryInfo(installLocation),
-                    Application = this
-                };
-
+                var result = ApplicationDetectionResult.Create(this, DefaultDisplayName, installLocation);
+                
                 var exe = new FileInfo(Path.Combine(installLocation, "emule.exe"));
                 if (!exe.Exists) result.IsPresent = false;
 

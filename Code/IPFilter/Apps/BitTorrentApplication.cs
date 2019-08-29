@@ -24,7 +24,8 @@ namespace IPFilter.Apps
             var key = Registry.CurrentUser.OpenSubKey(RegistryKeyName, false);
             if (key == null)
             {
-                key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(RegistryKeyName, false);
+                using var hklm32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                key = hklm32.OpenSubKey(RegistryKeyName, false);
             }
 
             if( key == null ) return Task.FromResult(ApplicationDetectionResult.NotFound());
@@ -37,15 +38,9 @@ namespace IPFilter.Apps
                 var displayName = (string)key.GetValue("DisplayName") ?? DefaultDisplayName;
                 var version = (string)key.GetValue("DisplayVersion") ?? "Unknown";
 
-                var result = new ApplicationDetectionResult
-                {
-                    IsPresent = true,
-                    Description = displayName,
-                    InstallLocation = new DirectoryInfo(installLocation),
-                    Version = version,
-                    Application = this
-                };
-
+                var result = ApplicationDetectionResult.Create(this, displayName, installLocation);
+                result.Version = version;
+                
                 if (!result.InstallLocation.Exists) result.IsPresent = false;
 
                 return Task.FromResult(result);
