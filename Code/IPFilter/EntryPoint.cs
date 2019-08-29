@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using IPFilter.Cli;
 using IPFilter.Commands;
 using IPFilter.Core;
+using IPFilter.Formats;
 using IPFilter.Logging;
 
 namespace IPFilter
@@ -140,8 +142,10 @@ namespace IPFilter
 
             // Download the filter
             var downloader = new FilterDownloader();
+            var progressValue = 0;
             var progress = new Progress<ProgressModel>(delegate(ProgressModel model)
             {
+                progressValue = model.Value;
                 Trace.TraceInformation("{0}", model.Caption);
             });
 
@@ -149,6 +153,25 @@ namespace IPFilter
             {
                 if (filter.Exception != null) throw filter.Exception;
 
+                Trace.TraceInformation("Parsing filter (" + filter.Length + " bytes)");
+                filter.Stream.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(filter.Stream, Encoding.Default, false, 65535, true))
+                {
+                    var line = await reader.ReadLineAsync();
+                            
+                    while (line != null)
+                    {
+                        var entry = DatParser.ParseEntry(line);
+                        if( entry != null) filter.Entries.Add(entry);
+                        var percent = (int)Math.Floor( (double)filter.Stream.Position / filter.Stream.Length * 100);
+                        await Task.Yield();
+                        //if( percent > progressValue) progress.Report(UpdateState.Decompressing, "Parsed " + filter.Entries.Count + " entries",  percent);
+                        line = await reader.ReadLineAsync();
+                    }
+
+                    Trace.TraceInformation("Parsed " + filter.Entries.Count + " entries");
+                }
+                
                 foreach (var application in apps)
                 {
                     Trace.TraceInformation("Updating app {0} {1}", application.Description, application.Version);
