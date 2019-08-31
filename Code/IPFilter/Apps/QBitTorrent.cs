@@ -33,7 +33,7 @@ namespace IPFilter.Apps
 
                     var result = ApplicationDetectionResult.Create(this, "qBittorrent", installLocation);
                     
-                    if (!result.InstallLocation.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());
+                    if (result.InstallLocation == null || !result.InstallLocation.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                     var applicationPath = Path.Combine(result.InstallLocation.FullName, "qbittorrent.exe");
                     if (!File.Exists(applicationPath)) return Task.FromResult(ApplicationDetectionResult.NotFound());

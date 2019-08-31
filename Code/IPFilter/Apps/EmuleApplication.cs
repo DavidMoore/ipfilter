@@ -24,7 +24,7 @@ namespace IPFilter.Apps
                 if (key == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                 var installLocation = (string)key.GetValue("Install Path");
-                if (installLocation == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
+                if (string.IsNullOrWhiteSpace(installLocation)) return Task.FromResult(ApplicationDetectionResult.NotFound());
                 
                 var result = ApplicationDetectionResult.Create(this, DefaultDisplayName, installLocation);
                 

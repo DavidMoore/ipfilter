@@ -16,9 +16,7 @@ namespace IPFilter.Native
 
         public static DirectoryInfo GetDirectoryInfo([NotNull] string path, CultureInfo cultureInfo)
         {
-            Trace.WriteLine($"Parsing path: '{path}'");
-
-            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentException("Path is null or empty.", nameof(path));
+            if (string.IsNullOrWhiteSpace(path)) return null;
 
             try
             {
@@ -30,20 +28,18 @@ namespace IPFilter.Native
                 // the yen character will actually get corrected to the backslash.
             
                 // Get the culture's codepage
-                Trace.TraceInformation("Culture: " + cultureInfo);
-                Trace.TraceInformation("Codepage: " + cultureInfo.TextInfo.ANSICodePage);
                 var encoding = Encoding.GetEncoding(cultureInfo.TextInfo.ANSICodePage);
 
                 var normalizedPath = encoding.GetString(encoding.GetBytes(path));
-
-                Trace.WriteLine("Normalized path: " + path);
-
+                
                 return new DirectoryInfo(normalizedPath);
             }
             catch (Exception ex)
             {
-                Trace.TraceWarning("Couldn't normalize the path: " + ex);
-                Trace.TraceWarning("Falling back to just using the un-normalized path that was passed in as '" + path + "'");
+                Trace.TraceWarning($"Couldn't normalize the path '{path}'. Culture: {cultureInfo}, CodePage: {cultureInfo.TextInfo.ANSICodePage}");
+                Trace.TraceWarning("Error: " + ex);
+                Trace.TraceInformation($"Falling back to un-normalized path of '{path}'");
+
                 return new DirectoryInfo(path);
             }
         }

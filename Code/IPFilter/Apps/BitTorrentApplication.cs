@@ -33,15 +33,16 @@ namespace IPFilter.Apps
             using (key)
             {
                 var installLocation = (string)key.GetValue("InstallLocation");
-                if (installLocation == null) return Task.FromResult(ApplicationDetectionResult.NotFound());
+                if (string.IsNullOrWhiteSpace(installLocation)) return Task.FromResult(ApplicationDetectionResult.NotFound());
 
                 var displayName = (string)key.GetValue("DisplayName") ?? DefaultDisplayName;
                 var version = (string)key.GetValue("DisplayVersion") ?? "Unknown";
 
                 var result = ApplicationDetectionResult.Create(this, displayName, installLocation);
-                result.Version = version;
                 
-                if (!result.InstallLocation.Exists) result.IsPresent = false;
+                if (result.InstallLocation == null || !result.InstallLocation.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());;
+                
+                result.Version = version;
 
                 return Task.FromResult(result);
             }
