@@ -1,0 +1,114 @@
+{{ define "main" }}
+
+<!-- <article class="pb4">
+  <header class="ph3 ph5-ns w-100 bg-transparent pv3 mb4 mb5-ns bb b--black-10 overflow-auto">
+    <div class="nowrap mw9 center">
+      <a title="Getting Started" href="#getting-started" class="pv1-ns f6 fw6 dim link black-70 mr2 mr3-m mr4-l dib">
+        Getting Started
+      </a>
+      <a title="Principles" href="#principles" class="pv1-ns f6 fw6 dim link black-70 mr1 mr3-m mr4-l dib">
+        Principles
+      </a>
+      <a title="Features" href="#features" class="pv1-ns f6 fw6 dim link black-70 mr1 mr3-m mr4-l dib">
+        Features
+      </a>
+      <a title="Style Guide" href="#style" class="pv1-ns f6 fw6 dim link black-70 mr1 mr3-m mr4-l dib">
+        Style Guide
+      </a>
+      <a title="Testimonials" href="#testimonials" class="pv1-ns f6 fw6 dim link black-70 mr1 mr3-m mr4-l dib">
+        Testimonials
+      </a>
+    </div>
+  </header>
+</article> -->
+
+<article class="w-100 ph4 pb5 pb6-ns pt1 pt5-ns">
+    <div class="flex-l">
+
+      <div class="order-2 w-100 w-20-l ph5-m ph0-l mb4 sticky">
+          <aside class="fixed-lTK mw5-l right-0 f6 bl-l b--moon-gray pv4 pv0-ns ph4-l nested-list-reset nested-links nested-copy-line-height">
+              <p class="b">On this page</p>
+              {{ .TableOfContents }}              
+              {{ if or .PrevInSection .NextInSection }}
+                <div date-pref>
+                  {{if .NextInSection}}
+                    <a href="{{.NextInSection.Permalink }}" class="dib f6 pl1 hover-bg-light-gray br-100" title="{{ .NextInSection.Title }} ">
+                      {{ partial "ic_chevron_left_black_24px.svg" (dict "fill" "#0594CB" "size" "30px") }}
+                    </a>
+                  {{end}}
+
+                  {{if .PrevInSection}}
+                    <a href="{{ .PrevInSection.Permalink }}" class="dib f6 pr1 hover-bg-light-gray br-100" title="{{ .PrevInSection.Title }}">
+                    {{ partial "ic_chevron_right_black_24px.svg" (dict "fill" "#0594CB" "size" "30px") }}
+                    </a>
+                  {{end}}
+                </div>
+              {{ end }}
+            </aside>
+      </div>
+
+      <div class="order-1 w-60-l mw9 ph0 ph5-ns mid-gray nested-copy-line-height no-underline nested-links nested-copy-seperator nested-blockquote mt0-ns" style="flex-grow:1;">
+        <div class="documentation-copy center">
+          <div id="readout" class="fixed right-0 bottom-0"></div>
+          <header class="flex-none w-100">
+              {{ if .Params.categories }}
+                {{ range .Params.categories }}
+                  <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}" class="f6 fw8 mb0 link mid-gray dim mr3">
+                    {{ humanize  . | upper }}
+                  </a>
+                {{ end }}
+              {{end}}
+              <h1 class="lh-title mb3 mv0 pt3 primary-color-dark">{{ .Title }}</h1>
+            </header>
+            
+            <aside class="bt bw1 pt3 mt2 mid-gray b--mid-gray fn w-100">
+              {{ with .Params.description }}
+                <div class="f4 fw4 lh-copy">
+                  {{ . | markdownify }}
+                </div>
+              {{ end }}
+            
+              <!--
+              NOTE: Removed to test builds without it.
+              partial "components/author-github-data" (dict "context" . "size" "110") -->
+            </aside>
+            
+            {{ with .Params.featured_image_path }}
+              <img src="{{ . }}" alt="Featured Image for {{ $.Title }}" class="mw-100">
+            {{ end }}
+            
+            <div class="prose" id="prose">
+              {{ .Content }}
+            </div>
+        </div>
+      </div>
+      <div class="order-0 w-20 dn db-l">
+          {{ $currentPage := . }}
+          <nav role="navigation">
+            <ul class="list pa0 nl2">
+              {{ range .Sections.ByWeight }}
+                {{ $post := printf "%s" .Post }}
+                <li class="f5 w-100 hover-bg-light-gray hover-accent-color-light fw8{{ if eq $post "break" }} mb1 bb b--moon-gray{{ end }}">
+                  <a href="{{ if .HasChildren }}javascript:void(0){{ else }}{{ .URL }}{{ end }}" class="js-toggle dib w-100 link mid-gray hover-accent-color-light pl2 pr2 pv2 {{if or ($currentPage.IsMenuCurrent "blog" .) ($currentPage.HasMenuCurrent "docs" .) }} primary-color{{end}}" data-target=".{{ .Name | urlize }}">{{ .Name }}</a>
+          
+                    {{ if .HasChildren }}
+                      <ul class="{{ .Name | urlize }} desktopmenu animated fadeIn list pl0 bg-light-gray{{if $currentPage.HasMenuCurrent "blog" . }} db{{ else }} dn{{ end }}">
+                        {{ range .Children }}
+                          <li  class="f6 fw4">
+                            <a href="{{.URL}}" class="db link hover-bg-gray hover-white pl3 pr2 pv2 {{if $currentPage.IsMenuCurrent "blog" . }}primary-color {{ else }}black {{end}}">
+                              {{ .Name }}
+                            </a>
+                          </li>
+                        {{ end }}
+                      </ul>
+                    {{end}}
+                  </li>
+              {{end}}
+            </ul>
+          </nav>
+      </div>
+
+    </div>
+  </article>
+
+{{ end }}

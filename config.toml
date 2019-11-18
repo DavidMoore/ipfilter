@@ -1,0 +1,43 @@
+baseURL = "https://ipfilter.app/"
+languageCode = "en-us"
+title = "IPFilter Updater"
+
+[[menu.global]]
+name = "Home"
+weight = 10
+identifier = "home"
+url = "/"
+
+[[menu.global]]
+name = "Download"
+weight = 20
+identifier = "download"
+url = "/#download"
+
+[[menu.global]]
+name = "FAQ"
+weight = 30
+identifier = "faq"
+url = "/faq/"
+
+#[[menu.global]]
+#name = "Docs"
+#weight = 50
+#identifier = "docs"
+#url = "/docs/"
+
+[[menu.global]]
+name = "Changelog"
+weight = 60
+identifier = "changelog"
+url = "/changelog/"
+
+# Anything with a weight > 100 gets an external icon
+
+[[menu.global]]
+name = "GitHub"
+weight = 200
+icon = true
+identifier = "github"
+post = "external"
+url = "https://github.com/davidmoore/ipfilter/"
