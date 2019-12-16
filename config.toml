@@ -2,6 +2,10 @@ baseURL = "https://ipfilter.app/"
 languageCode = "en-us"
 title = "IPFilter Updater"
 
+[caches]
+[caches.getjson]
+maxAge = 0
+
 [[menu.global]]
 name = "Home"
 weight = 10
