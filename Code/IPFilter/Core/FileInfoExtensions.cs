@@ -21,7 +21,7 @@ namespace IPFilter.Cli
             }
             catch (Exception ex)
             {
-                Trace.TraceWarning($"Couldn't delete temporary file {file.FullName}: {ex}");
+                Trace.TraceWarning($"Couldn't delete file {file.FullName}: {ex}");
             }
         }
 

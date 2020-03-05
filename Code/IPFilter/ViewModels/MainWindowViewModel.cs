@@ -1,3 +1,5 @@
+using IPFilter.Cli;
+
 namespace IPFilter.ViewModels
 {
     using System;
@@ -377,6 +379,41 @@ namespace IPFilter.ViewModels
                     Trace.TraceError("Failed to remove old ClickOnce app: " + ex);
                 }
 
+                var applicationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IPFilter");
+                var installerDir = new DirectoryInfo(Path.Combine(applicationDirectory, "installer"));
+                
+                // Detect the current running version. The ProductVersion contains the informational, semantic version e.g. "3.0.0-beta"
+                var versionInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+                var currentVersion = new SemanticVersion(versionInfo.ProductVersion);
+
+                // Remove any old installers
+                try
+                {
+                    if (!installerDir.Exists)
+                    {
+                        installerDir.Create();
+                    }
+                    else if (!Config.Default.settings.update.isCleanupDisabled)
+                    {
+                        // Don't delete the MSI for the current installed version
+                        var currentMsiName = "IPFilter." + currentVersion.ToNormalizedString() + ".msi";
+
+                        // Scan the directory for all installers
+                        foreach (var fileInfo in installerDir.GetFiles("IPFilter.*.msi"))
+                        {
+                            // Don't remove the installer for the installed version
+                            if (fileInfo.Name.Equals(currentMsiName, StringComparison.OrdinalIgnoreCase)) continue;
+
+                            Trace.TraceInformation("Removing cached installer: " + fileInfo.Name);
+                            fileInfo.SafeDelete();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Couldn't clean up old installers: " + ex);
+                }
+
                 Trace.TraceInformation("Checking for software updates...");
                 progress.Report(new ProgressModel(UpdateState.Downloading, "Checking for software updates...", -1));
 
@@ -385,10 +422,6 @@ namespace IPFilter.ViewModels
                 var result = await updater.CheckForUpdateAsync(Config.Default.settings.update.isPreReleaseEnabled);
                 if (result == null) return;
                 
-                // The ProductVersion contains the informational, semantic version e.g. "3.0.0-beta"
-                var versionInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
-                var currentVersion = new SemanticVersion(versionInfo.ProductVersion);
-
                 var latestVersion = new SemanticVersion(result.Version);
                 
                 Update.IsUpdateAvailable = latestVersion > currentVersion;
@@ -423,7 +456,7 @@ namespace IPFilter.ViewModels
                     {
                         using (var process = new Process())
                         {
-                            process.StartInfo = new ProcessStartInfo("https://davidmoore.github.io/ipfilter/")
+                            process.StartInfo = new ProcessStartInfo("https://www.ipfilter.app/")
                             {
                                 UseShellExecute = true
                             };
@@ -434,7 +467,8 @@ namespace IPFilter.ViewModels
                     }
                 }
 
-                var msiPath = Path.Combine(Path.GetTempPath(), "IPFilter.msi");
+                // Download the MSI to the installer directory
+                var msiPath = Path.Combine(installerDir.FullName, "IPFilter." + Update.AvailableVersion + ".msi");
 
                 // Download the installer
                 using (var handler = new WebRequestHandler())
@@ -458,7 +492,7 @@ namespace IPFilter.ViewModels
                         double bytesDownloaded = 0;
 
                         using(var stream = await response.Content.ReadAsStreamAsync())
-                        using(var msi = File.Open( msiPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                        using(var msi = File.Open(msiPath, FileMode.Create, FileAccess.Write, FileShare.Read))
                         {
                             var buffer = new byte[65535 * 4];
 
@@ -500,7 +534,8 @@ namespace IPFilter.ViewModels
                 var sb = new StringBuilder("msiexec.exe ");
 
                 // Enable logging for the installer
-                sb.AppendFormat(" /l*v \"{0}\"", Path.Combine(Path.GetTempPath(), "IPFilter.log"));
+                var installLog = Path.Combine(applicationDirectory, "install.log");
+                sb.AppendFormat(" /l*v \"{0}\"", installLog);
                 
                 sb.AppendFormat(" /i \"{0}\"", msiPath);
 
