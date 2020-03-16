@@ -129,13 +129,7 @@ namespace IPFilter
             var detector = new ApplicationEnumerator();
 
             var apps = (await detector.GetInstalledApplications()).ToList();
-
-            if (!apps.Any())
-            {
-                Trace.TraceWarning("No BitTorrent applications found. Nothing to do, so exiting.");
-                return;
-            }
-
+            
             var cancellationSource = new CancellationTokenSource();
 
             // Download the filter
