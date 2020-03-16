@@ -78,20 +78,6 @@
                     "description": ""
                 }
             ]
-        },
-        {
-            "id": "1CC6EFA1-5B90-4D3D-8284-0AF7FE118410",
-            "name": "CHEF-KOCH's NSA Blocklist'",
-            "description": "[D]esigned to stop known NSA / GCHQ / C.I.A. or F.B.I. servers from being connecting to you without permission",
-            "uri": "https://github.com/CHEF-KOCH/NSABlocklist",
-            "lists": [
-                {
-                    "id": "6B46518F-136C-49C9-B02A-A5E503207002",
-                    "name": "NSA Blocklist",
-                    "description": "",
-                    "uri": "https://github.com/CHEF-KOCH/NSABlocklist/raw/master/test/ip-filter/ipfilter.dat"
-                }
-            ]
         }
     ]
 }
