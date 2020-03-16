@@ -11,7 +11,7 @@ namespace IPFilter.Formats
     /// <summary>
     /// Writes out ipfilter.dat for eMule, which aligns the data in space-padded columns e.g.<c>"1.2.8.0         - 1.2.8.255       ,   0 ,  Some organization"</c>
     /// </summary>
-    class EmuleWriter : IDisposable
+    class EmuleWriter : IFormatWriter
     {
         readonly Stream stream;
 
@@ -54,12 +54,15 @@ namespace IPFilter.Formats
 
                     sb.Append(entry.Description);
 
-                    await writer.WriteLineAsync(sb.ToString());
+                    writer.WriteLine(sb.ToString());
 
                     if (progress == null) continue;
                     var percent = (int) Math.Floor((double) (i / entries.Count * 100));
                     progress.Report(new ProgressModel(UpdateState.Decompressing, "Updating eMule...", percent));
                 }
+
+                progress?.Report(new ProgressModel(UpdateState.Decompressing, "Flushing...", 100));
+                await writer.FlushAsync();
 
                 progress?.Report(new ProgressModel(UpdateState.Decompressing, "Updated eMule.", 100));
             }

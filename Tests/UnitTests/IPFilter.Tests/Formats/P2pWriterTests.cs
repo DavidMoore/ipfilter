@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using IPFilter.Formats;
@@ -12,7 +11,7 @@ using Moq;
 namespace IPFilter.Tests.Formats
 {
     [TestClass]
-    public class UTorrentWriterTests
+    public class P2pWriterTests
     {
         [TestMethod]
         public async Task Write()
@@ -27,7 +26,7 @@ namespace IPFilter.Tests.Formats
 
             using (var stream = new MemoryStream())
             {
-                using (var writer = new BitTorrentWriter(stream))
+                using (var writer = new P2pWriter(stream))
                 {
                     var progress = new Mock<IProgress<ProgressModel>>();
                     await writer.Write(entries, progress.Object);
