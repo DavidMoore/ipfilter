@@ -36,6 +36,12 @@ namespace IPFilter.Views
 
             Closing += OnClosing;
 
+            Loaded += (sender, args) =>
+            {
+                helper.EnsureHandle();
+                Win32Api.BringToFront(helper.Handle);
+            };
+
             Activated += (sender, args) =>
             {
                 helper.EnsureHandle();

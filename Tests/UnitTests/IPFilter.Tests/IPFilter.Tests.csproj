@@ -49,8 +49,10 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apps\DelugeTests.cs" />
     <Compile Include="FormatDetectorTests.cs" />
     <Compile Include="Formats\DatParserTests.cs" />
     <Compile Include="Formats\EmuleWriterTests.cs" />
@@ -58,7 +60,7 @@
     <Compile Include="Formats\FilterEntryComparerTests.cs" />
     <Compile Include="Formats\IPAddressComparerTests.cs" />
     <Compile Include="Formats\IpAddressTests.cs" />
-    <Compile Include="Formats\UTorrentWriterTests.cs" />
+    <Compile Include="Formats\P2pWriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DestinationPathsProviderTests.cs" />
     <Compile Include="ListMergerTests.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="TestFilterData.cs" />
     <Compile Include="AddressTests.cs" />
     <Compile Include="PathHelperTests.cs" />
+    <Compile Include="ShellLinkHelperTests.cs" />
     <Compile Include="UriResolverTests.cs" />
     <Compile Include="ZipEnumeratorTests.cs" />
   </ItemGroup>
@@ -96,6 +99,7 @@
       <Version>1.4.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

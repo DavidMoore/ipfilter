@@ -55,7 +55,7 @@ namespace IPFilter.Apps
 
             Trace.TraceInformation("Writing filter to " + destinationPath);
             using (var destination = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
-            using (var writer = new BitTorrentWriter(destination))
+            using (var writer = new P2pWriter(destination))
             {
                 await writer.Write(filter.Entries, progress);
             }

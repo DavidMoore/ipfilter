@@ -11,7 +11,7 @@ namespace IPFilter.Formats
     /// <summary>
     /// Writes out eMule DAT format, 0-padding integers to 3 digits. e.g.<c>"001.009.096.105 - 001.009.096.105 , 000 , Some organization"</c>
     /// </summary>
-    class BitTorrentWriter : IDisposable
+    class P2pWriter : IFormatWriter
     {
         readonly Stream stream;
 
@@ -20,7 +20,7 @@ namespace IPFilter.Formats
             stream.Dispose();
         }
 
-        public BitTorrentWriter(Stream stream)
+        public P2pWriter(Stream stream)
         {
             this.stream = stream;
         }

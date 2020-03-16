@@ -10,6 +10,8 @@ namespace IPFilter.Cli
 {
     class TextFilterWriter : IFilterWriter
     {
+        static readonly Task success = Task.FromResult(1);
+
         readonly FileInfo file;
         readonly TextWriter writer;
         readonly TempFile temp;
@@ -18,7 +20,6 @@ namespace IPFilter.Cli
         {
             file = new FileInfo(path);
             temp = new TempFile();
-            
             writer = new StreamWriter( temp.File.Open(FileMode.Create, FileAccess.Write, FileShare.Read));
         }
 
@@ -28,16 +29,17 @@ namespace IPFilter.Cli
             temp?.Dispose();
         }
 
-        public async Task WriteLineAsync(string line)
+        public Task WriteLineAsync(string line)
         {
             var parsed = DatParser.ParseLine(line);
             if (parsed == null)
             {
-                Trace.TraceWarning("Invalid line: " + line);
-                return;
+                if(!line.StartsWith("#")) Trace.TraceWarning("Invalid line: " + line);
+                return success;
             }
 
-            await writer.WriteLineAsync(parsed);
+            writer.WriteLine(parsed);
+            return success;
         }
 
         public async Task Flush()
@@ -61,11 +63,13 @@ namespace IPFilter.Cli
             var list = FilterCollection.Merge(filters);
 
             // Flush the list out
-            using (var stream = file.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (var listWriter = new EmuleWriter(stream))
-            {
-                await listWriter.Write(list, null);
-            }
+            using var stream = file.Open(FileMode.Create, FileAccess.Write, FileShare.Read);
+
+            // Determine the desired format from the file extension
+            var format = file.Extension.StartsWith(".p2p") ? FilterFileFormat.P2p : FilterFileFormat.Emule;
+            //using var listWriter = (format == FilterFileFormat.Emule ? new EmuleWriter(stream) : (IFormatWriter)new BitTorrentWriter(stream));
+            using var listWriter = new P2pWriter(stream);
+            await listWriter.Write(list, null);
         }
     }
 }

@@ -94,6 +94,8 @@ namespace IPFilter.Services
             public bool isDisabled { get; set; }
 
             public bool isPreReleaseEnabled { get; set; }
+
+            public bool isCleanupDisabled { get; set; }
         }
 
         public class TaskSettings

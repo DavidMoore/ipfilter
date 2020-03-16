@@ -87,8 +87,6 @@ namespace IPFilter
                 }
                 else
                 {
-
-
                     CurateList(args).GetAwaiter().GetResult();
                     //Trace.TraceWarning("Invalid command line: " + commandLine);
                 }
@@ -194,7 +192,14 @@ namespace IPFilter
                 // Configure outputs
                 if (options.Outputs.Count > 0)
                 {
-                    context.Filter = new TextFilterWriter(options.Outputs.First());
+                    if (options.Outputs.Count > 1)
+                    {
+                        context.Filter = new MultiFilterWriter(options.Outputs.Select(x => new TextFilterWriter(x)));
+                    }
+                    else
+                    {
+                        context.Filter = new TextFilterWriter(options.Outputs.First());
+                    }
                 }
                 else
                 {
