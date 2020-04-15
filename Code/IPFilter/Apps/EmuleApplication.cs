@@ -29,12 +29,17 @@ namespace IPFilter.Apps
                 var result = ApplicationDetectionResult.Create(this, DefaultDisplayName, installLocation);
                 
                 var exe = new FileInfo(Path.Combine(installLocation, "emule.exe"));
-                if (!exe.Exists) result.IsPresent = false;
+                if (exe.Exists)
+                {
+                    var version = FileVersionInfo.GetVersionInfo(exe.FullName);
+                    result.Description = version.ProductName;
+                    result.Version = version.FileVersion;
+                }
+                else
+                {
+                    result.IsPresent = false;
+                }
 
-                var version = FileVersionInfo.GetVersionInfo(exe.FullName);
-                result.Description = version.ProductName;
-                result.Version = version.FileVersion;
-                
                 return Task.FromResult(result);
             }
         }
