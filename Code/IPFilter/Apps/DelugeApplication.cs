@@ -50,15 +50,17 @@ namespace IPFilter.Apps
                 var result = ApplicationDetectionResult.Create(this, "Deluge", Path.GetDirectoryName(path));
 
                 var exe = new FileInfo(path);
-                if (!exe.Exists)
+                if (exe.Exists)
+                {
+                    var version = FileVersionInfo.GetVersionInfo(exe.FullName);
+                    result.Description = version.ProductName;
+                    result.Version = version.FileVersion;
+                }
+                else
                 {
                     Trace.TraceInformation("Deluge exe not found @ " + path);
                     result.IsPresent = false;
                 }
-
-                var version = FileVersionInfo.GetVersionInfo(exe.FullName);
-                result.Description = version.ProductName;
-                result.Version = version.FileVersion;
 
                 return Task.FromResult(result);
             }
