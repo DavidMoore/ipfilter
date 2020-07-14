@@ -31,7 +31,7 @@
                     <!-- <ColumnDefinition Width="75"/> -->
                     <ColumnDefinition Width="75"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" VerticalAlignment="Bottom" Content="{Binding StatusText}" />
+                <TextBlock Grid.Column="0" VerticalAlignment="Top" Text="{Binding StatusText}" TextWrapping="WrapWithOverflow" Margin="0,0,5,0" />
                 <!-- <Button Grid.Column="1" Width="75" Height="23" Content="options" Command="{Binding ShowOptionsCommand}" /> -->
                 <Button Grid.Column="1" Width="75" Height="23" Command="{Binding StartCommand}" Content="{Binding ButtonText}" />
             </Grid>
