@@ -30,9 +30,18 @@ namespace IPFilter.Apps
             var result = ApplicationDetectionResult.Create(this, DefaultDisplayName, installLocation);
                 
             var exe = new FileInfo(Path.Combine(installLocation, "emule.exe"));
-            if (!exe.Exists) result.IsPresent = false;
+            if (!exe.Exists)
+            {
+                result.IsPresent = false;
+            }
+            else
+            {
+                var version = FileVersionInfo.GetVersionInfo(exe.FullName);
+                result.Description = version.ProductName;
+                result.Version = version.FileVersion;
+            }
 
-            // eMule can be configured store config in the application folder or program data, instead of app data
+            // eMule can be configured to store config in the application folder or program data, instead of app data
             var useSharedConfigValue = key.GetValue("UsePublicUserDirectories") ?? 0;
             configFolder = (int) useSharedConfigValue switch
             {
@@ -41,10 +50,6 @@ namespace IPFilter.Apps
                 _ => Environment.SpecialFolder.LocalApplicationData
             };
 
-            var version = FileVersionInfo.GetVersionInfo(exe.FullName);
-            result.Description = version.ProductName;
-            result.Version = version.FileVersion;
-                
             return Task.FromResult(result);
         }
 
