@@ -28,7 +28,19 @@ namespace IPFilter.Apps
                 key = hklm32.OpenSubKey(RegistryKeyName, false);
             }
 
-            if( key == null ) return Task.FromResult(ApplicationDetectionResult.NotFound());
+            if( key == null )
+            {
+                // See if we can just find it installed in the user profile
+                var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
+                var applicationExe = new FileInfo(Path.Combine(roamingPath, FolderName, FolderName + ".exe"));
+                if(!applicationExe.Exists) return Task.FromResult(ApplicationDetectionResult.NotFound());
+                
+                var versionInfo = FileVersionInfo.GetVersionInfo(applicationExe.FullName);
+                var result = ApplicationDetectionResult.Create(this, versionInfo.ProductName ?? DefaultDisplayName, applicationExe.DirectoryName);
+                result.Version = versionInfo.ProductVersion ?? versionInfo.FileVersion;
+
+                return Task.FromResult(result);
+            }
 
             using (key)
             {
