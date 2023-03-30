@@ -11,6 +11,12 @@ on:
       - docs
   release:
     types: [published, edited]
+  workflow_run:
+    workflows: ["Nightly Lists"]
+    types: [completed]
+    branches:
+      - 'master'
+      - 'main'
 
 jobs:
   build_and_deploy_job:
