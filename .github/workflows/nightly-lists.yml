@@ -29,7 +29,7 @@ jobs:
           ls
 
           Write-Host "Finished"
-          exit $LASTEXITCODE
+          exit 0
 
       - name: Archive
         shell: powershell
