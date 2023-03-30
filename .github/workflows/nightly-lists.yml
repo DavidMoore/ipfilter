@@ -12,7 +12,6 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v2
       - name: Download release
         id: download-release
         shell: powershell
@@ -29,6 +28,8 @@ jobs:
           ls
 
           Write-Host "Finished"
+
+          exit $LASTEXITCODE
 
       - name: Archive
         shell: powershell
