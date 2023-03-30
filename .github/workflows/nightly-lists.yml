@@ -9,6 +9,8 @@ jobs:
   generate-list:
     runs-on: windows-latest
     name: Generate and upload lists
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v2
       - name: Download release
@@ -27,29 +29,18 @@ jobs:
           ls
 
           Write-Host "Finished"
+          exit 0
 
       - name: Archive
         shell: powershell
         run: |
-          $inputPath = ".\ipfilter.dat";
-          $output= ".\ipfilter.dat.gz";
+          
+          Write-Host "Creating ipfilter.dat.gz..."
+          7z a ipfilter.dat.gz ipfilter.dat
 
-          Write-Host "Source: $inputPath"
-          Write-Host "Destination: $output";
+          Write-Host "Creating ipfilter.zip..."
+          7z a ipfilter.zip ipfilter.dat
 
-          $inputStream = New-Object System.IO.FileStream($inputPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read);
-          $outputStream = New-Object System.IO.FileStream($output, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None);
-          $gzip = New-Object System.IO.Compression.GZipStream($outputStream, [System.IO.Compression.CompressionMode]::Compress);
-
-          try
-          {
-              $inputStream.CopyTo($gzip);
-          }
-          finally
-          {
-              if($gzip) { $gzip.Dispose(); }
-              if($outputStream) { $outputStream.Dispose(); }
-              if($inputStream) {$inputStream.Dispose(); }
-          }
-
-          Write-Host "Finished writing to: $output";
+      - name: Upload Release
+        run: |
+          gh release upload lists ipfilter.dat ipfilter.dat.gz ipfilter.zip --clobber
