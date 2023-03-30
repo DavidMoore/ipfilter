@@ -1,0 +1,46 @@
+name: Nightly Lists
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 5 * * *'
+
+jobs:
+  generate-list:
+    runs-on: windows-latest
+    name: Generate and upload lists
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download release
+        id: download-release
+        shell: powershell
+        run: |
+          gh release download --pattern '*.exe'
+          gh release download lists --pattern '*.json'
+          
+          Write-Host "Launching ipfilter..."
+          .\IPFilter.exe https://raw.githubusercontent.com/DavidMoore/ipfilter/lists/default/lists.json '-o:ipfilter.dat'
+
+          Write-Host "Waiting for ipfilter to finish..."
+          Wait-Process -Name ipfilter
+
+          ls
+
+          Write-Host "Finished"
+          exit 0
+
+      - name: Archive
+        shell: powershell
+        run: |
+          
+          Write-Host "Creating ipfilter.dat.gz..."
+          7z a ipfilter.dat.gz ipfilter.dat
+
+          Write-Host "Creating ipfilter.zip..."
+          7z a ipfilter.zip ipfilter.dat
+
+      - name: Upload Release
+        run: |
+          gh release upload lists ipfilter.dat ipfilter.dat.gz ipfilter.zip --clobber
