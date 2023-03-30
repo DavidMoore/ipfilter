@@ -35,8 +35,12 @@ jobs:
         shell: powershell
         run: |
           
-          Write-Host "Creating ipfilter.tar.gz..."
-          tar -cvf ipfilter.tar.gz ipfilter.dat
+          Write-Host "Creating ipfilter.dat.gz..."
+          7z a ipfilter.dat.gz ipfilter.dat
 
           Write-Host "Creating ipfilter.zip..."
           7z a ipfilter.zip ipfilter.dat
+
+      - name: Upload Release
+        run: |
+          gh release upload lists ipfilter.dat ipfilter.dat.gz ipfilter.zip --clobber
