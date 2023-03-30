@@ -9,6 +9,8 @@ jobs:
   generate-list:
     runs-on: windows-latest
     name: Generate and upload lists
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v2
       - name: Download release
