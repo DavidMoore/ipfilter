@@ -15,7 +15,8 @@ namespace IPFilter.Apps
                 new QBitTorrent(), 
                 new UTorrentApplication(),
                 new BitTorrentApplication(),
-                new EmuleApplication()
+                new EmuleApplication(),
+                new PortableApplication(),
             };
 
             foreach (var application in applications)
