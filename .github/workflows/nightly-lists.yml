@@ -34,25 +34,9 @@ jobs:
       - name: Archive
         shell: powershell
         run: |
-          $inputPath = ".\ipfilter.dat";
-          $output= ".\ipfilter.dat.gz";
+          
+          Write-Host "Creating ipfilter.tar.gz..."
+          tar -cvf ipfilter.tar.gz ipfilter.dat
 
-          Write-Host "Source: $inputPath"
-          Write-Host "Destination: $output";
-
-          $inputStream = New-Object System.IO.FileStream($inputPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read);
-          $outputStream = New-Object System.IO.FileStream($output, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None);
-          $gzip = New-Object System.IO.Compression.GZipStream($outputStream, [System.IO.Compression.CompressionMode]::Compress);
-
-          try
-          {
-              $inputStream.CopyTo($gzip);
-          }
-          finally
-          {
-              if($gzip) { $gzip.Dispose(); }
-              if($outputStream) { $outputStream.Dispose(); }
-              if($inputStream) {$inputStream.Dispose(); }
-          }
-
-          Write-Host "Finished writing to: $output";
+          Write-Host "Creating ipfilter.zip..."
+          7z a ipfilter.zip ipfilter.dat
