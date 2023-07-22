@@ -9,7 +9,6 @@ namespace IPFilter.Models
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
-    using UI.Annotations;
     using ViewModels;
 
     public class UpdateModel : INotifyPropertyChanged
@@ -27,7 +26,7 @@ namespace IPFilter.Models
         
         public UpdateModel()
         {
-            CurrentVersion = new SemanticVersion(GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+            CurrentVersion = new SemanticVersion(GetAttribute<AssemblyFileVersionAttribute>().Version);
             Product = GetAttribute<AssemblyProductAttribute>().Product;
             UpdateCommand = new DelegateCommand(DoUpdate, CanDoUpdate);
 
@@ -178,8 +177,7 @@ namespace IPFilter.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

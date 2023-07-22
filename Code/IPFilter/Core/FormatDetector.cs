@@ -118,7 +118,7 @@ namespace IPFilter.Core
             }
         }
         
-        public static Task<DataFormat> GetFormat(Stream stream, MediaTypeHeaderValue contentType = null)
+        public static Task<DataFormat> GetFormat(Stream stream, MediaTypeHeaderValue? contentType = null)
         {
             var mediaType = contentType?.MediaType;
             

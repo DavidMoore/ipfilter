@@ -1,5 +1,3 @@
-using System.Configuration;
-
 namespace IPFilter.ViewModels
 {
     using System;
@@ -7,9 +5,7 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using Properties;
     using Services;
-    using UI.Annotations;
 
     public class OptionsViewModel : INotifyPropertyChanged
     {
@@ -217,8 +213,7 @@ namespace IPFilter.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

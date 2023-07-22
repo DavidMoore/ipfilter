@@ -1,5 +1,4 @@
 <Project Sdk="WixToolset.Sdk/4.0.1">
-  <Import Project="..\..\Directory.Build.props" />
   <PropertyGroup>
     <OutputName>IPFilter</OutputName>
     <DefineConstants>MajorVersion=$(MajorVersion);MinorVersion=$(MinorVersion);BuildNumberMajor=$(BuildNumberMajor);BuildNumberMinor=$(BuildNumberMinor);TagVersion=$(TagVersion);InformationalVersion=$(InformationalVersion)</DefineConstants>
@@ -11,17 +10,6 @@
     <DefineConstants>Debug;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Code\IPFilter\IPFilter.csproj">
-      <Name>IPFilter</Name>
-      <Project>{34a454a5-5453-424a-81ce-30ff0a2b004b}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="WixToolset.Util.wixext" Version="4.0.1" />
   </ItemGroup>
-  <Import Project="..\..\Directory.Build.targets" />
 </Project>

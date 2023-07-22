@@ -71,7 +71,7 @@ namespace IPFilter.Formats
             return sb.ToString();
         }
 
-        public static FilterEntry ParseEntry(string line)
+        public static FilterEntry? ParseEntry(string line)
         {
             if (line == null) return null;
             var value = line.Trim();

@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ProjectGuid>{34A454A5-5453-424A-81CE-30FF0A2B004B}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -20,8 +20,10 @@
     <Version>3.0.0</Version>
     <Description>Tool for downloading ipfilter blocklists for your Bit Torrent client(s)</Description>
     <RepositoryUrl>https://github.com/DavidMoore/ipfilter</RepositoryUrl>
-    <PackageProjectUrl>https://www.sadrobot.co.nz/ipfilter</PackageProjectUrl>
-    <LangVersion>8</LangVersion>
+    <PackageProjectUrl>https://www.ipfilter.app/</PackageProjectUrl>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="App.ico" />

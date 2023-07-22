@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using IPFilter.UI.Annotations;
 
 namespace IPFilter.Native
 {
@@ -14,7 +13,7 @@ namespace IPFilter.Native
             return GetDirectoryInfo(path, CultureInfo.CurrentCulture);
         }
 
-        public static DirectoryInfo GetDirectoryInfo([NotNull] string path, CultureInfo cultureInfo)
+        public static DirectoryInfo GetDirectoryInfo(string path, CultureInfo cultureInfo)
         {
             if (string.IsNullOrWhiteSpace(path)) return null;
 

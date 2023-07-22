@@ -28,7 +28,6 @@ namespace IPFilter.ViewModels
     using Native;
     using Services;
     using Services.Deployment;
-    using UI.Annotations;
     using Views;
     using Application = System.Windows.Application;
 
@@ -384,7 +383,7 @@ namespace IPFilter.ViewModels
                 
                 // Detect the current running version. The ProductVersion contains the informational, semantic version e.g. "3.0.0-beta"
                 var versionInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
-                var currentVersion = new SemanticVersion(versionInfo.ProductVersion);
+                var currentVersion = new SemanticVersion(versionInfo.FileVersion);
 
                 // Remove any old installers
                 try
@@ -578,9 +577,7 @@ namespace IPFilter.ViewModels
             }
         }
 
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

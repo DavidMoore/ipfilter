@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using IPFilter.Core;
 using IPFilter.Formats;
-using IPFilter.UI.Annotations;
 
 namespace IPFilter.Models
 {
@@ -16,7 +14,7 @@ namespace IPFilter.Models
 
         public static IPAddressComparer AddressComparer { get; } = new IPAddressComparer();
 
-        public FilterEntry([NotNull] string from, [NotNull] string to) : this(IpAddress.Parse(from), IpAddress.Parse(to)) { }
+        public FilterEntry(string from, string to) : this(IpAddress.Parse(from), IpAddress.Parse(to)) { }
 
         public FilterEntry(uint from, uint to)
         {
