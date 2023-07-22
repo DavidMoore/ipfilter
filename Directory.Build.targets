@@ -6,7 +6,7 @@
   </Target>
 
   <!-- Authenticode signing for WiX -->
-  <Target Name="SignMsi">
+  <Target Name="SignMsi" Condition="'$(SignAuthenticode)' == 'true'">
     <Exec EchoOff="$(SignAuthenticodeEchoOff)" Command= "&quot;$(SignToolPath)&quot; $(SignToolArguments) &quot;%(SignMsi.FullPath)&quot;" />
   </Target>
 </Project>

@@ -57,7 +57,7 @@
       <PropertyGroup>
         <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
         <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
-        <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
+        <DebugType Condition="'$(DebugType)' == ''">full</DebugType>
         <DefineConstants>$(DefineConstants),TRACE</DefineConstants>
       </PropertyGroup>
     </When>
@@ -79,7 +79,7 @@
 
   <!-- Signing -->
   <PropertyGroup>
-    <SignAuthenticode Condition="'$(SignAuthenticode)' == '' and '$(Configuration)' == 'Release'">true</SignAuthenticode>
+    <SignAuthenticode Condition="'$(SignAuthenticode)' == '' and '$(Configuration)' == 'Release'">false</SignAuthenticode>
     <SignAuthenticode Condition="'$(SignAuthenticode)' == ''">false</SignAuthenticode>
     <SignAuthenticodeThumbprint Condition="'$(SignAuthenticodeThumbprint)' == ''">8d72fc3e61f4653dfd192baea0708186f05b163b</SignAuthenticodeThumbprint>
     <SignAuthenticodeTimestamp Condition="'$(SignAuthenticodeTimestamp)' == ''">http://timestamp.digicert.com</SignAuthenticodeTimestamp>
