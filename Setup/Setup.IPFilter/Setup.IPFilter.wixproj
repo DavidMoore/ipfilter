@@ -12,4 +12,7 @@
   <ItemGroup>
     <PackageReference Include="WixToolset.Util.wixext" Version="4.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Code\IPFilter\IPFilter.csproj" />
+  </ItemGroup>
 </Project>
