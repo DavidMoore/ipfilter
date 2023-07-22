@@ -20,4 +20,4 @@ jobs:
 
       - name: Build
         run: |
-            dotnet build -c Release -p:Version=$GITHUB_REF_NAME
+            msbuild /p:Configuration=Release /p:Version=$GITHUB_REF_NAME
