@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-    <Package Name="IPFilter $(var.InformationalVersion)" Language="1033" Version="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildNumberMajor)" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf" InstallerVersion="200" Scope="perUser">
+    <Package Name="IPFilter $(var.Version)" Language="1033" Version="$(var.Version)" Manufacturer="David Moore" UpgradeCode="15a0d30b-23cf-400b-ab67-05ca4fc13bdf" InstallerVersion="200" Scope="perUser">
         <!-- Allow upgrades or downgrades -->
         <InstallExecuteSequence>
             <RemoveExistingProducts Before="CostInitialize" />
@@ -15,7 +15,7 @@
         <Property Id="ARPPRODUCTICON" Value="ApplicationIcon.ico" />
         <Property Id="ARPURLINFOABOUT" Value="https://www.sadrobot.co.nz/ipfilter/" />
         <Property Id="ARPCONTACT" Value="David Moore" />
-        <Property Id="ARPCOMMENTS" Value="IPFilter $(var.InformationalVersion)" />
+        <Property Id="ARPCOMMENTS" Value="IPFilter $(var.Version)" />
 
         <Feature Id="ProductFeature" Title="IPFilter" Level="1">
             <ComponentGroupRef Id="ProductComponents" />
