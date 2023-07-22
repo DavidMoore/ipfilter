@@ -20,4 +20,4 @@ jobs:
 
       - name: Build
         run: |
-            "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=Release /p:Version=$GITHUB_REF_NAME
+            & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\msbuild.exe" "/p:Configuration=Release" "/p:Version=${env.GITHUB_REF_NAME}"
