@@ -34,5 +34,7 @@ jobs:
           & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\msbuild.exe" "/p:Configuration=Release" "/p:Version=$env:VERSION"
 
       - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create $env:VERSION --draft --prerelease --title "v$env:VERSION" --notes "Download and run **IPFilter.msi** to install. If you wish to just download and run the self-contained executable, you can download IPFilter.exe" ./Bin/IPFilter.msi ./Bin/IPFilter.exe
