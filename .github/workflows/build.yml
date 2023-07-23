@@ -9,8 +9,8 @@ on:
         type: string
 
   push:
-    branches:
-      - main
+    #branches:
+    #  - main
     tags:
       - '*'
     paths-ignore:
