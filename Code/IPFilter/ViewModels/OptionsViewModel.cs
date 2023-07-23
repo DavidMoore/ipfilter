@@ -37,7 +37,7 @@ namespace IPFilter.ViewModels
                 Paths = new ObservableCollection<PathSetting>(pathProvider.GetDestinations());
                 Paths.CollectionChanged += (sender, args) => PendingChanges = true;
 
-                IsScheduleEnabled = Config.Default.settings.update.isDisabled;
+                IsScheduleEnabled = Config.Default.settings.task.isEnabled;
                 IsPreReleaseEnabled = Config.Default.settings.update.isPreReleaseEnabled;
                 IsUpdateDisabled = Config.Default.settings.update.isDisabled;
 
