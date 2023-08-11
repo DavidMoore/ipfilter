@@ -1,0 +1,16 @@
+changelog:
+  exclude:
+    labels:
+      - dependencies
+    authors:
+      - octocat
+  categories:
+    - title: Fixed 🛠
+      labels:
+        - bug
+    - title: Added 🎉
+      labels:
+        - feature
+    - title: Changed
+      labels:
+        - "*"
