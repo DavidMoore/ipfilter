@@ -13,7 +13,7 @@
         <!-- Add / Remove Programs support information -->
         <Property Id="ARPNOMODIFY" Value="1" />
         <Property Id="ARPPRODUCTICON" Value="ApplicationIcon.ico" />
-        <Property Id="ARPURLINFOABOUT" Value="https://www.sadrobot.co.nz/ipfilter/" />
+        <Property Id="ARPURLINFOABOUT" Value="https://www.ipfilter.app/" />
         <Property Id="ARPCONTACT" Value="David Moore" />
         <Property Id="ARPCOMMENTS" Value="IPFilter $(var.Version)" />
 
