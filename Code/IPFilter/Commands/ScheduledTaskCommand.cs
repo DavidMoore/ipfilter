@@ -59,12 +59,29 @@ namespace IPFilter.Commands
 
         const string taskPath = "IPFilter";
 
-        public static void Execute()
+        public static void Execute(bool enable)
         {
             var type = Type.GetTypeFromProgID("Schedule.Service");
             dynamic service = Activator.CreateInstance(type);
 
             service.Connect();
+
+            if(!enable)
+            {
+                Trace.TraceInformation("Deleting the automatic schedule task...");
+                var folder = service.GetFolder("\\");
+                var existingTask = folder.GetTask(taskPath);
+                if (existingTask != null)
+                {
+                    existingTask.Enabled = false;
+                    existingTask.Stop(0);
+                    folder.DeleteTask(taskPath, 0);
+                    Trace.TraceInformation("Successfully deleted the scheduled task.");
+                    return;
+                }
+                Trace.TraceInformation("No task found to delete.");
+                return;
+            }
             
             Trace.TraceInformation("Setting up the automatic schedule...");
             var task = service.NewTask(0);
@@ -92,6 +109,7 @@ namespace IPFilter.Commands
                 task.Settings.RunOnlyIfNetworkAvailable = true;
                 task.Settings.StartWhenAvailable = true;
                 task.Settings.WakeToRun = false;
+                task.Settings.Enabled = true;
 
                 task.Principal.RunLevel = _TASK_RUNLEVEL.TASK_RUNLEVEL_LUA;
                 task.Principal.LogonType = _TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN;

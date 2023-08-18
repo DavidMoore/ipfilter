@@ -101,7 +101,7 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Updating schedule settings...");
-                Commands.ScheduledTaskCommand.Execute();
+                Commands.ScheduledTaskCommand.Execute(Config.Default.settings.task.isEnabled);
             }
             catch (UnauthorizedAccessException)
             {
