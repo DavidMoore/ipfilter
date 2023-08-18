@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using IPFilter.Cli;
 using IPFilter.Formats;
 using IPFilter.Models;
 using IPFilter.Native;
@@ -74,21 +76,110 @@ namespace IPFilter.Apps
             // AppId: {7C5A40EF-A0FB-4BFC-874A-C0F2E0B9FA8E}\Deluge\deluge.exe
             // AppPath: C:\Program Files (x86)\Deluge\deluge.exe
 
+            // blocklist.conf
+
         }
 
         public async Task<FilterUpdateResult> UpdateFilterAsync(FilterDownloadResult filter, CancellationToken cancellationToken, IProgress<ProgressModel> progress)
         {
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
-            var destinationPath = Path.Combine(roamingPath, "deluge", "ipfilter.dat");
+            var destination = new FileInfo(Path.Combine(roamingPath, "deluge", "ipfilter.dat"));
 
-            Trace.TraceInformation("Writing filter to " + destinationPath);
-            using (var destination = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
-            using (var writer = new P2pWriter(destination))
+            Trace.TraceInformation("Writing filter to " + destination.FullName);
+            if(!destination.Directory.Exists) destination.Directory.Create();
+            
+            using (var stream = File.Open(destination.FullName, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new P2pWriter(stream))
             {
                 await writer.Write(filter.Entries, progress);
             }
 
+            // Get the blocklist config file
+            var blocklistConfigFile = new FileInfo( Path.Combine( destination.DirectoryName, "blocklist.conf") );
+            var builder = new UriBuilder(destination.FullName);
+
+            var config = new DelugeBlocklistConfig();
+            var header = new DelugeConfigHeader();
+
+            if (blocklistConfigFile.Exists)
+            {
+                var blocklistConfigValue = await blocklistConfigFile.ReadAllText();
+
+                var headerMarker = blocklistConfigValue.IndexOf('}');
+
+                header = serializer.Deserialize<DelugeConfigHeader>(blocklistConfigValue.Substring(0, headerMarker + 1));
+                config = serializer.Deserialize<DelugeBlocklistConfig>( blocklistConfigValue.Substring(headerMarker + 1) );
+            }
+
+            // Update blocklist config
+            config.url = builder.Uri.AbsolutePath;
+            config.list_type = "Emule";
+            config.load_on_start = true;
+            config.list_size = (int)(filter.Length ?? 0);
+            config.last_update = filter.FilterTimestamp.HasValue ? filter.FilterTimestamp.Value.ToUnixTimeSeconds() : 0;
+
+            // Write out blocklist config
+            var headerJson = serializer.Serialize(header);
+            var configJson = serializer.Serialize(config);
+
+            await blocklistConfigFile.WriteAllText(headerJson + configJson);
+
             return new FilterUpdateResult { FilterTimestamp = filter.FilterTimestamp };
         }
+
+        internal static readonly JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+        class DelugeConfigHeader
+        {
+            public int file { get; set; } = 1;
+            public int format { get; set; } = 1;
+        }
+
+        class DelugeBlocklistConfig
+        {
+            public int check_after_days { get; set; }
+            
+            public float last_update { get; set; }
+
+            public string list_compression { get; set; }
+
+            public int list_size { get; set; }
+
+            public string list_type { get; set; }
+
+            public int timeout { get; set; }
+
+            public int try_times { get; set; }
+
+            public bool load_on_start { get; set; }
+
+            public string[] whitelisted { get; set; }
+
+            public string url { get; set; }
+
+        }
+
+        // deluge-debug.exe -L debug -l C:\Users\<use>\AppData\Roaming\deluge\deluge.log
+        // https://github.com/deluge-torrent/deluge/blob/develop/deluge/plugins/Blocklist/deluge_blocklist/
+        // blocklist.conf
+        //        {
+        //    "file": 1,
+        //    "format": 1
+        //}{
+        //    "check_after_days": 4,
+        //    "last_update": 0.0,
+        //    "list_compression": "",
+        //    "list_size": 0,
+        //    "list_type": "Emule",
+        //    "load_on_start": false,
+        //    "timeout": 180,
+        //    "try_times": 3,
+        //    "url": "ipfilter.dat",
+        //    "whitelisted": []
+        //}
+
+        // Core.conf
+        // "enabled_plugins": [
+        // "Blocklist"],
     }
 }

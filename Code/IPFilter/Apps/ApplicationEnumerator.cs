@@ -12,10 +12,11 @@ namespace IPFilter.Apps
 
             var applications = new List<IApplication>
             {
-                new QBitTorrent(), 
+                new QBitTorrent(),
                 new UTorrentApplication(),
                 new BitTorrentApplication(),
-                new EmuleApplication()
+                new EmuleApplication(),
+                new DelugeApplication()
             };
 
             foreach (var application in applications)

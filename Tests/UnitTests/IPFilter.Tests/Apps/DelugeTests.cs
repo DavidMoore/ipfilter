@@ -1,6 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web.Script.Serialization;
+using IPFilter.Apps;
+using System.Threading.Tasks;
+using IPFilter.Models;
+using System.Threading;
+
 namespace IPFilter.Tests.Apps
 {
     [TestClass]
@@ -20,9 +25,16 @@ namespace IPFilter.Tests.Apps
 
         }
 
-        class DelugeSerializer
+        [TestMethod, Ignore]
+        public async Task TestDeploy()
         {
+            var app = new DelugeApplication();
 
+            var filter = new FilterDownloadResult { };
+
+            var progress = new Progress<ProgressModel>();
+
+            await app.UpdateFilterAsync(filter, CancellationToken.None, progress);
         }
     }
 }
