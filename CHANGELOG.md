@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [3.0.1-beta] - 2023-08-18
+## [3.0.3-beta] - 2023-08-18
 
 ### Changed
 * Build & installer no longer signed with code signing certificate
@@ -39,8 +39,8 @@
 
 ## [3.0.1.4-beta]
 
-[Unreleased]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.9-beta...HEAD
-[3.0.1-beta]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.9-beta...3.0.3-beta
+[Unreleased]: https://github.com/DavidMoore/ipfilter/compare/3.0.3-beta...HEAD
+[3.0.3-beta]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.9-beta...3.0.3-beta
 [3.0.2.9-beta]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.7-beta...3.0.2.9-beta
 [3.0.2.7-beta]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.4-beta...3.0.2.7-beta
 [3.0.2.4-beta]: https://github.com/DavidMoore/ipfilter/compare/3.0.2.3-beta...3.0.2.4-beta
