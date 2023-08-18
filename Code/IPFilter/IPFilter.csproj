@@ -33,6 +33,10 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\CHANGELOG.md" Link="CHANGELOG.md" />
+    <None Include="..\..\README.md" Link="README.md" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="App.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.33913.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Setup.IPFilter", "Setup\Setup.IPFilter\Setup.IPFilter.wixproj", "{345FF54A-FCA9-48D5-99B8-AC15669ABDEE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E208A54C-2B63-41CC-8FCD-2A2CF60ECFCA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\UnitTests\IPFilter.Tests\IPFilter.Tests.csproj", "{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
@@ -57,9 +55,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{908B06C1-CFDD-47FA-B651-7A23D1EDB6E4} = {E208A54C-2B63-41CC-8FCD-2A2CF60ECFCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF751B36-B446-4E63-BF70-2D8B03FCA7B2}
