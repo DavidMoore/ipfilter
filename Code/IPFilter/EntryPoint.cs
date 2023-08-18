@@ -77,7 +77,7 @@ namespace IPFilter
                 {
                     try
                     {
-                        ScheduledTaskCommand.Execute();
+                        ScheduledTaskCommand.Execute(true);
                     }
                     catch (Exception ex)
                     {

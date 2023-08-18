@@ -19,7 +19,7 @@
 
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem >
-                <Button Padding="5" Margin="5" Content="Save Settings" Command="{Binding SaveSettingsCommand}"/>
+                <Button Padding="5" Margin="5" Content="OK" Command="{Binding SaveSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
             </StatusBarItem>
             <StatusBarItem>
                 <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"/>

@@ -5,6 +5,7 @@ namespace IPFilter.ViewModels
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using System.Windows;
     using Services;
 
     public class OptionsViewModel : INotifyPropertyChanged
@@ -101,7 +102,7 @@ namespace IPFilter.ViewModels
             try
             {
                 Trace.TraceInformation("Updating schedule settings...");
-                Commands.ScheduledTaskCommand.Execute();
+                Commands.ScheduledTaskCommand.Execute(Config.Default.settings.task.isEnabled);
             }
             catch (UnauthorizedAccessException)
             {
@@ -112,7 +113,11 @@ namespace IPFilter.ViewModels
             {
                 Trace.TraceError("Couldn't schedule automated update: " + ex);
                 ErrorMessage = "Couldn't schedule automated update: " + ex.Message;
+                return;
             }
+
+            if (o is not Window window) return;
+            window.Close();
         }
 
         public DelegateCommand SaveSettingsCommand { get; private set; }
