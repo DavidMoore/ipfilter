@@ -18,14 +18,14 @@
     <DockPanel>
 
         <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem >
+            <StatusBarItem>
                 <Button Padding="5" Margin="5" Content="OK" Command="{Binding SaveSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
             </StatusBarItem>
             <StatusBarItem>
-                <Label Content="{Binding ErrorMessage}" Foreground="Red" Width="Auto"/>
+                <Button Padding="5" Margin="0,5,5,5" Content="Cancel" Command="{Binding ResetSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
             </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right">
-                <Button Padding="5" Margin="5" Content="Cancel" Command="{Binding ResetSettingsCommand}" />
+            <StatusBarItem Width="Auto">
+                <TextBlock VerticalAlignment="Top" Text="{Binding ErrorMessage}" Foreground="Red" TextWrapping="WrapWithOverflow" Margin="0,0,5,0" />
             </StatusBarItem>
         </StatusBar>
 

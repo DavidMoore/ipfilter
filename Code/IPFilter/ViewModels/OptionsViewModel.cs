@@ -57,22 +57,34 @@ namespace IPFilter.ViewModels
 
         bool CanResetSettings(object o)
         {
-            return PendingChanges;
+            return true;
         }
 
         void ResetSettings(object o)
         {
             Config.Reload();
             LoadSettings();
+            if (o is not Window window) return;
+            window.Close();
         }
 
         bool CanSaveSettings(object o)
         {
-            return PendingChanges;
+            return true;
         }
 
         void SaveSettings(object o)
         {
+            var window = o as Window;
+
+            // Just close the dialog if we haven't changed settings
+            if (!PendingChanges)
+            {
+                if (window == null) return;
+                window.Close();
+                return;
+            }
+
             ErrorMessage = string.Empty;
 
             try
@@ -116,8 +128,7 @@ namespace IPFilter.ViewModels
                 return;
             }
 
-            if (o is not Window window) return;
-            window.Close();
+            window?.Close();
         }
 
         public DelegateCommand SaveSettingsCommand { get; private set; }
