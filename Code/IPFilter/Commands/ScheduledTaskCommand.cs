@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace IPFilter.Commands
 {
@@ -69,57 +70,58 @@ namespace IPFilter.Commands
             if(!enable)
             {
                 Trace.TraceInformation("Deleting the automatic schedule task...");
-                var folder = service.GetFolder("\\");
-                var existingTask = folder.GetTask(taskPath);
-                if (existingTask != null)
+                var rootFolder = service.GetFolder("\\");
+
+                try
                 {
+                    var existingTask = rootFolder.GetTask(taskPath);
                     existingTask.Enabled = false;
                     existingTask.Stop(0);
-                    folder.DeleteTask(taskPath, 0);
+                    rootFolder.DeleteTask(taskPath, 0);
                     Trace.TraceInformation("Successfully deleted the scheduled task.");
-                    return;
                 }
-                Trace.TraceInformation("No task found to delete.");
+                catch (FileNotFoundException)
+                {
+                    Trace.TraceInformation("No task found to delete.");
+                }
                 return;
             }
             
             Trace.TraceInformation("Setting up the automatic schedule...");
             var task = service.NewTask(0);
-            //using (var task = service.NewTask())
-            {
-                task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
+            
+            task.RegistrationInfo.Description = "Updates the IP Filter for bit torrent clients";
 
-                task.Triggers.Clear();
+            task.Triggers.Clear();
 
-                // Schedule to run daily at 4am
-                var now = DateTime.Now.AddDays(-1);
-                var date = new DateTime(now.Year, now.Month, now.Day, 4, 0, 0);
+            // Schedule to run daily at 4am
+            var now = DateTime.Now.AddDays(-1);
+            var date = new DateTime(now.Year, now.Month, now.Day, 4, 0, 0);
                 
-                var trigger = task.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_DAILY);
-                trigger.DaysInterval = 1;
-                trigger.StartBoundary = date.ToString("s");
-                trigger.RandomDelay = "PT15M"; // Delay randomly by 15 minutes to stagger the amount of requests hitting list servers
+            var trigger = task.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_DAILY);
+            trigger.DaysInterval = 1;
+            trigger.StartBoundary = date.ToString("s");
+            trigger.RandomDelay = "PT15M"; // Delay randomly by 15 minutes to stagger the amount of requests hitting list servers
                 
-                // Execute silently
-                //var action = (IExecAction) task.Actions.Create(_TASK_ACTION_TYPE.TASK_ACTION_EXEC);
-                var action = task.Actions.Create(_TASK_ACTION_TYPE.TASK_ACTION_EXEC);
-                action.Path = Process.GetCurrentProcess().MainModule.FileName;
-                action.Arguments = "/silent";
+            // Execute silently
+            //var action = (IExecAction) task.Actions.Create(_TASK_ACTION_TYPE.TASK_ACTION_EXEC);
+            var action = task.Actions.Create(_TASK_ACTION_TYPE.TASK_ACTION_EXEC);
+            action.Path = Process.GetCurrentProcess().MainModule.FileName;
+            action.Arguments = "/silent";
 
-                task.Settings.RunOnlyIfNetworkAvailable = true;
-                task.Settings.StartWhenAvailable = true;
-                task.Settings.WakeToRun = false;
-                task.Settings.Enabled = true;
+            task.Settings.RunOnlyIfNetworkAvailable = true;
+            task.Settings.StartWhenAvailable = true;
+            task.Settings.WakeToRun = false;
+            task.Settings.Enabled = true;
 
-                task.Principal.RunLevel = _TASK_RUNLEVEL.TASK_RUNLEVEL_LUA;
-                task.Principal.LogonType = _TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN;
-                //task.Principal.UserId = identity.Name;
+            task.Principal.RunLevel = _TASK_RUNLEVEL.TASK_RUNLEVEL_LUA;
+            task.Principal.LogonType = _TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN;
+            //task.Principal.UserId = identity.Name;
 
-                var folder = service.GetFolder("\\");
+            var folder = service.GetFolder("\\");
                 
-                var registered = folder.RegisterTaskDefinition(taskPath, task, (int)_TASK_CREATION.TASK_CREATE_OR_UPDATE, null,null,_TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN);
-                Trace.TraceInformation("Finished creating / updating scheduled task");
-            }
+            var registered = folder.RegisterTaskDefinition(taskPath, task, (int)_TASK_CREATION.TASK_CREATE_OR_UPDATE, null,null,_TASK_LOGON_TYPE.TASK_LOGON_INTERACTIVE_TOKEN);
+            Trace.TraceInformation("Finished creating / updating scheduled task");
         }
     }
 }
