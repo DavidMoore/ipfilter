@@ -54,8 +54,8 @@ jobs:
             tree "${{ env.SITE_PATH }}"
 
       - name: Install Playwright
-        run: pwsh "${{ env.SITE_PATH }}/bin/Debug/net9.0/playwright.ps1" install --with-deps
-
+        run: npx playwright install chromium --with-deps
+        
       - name: Run SiteGen
         id: run-sitegen
         run: |
