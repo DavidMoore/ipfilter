@@ -56,12 +56,13 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
         
-      - name: Run dynamic site
+      - name: Run SiteGen
         id: run-sitegen
         run: |
             cd "${{ env.SITE_PATH }}"
             dotnet run &
-            sleep 20
+            sleep 10
+            dotnet sitegen
 
       - name: Build And Deploy
         id: builddeploy
@@ -70,7 +71,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          skip_app_build: false
+          skip_app_build: true
           app_location: "${{ env.SITE_PATH }}"
           api_location: "/api"
           output_location: '/public'
