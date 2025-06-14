@@ -73,7 +73,7 @@ jobs:
           action: "upload"
           skip_app_build: true
           skip_api_build: true
-          app_location: "./src/IPFilter.Docs"
+          app_location: "./src/IPFilter.Docs/public"
           api_location: "/api"
           output_location: 'public'
           app_build_command: 'ls -l ./'
