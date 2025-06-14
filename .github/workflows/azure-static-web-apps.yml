@@ -35,6 +35,12 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        id: setup-dotnet
+        with:
+          dotnet-version: '9.0.x'
+        
       - name: Install SiteGen tool
         id: setup-sitegen
         run: |
