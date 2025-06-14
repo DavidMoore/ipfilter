@@ -71,12 +71,12 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          skip_app_build: true
+          skip_app_build: false
           skip_api_build: true
-          app_location: "public"
+          app_location: "./src/IPFilter.Docs"
           api_location: "/api"
           output_location: 'public'
-          app_build_command: 'dotnet sitegen'
+          app_build_command: 'ls -l ./'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
