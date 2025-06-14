@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-        SITE_PATH: ./src/IPFilter.Docs
+        SITE_PATH: ${{ github.workspace }}/src/IPFilter.Docs
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,8 +66,7 @@ jobs:
 
       - name: Listing
         id: run-tree
-        run: |
-            tree "/home/runner/work/ipfilter/src/IPFilter.Docs"
+        run: tree "${{ env.SITE_PATH }}/public"
 
       - name: Build And Deploy
         id: builddeploy
@@ -77,7 +76,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           skip_app_build: true
-          app_location: "/github/workspace/ipfilter/src/IPFilter.Docs/public"
+          app_location: "${{ env.SITE_PATH }}"
           api_location: "/api" # Api source code path - optional
           output_location: '/public' # Built app content directory - optional
           app_build_command: 'dotnet sitegen'
