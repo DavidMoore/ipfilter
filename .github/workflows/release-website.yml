@@ -60,7 +60,7 @@ jobs:
         id: run-sitegen
         run: |
             cd "${{ env.SITE_PATH }}"
-            dotnet run
+            dotnet run &
             sleep 20
 
       - name: Build And Deploy
