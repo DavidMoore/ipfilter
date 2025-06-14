@@ -1,0 +1,99 @@
+﻿@page
+@using IPFilter.Docs.Pages.Shared
+@model IndexModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "IPFilter Updater";
+}
+
+<main class="w-100 bt b--black-10 bg-white">
+    <section class="bg-black-0125 w-100">
+
+        <div class="bg-black-80 pv3 pv4-m pv5-l">
+            <div class="tc-l ph3">
+                <h1 class="f2 f1-l fw2 mb0 white-90 lh-title">IPFilter Updater</h1>
+                <h2 class="fw1 f3 white-70 mt3 mb4">A free, Open Source utility to keep your Bit Torrent blocklist updated.</h2>
+
+                <a class="f4 no-underline grow dib v-mid white ba b--dark-green pv3 ph4 mb3 bg-green br3"
+                   href="@Model.LatestInstaller.BrowserDownloadUrl">
+                    <span class="b">Download for Windows</span>
+                    <small class="f6 db">Windows Installer (.msi)</small>
+                </a>
+
+                <span class="dib v-mid ph3 white-70 mb3">or</span>
+                <a class="f6 no-underline grow dib v-mid white ba b--white ph3 pv2 mb3" href="#download">Other downloads</a>
+            </div>
+        </div>
+
+        <div class="cf mw9 center tc-m">
+            <div class="fl-l w-50-l tc pb3 pb4-ns pt4 pt5-ns black-70 ">
+                <h1 class="f4 fw6 f1-ns lh-title measure mt0">
+                    Supporters &amp; Sponsors
+                </h1>
+                <a href="https://www.jetbrains.com/?from=IPFilterUpdater" class="link no-underline "
+                   target="_blank"><component type="typeof(Jetbrains)" render-mode="ServerPrerendered" /></a>
+            </div>
+            <div class="fl-l w-50-l tc pb3 pb4-ns pt4 pt5-ns black-70">
+                <h1 class="f4 fw6 f1-ns lh-title measure mt0">Donate</h1>
+
+                <div>
+                    <a href='https://ko-fi.com/M4M517U7R' target='_blank'><img height='36' style='border:0px;height:36px;' src='/img/kofi.png' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                </div>
+
+                <div class="mt3">
+                    <a class="f7 f6-ns fw6 dib ba b--black-20 bg-blue white ph3 ph4-ns pv2 pv3-ns br3 no-underline"
+                       href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U4PNPZUUENA98&source=url">Donate to my PayPal</a>
+                </div>
+
+                <div>
+                </div>
+            </div>
+        </div>
+
+        <a name="download"></a>
+        <section class="cf ph3 ph5-ns pb5 bg-washed-blue black-70 bt b--black-20" id="features">
+            <div class="mw9 center">
+                <div class="cf">
+                    <article class="pv2 fl w-100 w-50-l pr0 pr2-l">
+                        <h1 class="tc f3 f2-ns fw6 mb2">Downloads</h1>
+                        <h3 class="f4 f3-ns fw6 mb3">Windows Installer</h3>
+                        <a class="f4 no-underline grow dib white pv3 ph4 mb3 bg-green br3"
+                           href="@Model.LatestInstaller.BrowserDownloadUrl">Download for Windows <code class="f5 db">@Model.LatestClient.Name</code></a>
+
+                        <h3 class="f4 f3-ns fw6 mb3">Portable Executable</h3>
+                        <a class="f4 no-underline grow dib white pv3 ph4 mb3 bg-blue br3"
+                           href="@Model.LatestExe.BrowserDownloadUrl">Download IPFilter.exe <code class="f5 db">@Model.LatestClient.Name</code></a>
+                        <p class="f5 lh-copy">Save the portable exe to anywhere you wish on your machine and launch it.</p>
+                    </article>
+                    <article class="pv2 fl w-100 w-50-l pl0 pl2-l">
+                        <h1 class="tc f3 f2-ns fw6 mb2">Nightly Lists</h1>
+                        <p class="f5 lh-copy ma4 mb3">
+                            The default nightly blocklist is available to manually download or integrate with other tools
+                        </p>
+                        <div class="overflow-auto">
+                            <table class="f6 w-100 mw8 center" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="fw6 bb b--black-20 tl pv3 pr3">Format</th>
+                                        <th class="fw6 bb b--black-20 tl pv3 pr3">Date Updated</th>
+                                        <th class="fw6 bb b--black-20 tl pv3 pr3">Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="lh-copy">
+                                    @foreach(var list in Model.Lists.Assets)
+                                    {
+                                        <tr>
+                                            <td class="pv3 pr3 bb b--black-20"><a class="link dark-blue b hover-blue" href="@list.BrowserDownloadUrl">@list.Name</a></td>
+                                            <td class="pv3 pr3 bb b--black-20">@list.UpdatedAt.ToString("F")</td>
+                                            <td class="pv3 pr3 bb b--black-20">@( (list.Size / 1048576.0).ToString("N2")) MB</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </section>
+</main>

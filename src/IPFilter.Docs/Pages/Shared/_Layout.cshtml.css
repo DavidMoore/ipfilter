@@ -1,0 +1,21 @@
+﻿#TableOfContents ul li ul li ul li {
+    display: none;
+}
+
+#TableOfContents ul li {
+    color: black;
+    display: block;
+    margin-bottom: .375em;
+    line-height: 1.375;
+}
+
+    #TableOfContents ul li a {
+        width: 100%;
+        padding: .25em .375em;
+        margin-left: -.375em;
+    }
+
+        #TableOfContents ul li a:hover {
+            background-color: #999;
+            color: white;
+        }

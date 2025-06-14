@@ -5,10 +5,14 @@ on:
   push:
     branches:
       - docs
+    paths:
+      - src/IPFilter.Docs/**/*
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - docs
+      - main
+    paths:
+      - src/IPFilter.Docs/**/*
   release:
     types: [published, edited]
   workflow_run:
@@ -16,19 +20,50 @@ on:
      ["Nightly Lists"]
     types: [completed]
     branches:
-      - 'master'
-      - 'main'
+      - main
 
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'release' || github.event_name == 'push' || github.event_name == 'workflow_run' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    env:
+        SITE_PATH: ./src/IPFilter.Docs
     steps:
       - uses: actions/checkout@v3
         with:
+          fetch-depth: 0
           submodules: true
-          ref: docs
+
+      - name: Install SiteGen tool
+        id: setup-sitegen
+        run: |
+            dotnet new tool-manifest
+            dotnet tool install --local SiteGen.Cli --version 0.1.8-alpha
+
+      - name: Build site
+        id: build-site
+        run: |
+            dotnet build "${{ env.SITE_PATH }}/IPFilter.Docs.csproj"
+            sudo apt-get install tree
+            tree "${{ env.SITE_PATH }}"
+
+      - name: Install Playwright
+        run: pwsh "${{ env.SITE_PATH }}/bin/Debug/net9.0/playwright.ps1" install --with-deps
+
+      - name: Run SiteGen
+        id: run-sitegen
+        run: |
+            cd "${{ env.SITE_PATH }}"
+            dotnet run &
+            sleep 20
+            dotnet sitegen
+
+      - name: Listing
+        id: run-tree
+        run: |
+            tree "/home/runner/work/ipfilter/src/IPFilter.Docs"
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -36,9 +71,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "public" # Built app content directory - optional
+          skip_app_build: true
+          app_location: "/github/workspace/ipfilter/src/IPFilter.Docs/public"
+          api_location: "/api" # Api source code path - optional
+          output_location: '/public' # Built app content directory - optional
+          app_build_command: 'dotnet sitegen'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
