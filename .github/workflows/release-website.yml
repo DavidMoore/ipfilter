@@ -72,9 +72,10 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           skip_app_build: true
-          app_location: "/github/workspace/ipfilter/public"
+          skip_api_build: true
+          app_location: "public"
           api_location: "/api"
-          output_location: '/public'
+          output_location: 'public'
           app_build_command: 'dotnet sitegen'
 
   close_pull_request_job:
