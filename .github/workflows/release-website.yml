@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD
+name: Publish https://ipfilter.app
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'release' || github.event_name == 'push' || github.event_name == 'workflow_run' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
