@@ -1,4 +1,4 @@
-name: Publish https://ipfilter.app
+name: Publish Website
 
 on:
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-        SITE_PATH: ./src/IPFilter.Docs
+        SITE_PATH: ${{ github.workspace }}/src/IPFilter.Docs
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,31 +43,19 @@ jobs:
         
       - name: Install toolchain
         id: setup-sitegen
-        run: |
-            dotnet tool restore
+        run: dotnet tool restore
 
       - name: Build site
         id: build-site
-        run: |
-            dotnet build "${{ env.SITE_PATH }}/IPFilter.Docs.csproj"
-            sudo apt-get install tree
-            tree "${{ env.SITE_PATH }}"
-
-      - name: Install Playwright
-        run: npx playwright install chromium --with-deps
+        run: dotnet build "${{ env.SITE_PATH }}/IPFilter.Docs.csproj"
         
       - name: Run SiteGen
         id: run-sitegen
         run: |
             cd "${{ env.SITE_PATH }}"
             dotnet run &
-            sleep 20
+            sleep 10
             dotnet sitegen
-
-      - name: Listing
-        id: run-tree
-        run: |
-            tree "/home/runner/work/ipfilter/src/IPFilter.Docs"
 
       - name: Build And Deploy
         id: builddeploy
@@ -77,10 +65,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           skip_app_build: true
-          app_location: "/github/workspace/ipfilter/src/IPFilter.Docs/public"
-          api_location: "/api" # Api source code path - optional
-          output_location: '/public' # Built app content directory - optional
-          app_build_command: 'dotnet sitegen'
+          app_location: "./src/IPFilter.Docs/public"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
