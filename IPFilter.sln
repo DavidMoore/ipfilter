@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Tests", "Tests\Uni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPFilter", "Code\IPFilter\IPFilter.csproj", "{34A454A5-5453-424A-81CE-30FF0A2B004B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPFilter.Docs", "src\IPFilter.Docs\IPFilter.Docs.csproj", "{48300162-E8EA-4EFD-B09D-2DD8832388C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,18 @@ Global
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x64.Build.0 = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.ActiveCfg = Release|Any CPU
 		{34A454A5-5453-424A-81CE-30FF0A2B004B}.Release|x86.Build.0 = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Debug|x86.Build.0 = Debug|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|x64.Build.0 = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{48300162-E8EA-4EFD-B09D-2DD8832388C5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

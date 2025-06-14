@@ -1,0 +1,219 @@
+﻿@using IPFilter.Docs.Pages.Shared
+@using SiteGen.Core.Extensions.Markdown
+@using SiteGen.Core.Models
+@using SiteGen.Core.Models.Hierarchy
+@using SiteGen.Core.Models.Pagination
+@model SiteGen.Core.Models.SiteNode
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<article class="w-100 ph4 pb5 pb6-ns pt1 pt3-ns">
+    <div class="flex-l">
+
+        <div class="order-2 w-100 w-20-l ph5-m ph0-l mb4">
+            <aside class="fixed-lTK right-0 f6 bl-l b--moon-gray pv4 pv0-ns ph4-l nested-list-reset nested-links nested-copy-line-height sticky sticky-r">
+                @if (Model.Tree.PreviousSibling != null || Model.Tree.NextSibling != null)
+                {
+                    <div date-pref>
+                        @if (Model.Tree.PreviousSibling != null)
+                        {
+                            <a href="@Model.Tree.PreviousSibling.Url" class="tr fr w-50 dib pa2 f6 pr1 hover-bg-light-gray overflow-hidden" title="@Model.Tree.PreviousSibling.Title">
+                                <component type="typeof(ChevronRight)" render-mode="ServerPrerendered" param-Size="@("30px")" /><br />
+                                <span>@Model.Tree.PreviousSibling.Title</span>
+                            </a>
+                        }
+
+                        @if (Model.Tree.NextSibling != null)
+                        {
+                            <a href="@Model.Tree.NextSibling.Url" class="fl w-50 dib f6 pa2 pl1 hover-bg-light-gray overflow-hidden" title="@Model.Tree.NextSibling.Title">
+                                <component type="typeof(ChevronLeft)" render-mode="ServerPrerendered" param-Size="@("30px")" /><br />
+                                <span>@Model.Tree.NextSibling.Title</span>
+                            </a>
+                        }
+                    </div>
+                }
+                <div class="clear-fix"></div>
+                <p class="mt-2 b clear-fix">Contents</p>
+                @if(Model.TableOfContents != null && Model.TableOfContents.Count > 0)
+                {
+                    <nav>
+                        <ul>
+                            @foreach (var child in Model.TableOfContents)
+                            {
+                                TableOfContentsNav(child);
+                            }
+                        </ul>
+                    </nav>
+                }
+
+            </aside>
+        </div>
+
+        <div class="order-1 w-60-l ph0 ph5-ns mid-gray nested-copy-line-height no-underline nested-copy-seperator nested-blockquote mt0-ns" style="flex-grow:1;">
+            <nav class="nested-links">
+                @{
+                    BreadcrumbNav(Model, Model);
+                }
+            </nav>
+
+            @functions {
+
+                public void BreadcrumbNav(SiteNode node, SiteNode currentPage)
+                {
+                    if (node == null) return;
+                    if (node.Tree?.Parent != null && node.Tree?.Parent != ViewBag.Root)
+                    {
+                        BreadcrumbNav(node.Tree.Parent, currentPage);
+                        <span class="mr3">/</span>
+                    }
+                    if (node == currentPage)
+                    {
+                        <span class="gray f4 f5-ns dib mr3 active" title="@(node.Title)">@(node.Title)</span>
+                    }
+                    else
+                    {
+                        <a class="link dim f4 f5-ns dib mr3" href="@node.Url" title="@node.Title">@node.Title</a>
+                    }
+                }
+
+                public void TableOfContentsNav(TocNode node)
+                {
+                    if (node == null) return;
+                    <li>
+                        <a href="#@node.Href" title="@node.Name">@node.Name</a>
+                        @if (node.Tree?.Children != null && node.Tree?.Children.Count > 0)
+                        {
+                            <ul>
+                                @foreach(var child in node.Tree.Children)
+                                {
+                                    TableOfContentsNav(child);
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            }
+
+            <div class="documentation-copy">
+                <div id="readout" class="fixed right-0 bottom-0"></div>
+
+                <header class="flex-none w-100">
+
+                    <h1 class="lh-title mb3 mv0 pt3 primary-color-dark">@Model.Title</h1>
+
+                    @if (Model.Type == SiteGen.Core.Models.NodeType.Page)
+                    {
+                        <aside class="fr f6 mid-gray dim ml3">@Model.ReadingTime min read</aside>
+                    }
+
+                    <date class="f6 db mb1" datetime="@Model.Date?.ToString("o")">
+                        @(Model.Date?.ToString("D"))
+                    </date>
+
+                    @if (Model.DateModified != null && Model.DateModified != Model.Date)
+                    {
+                        <date class="f6 db mb1 fr" datetime="@Model.DateModified?.ToString("o")">
+                            Edited @(Model.DateModified?.ToString("D"))
+                        </date>
+                    }
+
+                    @if (Model.Categories != null)
+                    {
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <a href="/categories/@cat" class="f6 mb0 mt2 ph2 pv0 link dim mr2 ba pill">@cat.ToLowerInvariant()</a>
+                        }
+                    }
+
+                </header>
+
+                <aside class="clear-fix bt bw1 pt3 mt2 mid-gray b--mid-gray fn w-100 nested-links">
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <div class="f4 fw4 lh-copy">@Html.Raw(Model.Description)</div>
+                    }
+                </aside>
+
+                @*<img src="{{ . }}" alt="Featured Image for {{ $.Title }}" class="mw-100">*@
+                
+                <div class="prose nested-links" id="prose">
+                    @Html.Raw(Model.HtmlContent)
+                </div>
+
+                @* Child Sections *@
+                <div class="flex flex-wrap">
+                    <section class="flex-ns flex-wrap justify-between w-100">
+                        @foreach (var child in Model.Tree.Children.Where(x => x.Type == NodeType.Section).OrderByDescending(x => x.Weight).ThenByDescending(x => x.Date))
+                        {
+                            <div class="relative flex-auto w-100 w-40-l mr3 mb3 ba br3 b--moon-gray bg-white nested-copy-line-height shadow-4 weight-@(Model.Weight)">
+                                <div class="mb2 pa3 pa4-l gray">
+                                    <h1 class="near-black f3">
+                                        <a href="@child.Url" class="link primary-color dim">@child.Title</a>
+                                    </h1>
+
+                                    <div class="lh-copy links">
+                                        @child.Description
+                                        <a href="@child.Url" class="f6 mt2 db link primary-color dim">Read More &raquo;</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </section>
+                </div>
+
+                @* Child Pages *@
+                <section class="flex-ns flex-wrap justify-between w-100 w-80-nsTK v-top">
+                    @foreach (var child in Model.Tree.Children.Where(x => x.Type == NodeType.Page).OrderByDescending(x => x.Weight).ThenByDescending(x => x.Date))
+                    {
+                        <div class="relative flex-auto w-100 w-40-l mr3 mb3 bg-white ba b--moon-gray nested-copy-line-height weight-@(Model.Weight)">
+                            <div class="bg-white mb2 pa3 pa4-l gray">
+                                <h1 class="near-black f3">
+                                    <a href="@child.Url" class="link primary-color dim">@child.Title</a>
+                                </h1>
+
+                                <div class="lh-copy links">
+                                    @child.Description
+                                    <a href="@child.Url" class="f6 mt2 db link primary-color dim">Read More &raquo;</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </section>
+
+            </div>
+        </div>
+
+        @{
+            var ancestorNode = Model.Tree.Ancestors.Count > 1 ? Model.Tree.Ancestors[1] : Model;
+            var ancestorSections = ancestorNode.Tree.Children.Where(x => x.Type == NodeType.Section).OrderByDescending(x => x.Weight).ThenByDescending(x => x.Date).ToList();
+        }
+        @if (ancestorSections.Count > 0) {
+        <div class="order-0 dn db-l w-100 w-20-l">
+            <nav role="navigation " class="">
+                <ul class="list pa0 nl2">
+                    @foreach (var section in ancestorSections)
+                    {
+                        var isActive = section == Model || TreeInfoExtensions.IsAncestorOf(section.Tree, Model);
+                        var activeClass = isActive ? "accent-color-light" : "";
+                        <li class="f5 w-100 hover-bg-light-gray hover-accent-color-light fw5 primary-color @(activeClass)">
+                            <a href="@(section.Url)" class="js-toggle dib w-100 link mid-gray hover-accent-color-light pl2 pr2 pv2 primary-color @(activeClass)">@(section.Title)</a>
+                            @if (isActive)
+                            {
+                                <ul class="desktopmenu animated fadeIn list pl0 bg-light-gray">
+                                        @foreach (var child in section.Tree.Children.Where(x => x.Type == NodeType.Section).OrderByDescending(x => x.Weight).ThenByDescending(x => x.Date))
+                                    {
+                                        <li class="f6 fw2">
+                                            <a href="@(child.Url)" class="db link hover-bg-gray hover-white pl3 pr2 pv2 @(child == Model || TreeInfoExtensions.IsAncestorOf(child.Tree, Model) ? "accent-color-light":"")">@(child.Title)</a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+        }
+    </div>
+</article>
