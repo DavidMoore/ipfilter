@@ -43,18 +43,11 @@ jobs:
         
       - name: Install toolchain
         id: setup-sitegen
-        run: |
-            dotnet tool restore
+        run: dotnet tool restore
 
       - name: Build site
         id: build-site
-        run: |
-            dotnet build "${{ env.SITE_PATH }}/IPFilter.Docs.csproj"
-            sudo apt-get install tree
-            tree "${{ env.SITE_PATH }}"
-
-      # - name: Install Playwright
-      #   run: npx playwright install chromium --with-deps
+        run: dotnet build "${{ env.SITE_PATH }}/IPFilter.Docs.csproj"
         
       - name: Run SiteGen
         id: run-sitegen
@@ -72,11 +65,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           skip_app_build: true
-          skip_api_build: true
           app_location: "./src/IPFilter.Docs/public"
-          api_location: "/api"
-          output_location: 'public'
-          app_build_command: 'ls -l ./'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
