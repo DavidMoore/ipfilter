@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Code/IPFilter/IPFilter.csproj" />
+  <Project Path="Setup/Setup.IPFilter/Setup.IPFilter.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0">
+    <Platform Project="x86" />
+    <Build Solution="*|x64" Project="false" />
+    <Build Solution="Debug|Any CPU" Project="false" />
+  </Project>
+  <Project Path="src/IPFilter.Cli/IPFilter.Cli.csproj" />
+  <Project Path="src/IPFilter.Core/IPFilter.Core.csproj" />
+  <Project Path="src/IPFilter.Docs/IPFilter.Docs.csproj" />
+  <Project Path="Tests/UnitTests/IPFilter.Tests/IPFilter.Tests.csproj" Id="908b06c1-cfdd-47fa-b651-7a23d1edb6e4" />
+</Solution>
