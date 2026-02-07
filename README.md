@@ -9,6 +9,10 @@ Downloads IP Filter lists for use in Bit Torrent clients.
 * Can automatically schedule itself to update the list silently
 * Auto-updating
 
+## Download
+
+https://davidmoore.github.io/ipfilter/
+
 ## Requirements
 
 * Microsoft Windows XP+
